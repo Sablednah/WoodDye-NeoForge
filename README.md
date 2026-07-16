@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/wood-dye-banner.png" alt="WoodDye" width="420">
+</p>
+
 # WoodDye (NeoForge)
 
 *No mod does wood more good!* Stain your wood with dyes, bleach it with bone meal, and fireproof it with magma cream.
