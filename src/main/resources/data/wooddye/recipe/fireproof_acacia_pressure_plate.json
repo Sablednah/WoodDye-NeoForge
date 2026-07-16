@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "fireproof_wooden_pressure_plate",
+  "key": {
+    "#": "wooddye:fireproof_acacia_planks"
+  },
+  "pattern": [
+    "##"
+  ],
+  "result": {
+    "count": 1,
+    "id": "wooddye:fireproof_acacia_pressure_plate"
+  }
+}

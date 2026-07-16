@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "fireproof_planks",
+  "ingredients": [
+    "#wooddye:fireproof_bamboo_blocks"
+  ],
+  "result": {
+    "count": 2,
+    "id": "wooddye:fireproof_bamboo_planks"
+  }
+}

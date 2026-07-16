@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_fence_gate",
+  "ingredients": [
+    {
+      "neoforge:ingredient_type": "neoforge:difference",
+      "base": "#minecraft:fence_gates",
+      "subtracted": "#wooddye:fireproof_fence_gates"
+    },
+    "minecraft:red_dye"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:mangrove_fence_gate"
+  }
+}

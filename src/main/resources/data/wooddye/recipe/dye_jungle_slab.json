@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_slab",
+  "ingredients": [
+    {
+      "neoforge:ingredient_type": "neoforge:difference",
+      "base": "#minecraft:wooden_slabs",
+      "subtracted": "#wooddye:fireproof_wooden_slabs"
+    },
+    "minecraft:yellow_dye"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:jungle_slab"
+  }
+}

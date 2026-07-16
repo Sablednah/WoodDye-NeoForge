@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "fireproof_wooden_stairs",
+  "key": {
+    "#": "wooddye:fireproof_cherry_planks"
+  },
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "result": {
+    "count": 4,
+    "id": "wooddye:fireproof_cherry_stairs"
+  }
+}

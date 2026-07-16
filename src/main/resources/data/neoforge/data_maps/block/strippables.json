@@ -1,0 +1,61 @@
+{
+  "values": {
+    "wooddye:fireproof_pale_oak_log": {
+      "stripped_block": "wooddye:fireproof_stripped_pale_oak_log"
+    },
+    "wooddye:fireproof_pale_oak_wood": {
+      "stripped_block": "wooddye:fireproof_stripped_pale_oak_wood"
+    },
+    "wooddye:fireproof_cherry_log": {
+      "stripped_block": "wooddye:fireproof_stripped_cherry_log"
+    },
+    "wooddye:fireproof_cherry_wood": {
+      "stripped_block": "wooddye:fireproof_stripped_cherry_wood"
+    },
+    "wooddye:fireproof_birch_log": {
+      "stripped_block": "wooddye:fireproof_stripped_birch_log"
+    },
+    "wooddye:fireproof_birch_wood": {
+      "stripped_block": "wooddye:fireproof_stripped_birch_wood"
+    },
+    "wooddye:fireproof_bamboo_block": {
+      "stripped_block": "wooddye:fireproof_stripped_bamboo_block"
+    },
+    "wooddye:fireproof_oak_log": {
+      "stripped_block": "wooddye:fireproof_stripped_oak_log"
+    },
+    "wooddye:fireproof_oak_wood": {
+      "stripped_block": "wooddye:fireproof_stripped_oak_wood"
+    },
+    "wooddye:fireproof_jungle_log": {
+      "stripped_block": "wooddye:fireproof_stripped_jungle_log"
+    },
+    "wooddye:fireproof_jungle_wood": {
+      "stripped_block": "wooddye:fireproof_stripped_jungle_wood"
+    },
+    "wooddye:fireproof_acacia_log": {
+      "stripped_block": "wooddye:fireproof_stripped_acacia_log"
+    },
+    "wooddye:fireproof_acacia_wood": {
+      "stripped_block": "wooddye:fireproof_stripped_acacia_wood"
+    },
+    "wooddye:fireproof_spruce_log": {
+      "stripped_block": "wooddye:fireproof_stripped_spruce_log"
+    },
+    "wooddye:fireproof_spruce_wood": {
+      "stripped_block": "wooddye:fireproof_stripped_spruce_wood"
+    },
+    "wooddye:fireproof_mangrove_log": {
+      "stripped_block": "wooddye:fireproof_stripped_mangrove_log"
+    },
+    "wooddye:fireproof_mangrove_wood": {
+      "stripped_block": "wooddye:fireproof_stripped_mangrove_wood"
+    },
+    "wooddye:fireproof_dark_oak_log": {
+      "stripped_block": "wooddye:fireproof_stripped_dark_oak_log"
+    },
+    "wooddye:fireproof_dark_oak_wood": {
+      "stripped_block": "wooddye:fireproof_stripped_dark_oak_wood"
+    }
+  }
+}

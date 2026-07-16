@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_fence",
+  "ingredients": [
+    {
+      "neoforge:ingredient_type": "neoforge:difference",
+      "base": "#minecraft:wooden_fences",
+      "subtracted": "#wooddye:fireproof_wooden_fences"
+    },
+    "minecraft:white_dye"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:birch_fence"
+  }
+}

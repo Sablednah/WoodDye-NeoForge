@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_stairs",
+  "ingredients": [
+    {
+      "neoforge:ingredient_type": "neoforge:difference",
+      "base": "#minecraft:wooden_stairs",
+      "subtracted": "#wooddye:fireproof_wooden_stairs"
+    },
+    "minecraft:black_dye"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:dark_oak_stairs"
+  }
+}

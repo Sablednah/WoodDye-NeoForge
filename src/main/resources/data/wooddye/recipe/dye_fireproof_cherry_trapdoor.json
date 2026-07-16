@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_fireproof_trapdoor",
+  "ingredients": [
+    "#wooddye:fireproof_wooden_trapdoors",
+    "minecraft:pink_dye"
+  ],
+  "result": {
+    "count": 1,
+    "id": "wooddye:fireproof_cherry_trapdoor"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_pressure_plate",
+  "ingredients": [
+    {
+      "neoforge:ingredient_type": "neoforge:difference",
+      "base": "#minecraft:wooden_pressure_plates",
+      "subtracted": "#wooddye:fireproof_wooden_pressure_plates"
+    },
+    "minecraft:orange_dye"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:acacia_pressure_plate"
+  }
+}
