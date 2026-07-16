@@ -33,15 +33,30 @@ if [ ! -d "$MODS" ]; then
     exit 1
 fi
 
-echo ">> Removing previous WoodDye jars from the instance..."
-rm -f "$MODS"/wooddye-*.jar
-
 JAR="$(ls -t "$ROOT"/build/libs/wooddye-*.jar 2>/dev/null | grep -v -- '-sources' | head -1 || true)"
 if [ -z "$JAR" ]; then
     echo "!! No built jar found in build/libs" >&2
     exit 1
 fi
 
-cp "$JAR" "$MODS/"
-echo ">> Deployed: $(basename "$JAR")"
+# A running instance holds the jar open, so Windows refuses to replace it. Say so plainly: this
+# otherwise fails looking like a success, and you test a stale jar wondering why nothing changed.
+instance_locked() {
+    echo "!! Could not $1 the jar in the instance's mods folder." >&2
+    echo "!! Is the '$(basename "$INSTANCE")' instance still running? Close Minecraft and retry." >&2
+    exit 1
+}
+
+echo ">> Removing previous WoodDye jars from the instance..."
+rm -f "$MODS"/wooddye-*.jar || instance_locked "remove"
+
+cp "$JAR" "$MODS/" || instance_locked "copy"
+
+# Confirm the jar really landed and matches: a half-written copy is worse than a loud failure.
+if ! cmp -s "$JAR" "$MODS/$(basename "$JAR")"; then
+    echo "!! The deployed jar does not match the one just built." >&2
+    exit 1
+fi
+
+echo ">> Deployed: $(basename "$JAR") ($(stat -c%s "$JAR") bytes)"
 echo ">> Launch the '$(basename "$INSTANCE")' instance in CurseForge to test."
