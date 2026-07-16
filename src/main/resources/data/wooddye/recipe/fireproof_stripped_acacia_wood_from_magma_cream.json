@@ -2,12 +2,17 @@
   "type": "wooddye:fireproofing",
   "category": "misc",
   "group": "wooddye_fireproofing_stripped_wood",
-  "ingredients": [
-    "minecraft:stripped_acacia_wood",
-    "minecraft:magma_cream"
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
   ],
+  "key": {
+    "#": "minecraft:stripped_acacia_wood",
+    "X": "minecraft:magma_cream"
+  },
   "result": {
-    "count": 1,
+    "count": 8,
     "id": "wooddye:fireproof_stripped_acacia_wood"
   }
 }

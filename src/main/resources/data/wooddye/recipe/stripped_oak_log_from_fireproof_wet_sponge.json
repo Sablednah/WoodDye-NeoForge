@@ -2,12 +2,17 @@
   "type": "wooddye:sponge_restore",
   "category": "misc",
   "group": "wooddye_restoring_stripped_log",
-  "ingredients": [
-    "wooddye:fireproof_stripped_oak_log",
-    "minecraft:wet_sponge"
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
   ],
+  "key": {
+    "#": "wooddye:fireproof_stripped_oak_log",
+    "X": "minecraft:wet_sponge"
+  },
   "result": {
-    "count": 1,
+    "count": 8,
     "id": "minecraft:stripped_oak_log"
   }
 }

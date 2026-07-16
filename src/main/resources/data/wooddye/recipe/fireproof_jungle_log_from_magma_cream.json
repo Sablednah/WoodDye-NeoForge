@@ -2,12 +2,17 @@
   "type": "wooddye:fireproofing",
   "category": "misc",
   "group": "wooddye_fireproofing_log",
-  "ingredients": [
-    "minecraft:jungle_log",
-    "minecraft:magma_cream"
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
   ],
+  "key": {
+    "#": "minecraft:jungle_log",
+    "X": "minecraft:magma_cream"
+  },
   "result": {
-    "count": 1,
+    "count": 8,
     "id": "wooddye:fireproof_jungle_log"
   }
 }

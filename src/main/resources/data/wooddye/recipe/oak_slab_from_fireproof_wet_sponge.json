@@ -2,12 +2,17 @@
   "type": "wooddye:sponge_restore",
   "category": "misc",
   "group": "wooddye_restoring_slab",
-  "ingredients": [
-    "wooddye:fireproof_oak_slab",
-    "minecraft:wet_sponge"
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
   ],
+  "key": {
+    "#": "wooddye:fireproof_oak_slab",
+    "X": "minecraft:wet_sponge"
+  },
   "result": {
-    "count": 1,
+    "count": 8,
     "id": "minecraft:oak_slab"
   }
 }

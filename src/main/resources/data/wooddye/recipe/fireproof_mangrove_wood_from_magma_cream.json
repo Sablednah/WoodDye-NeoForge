@@ -2,12 +2,17 @@
   "type": "wooddye:fireproofing",
   "category": "misc",
   "group": "wooddye_fireproofing_wood",
-  "ingredients": [
-    "minecraft:mangrove_wood",
-    "minecraft:magma_cream"
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
   ],
+  "key": {
+    "#": "minecraft:mangrove_wood",
+    "X": "minecraft:magma_cream"
+  },
   "result": {
-    "count": 1,
+    "count": 8,
     "id": "wooddye:fireproof_mangrove_wood"
   }
 }

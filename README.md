@@ -32,17 +32,21 @@ Pale Oak → Cherry → Birch → Bamboo → Oak → Jungle → Acacia → Spruc
 - **Un-fireproof** it again by right-clicking with a **Wet Sponge**, which soaks the magma cream back
   out and returns the plain vanilla wood (always available, even if fireproofing is disabled).
 
-Both also work **on the crafting bench**, for wood still in your bag:
+Both also work **on the crafting bench**, for wood still in your bag — **eight around one**, laid out
+like vanilla's stained glass:
 
 | Recipe | Gives |
 |--------|-------|
-| any wooden block **+ Magma Cream** | its fireproof form |
-| any fireproof block **+ Wet Sponge** | the plain wood back — **and the sponge**, which is not consumed |
+| 8 × any wooden block around **Magma Cream** | 8 × its fireproof form |
+| 8 × any fireproof block around **Wet Sponge** | 8 × the plain wood back — **and the sponge**, which is not consumed |
 
-The sponge comes back wet by default, so it works indefinitely. Set `spongeDries` to hand back a dry
-**Sponge** instead, which must be re-soaked between uses. The magma cream recipes obey the
-`fireProof` option: switch it off and there is *no* route to fireproof wood, in world or on the
-bench. Restoring with a sponge is never blocked, so fireproofing is always reversible.
+So the bench is how you treat a stack, and the right-click is how you treat one. The sponge comes
+back wet by default and works indefinitely; set `spongeDries` to hand back a dry **Sponge** instead,
+which must be re-soaked between uses.
+
+The magma cream recipes obey the `fireProof` option: switch it off and there is *no* route to
+fireproof wood, in world or on the bench. Restoring with a sponge is never blocked, so fireproofing
+is always reversible.
 
 Every successful treatment plays a particle + sound and shows a configurable action-bar message.
 
@@ -164,14 +168,14 @@ any special in-world handling. Everything else is driven from it:
 | `registry/WoodDyeItems.java` | Their block items (doors get a `DoubleHighBlockItem`). |
 | `neoforge/WoodTransforms.java` | The lookup tables: dye chains, vanilla↔fireproof, sneak/door/sign/shelf sets. |
 | `neoforge/WoodDyeInteractions.java` | The right-click behaviour. |
-| `crafting/DelegatingShapelessRecipe.java` | Base for the two recipes JSON can't express (below). |
+| `crafting/DelegatingShapedRecipe.java` | Base for the two recipes JSON can't express (below). |
 | `tools/gen_resources.py` | Generates all assets/data by cloning vanilla's. Mirrors `WoodType.Form`. |
 
 Almost every recipe is a plain vanilla type in JSON. Two need a Java serializer, because they do one
-thing a shapeless recipe cannot: `wooddye:fireproofing` refuses to match while `fireProof` is off,
-and `wooddye:sponge_restore` returns the sponge rather than eating it. Both delegate everything else
-to a real `ShapelessRecipe` and report themselves as `minecraft:crafting`, so the recipe book and JEI
-treat them as ordinary.
+thing a shaped recipe cannot: `wooddye:fireproofing` refuses to match while `fireProof` is off, and
+`wooddye:sponge_restore` returns the sponge rather than eating it. Both delegate everything else to a
+real `ShapedRecipe` and report themselves as `minecraft:crafting`, so the recipe book and JEI treat
+them as ordinary.
 
 `gen_resources.py` clones rather than authors: it copies each vanilla blockstate and item model
 verbatim (pointing at vanilla's models — the mod ships no textures), and remaps the ids in vanilla's

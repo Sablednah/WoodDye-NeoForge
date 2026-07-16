@@ -2,12 +2,17 @@
   "type": "wooddye:fireproofing",
   "category": "misc",
   "group": "wooddye_fireproofing_door",
-  "ingredients": [
-    "minecraft:spruce_door",
-    "minecraft:magma_cream"
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
   ],
+  "key": {
+    "#": "minecraft:spruce_door",
+    "X": "minecraft:magma_cream"
+  },
   "result": {
-    "count": 1,
+    "count": 8,
     "id": "wooddye:fireproof_spruce_door"
   }
 }

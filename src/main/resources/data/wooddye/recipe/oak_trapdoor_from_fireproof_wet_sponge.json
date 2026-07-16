@@ -2,12 +2,17 @@
   "type": "wooddye:sponge_restore",
   "category": "misc",
   "group": "wooddye_restoring_trapdoor",
-  "ingredients": [
-    "wooddye:fireproof_oak_trapdoor",
-    "minecraft:wet_sponge"
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
   ],
+  "key": {
+    "#": "wooddye:fireproof_oak_trapdoor",
+    "X": "minecraft:wet_sponge"
+  },
   "result": {
-    "count": 1,
+    "count": 8,
     "id": "minecraft:oak_trapdoor"
   }
 }

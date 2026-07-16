@@ -234,13 +234,18 @@ with zipfile.ZipFile(MJAR) as z:
         built += 1
 
 # ===================== fireproofing recipes (wood + magma cream -> fireproof wood) =====================
-# The bench equivalent of right-clicking a placed block with magma cream, for wood still in your bag.
-# Unlike dyeing, fireproofing must keep the wood it is given, so each recipe names its specific input
-# block rather than taking a tag — there is one per fireproof block.
+# The bench equivalent of right-clicking a placed block, for wood still in your bag. Eight blocks
+# around one treatment, laid out exactly like vanilla's stained glass and terracotta: the bench is
+# how you do a stack at once, the in-world click is how you do just one.
 #
-# Both types below are shapeless recipes with one twist that JSON cannot express (see
-# crafting/DelegatingShapelessRecipe.java): wooddye:fireproofing obeys the fireProof config, and
+# Unlike dyeing, these must keep the wood they are given, so each recipe names its specific input
+# block rather than taking a tag — there is one per fireproof block, each way.
+#
+# Both types are shaped recipes with one twist JSON cannot express (see
+# crafting/DelegatingShapedRecipe.java): wooddye:fireproofing obeys the fireProof config, and
 # wooddye:sponge_restore hands the sponge back rather than consuming it.
+EIGHT_AROUND_ONE = ["###", "#X#", "###"]
+
 for wood in WOODS:
     for template in FORMS:
         vanilla = vanilla_name(template, wood)
@@ -251,16 +256,18 @@ for wood in WOODS:
             "type": f"{MODID}:fireproofing",
             "category": "misc",
             "group": f"wooddye_fireproofing_{form}",
-            "ingredients": [f"minecraft:{vanilla}", "minecraft:magma_cream"],
-            "result": {"count": 1, "id": f"{MODID}:fireproof_{vanilla}"},
+            "pattern": EIGHT_AROUND_ONE,
+            "key": {"#": f"minecraft:{vanilla}", "X": "minecraft:magma_cream"},
+            "result": {"count": 8, "id": f"{MODID}:fireproof_{vanilla}"},
         })
-        # ...and back out again.
+        # ...and back out again. The sponge is handed back, so this costs nothing but the wood.
         write(f"data/{MODID}/recipe/{vanilla}_from_fireproof_wet_sponge.json", {
             "type": f"{MODID}:sponge_restore",
             "category": "misc",
             "group": f"wooddye_restoring_{form}",
-            "ingredients": [f"{MODID}:fireproof_{vanilla}", "minecraft:wet_sponge"],
-            "result": {"count": 1, "id": f"minecraft:{vanilla}"},
+            "pattern": EIGHT_AROUND_ONE,
+            "key": {"#": f"{MODID}:fireproof_{vanilla}", "X": "minecraft:wet_sponge"},
+            "result": {"count": 8, "id": f"minecraft:{vanilla}"},
         })
 
 # ===================== dye recipes (shapeless: convertible wood + dye -> target wood) =====================

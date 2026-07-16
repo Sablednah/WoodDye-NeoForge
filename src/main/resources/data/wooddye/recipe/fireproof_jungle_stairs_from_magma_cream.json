@@ -2,12 +2,17 @@
   "type": "wooddye:fireproofing",
   "category": "misc",
   "group": "wooddye_fireproofing_stairs",
-  "ingredients": [
-    "minecraft:jungle_stairs",
-    "minecraft:magma_cream"
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
   ],
+  "key": {
+    "#": "minecraft:jungle_stairs",
+    "X": "minecraft:magma_cream"
+  },
   "result": {
-    "count": 1,
+    "count": 8,
     "id": "wooddye:fireproof_jungle_stairs"
   }
 }

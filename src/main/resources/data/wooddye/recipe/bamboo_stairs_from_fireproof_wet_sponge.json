@@ -2,12 +2,17 @@
   "type": "wooddye:sponge_restore",
   "category": "misc",
   "group": "wooddye_restoring_stairs",
-  "ingredients": [
-    "wooddye:fireproof_bamboo_stairs",
-    "minecraft:wet_sponge"
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
   ],
+  "key": {
+    "#": "wooddye:fireproof_bamboo_stairs",
+    "X": "minecraft:wet_sponge"
+  },
   "result": {
-    "count": 1,
+    "count": 8,
     "id": "minecraft:bamboo_stairs"
   }
 }

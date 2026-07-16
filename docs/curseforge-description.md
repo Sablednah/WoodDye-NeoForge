@@ -44,13 +44,13 @@ Fireproof wood is **still fully dyeable**, still craftable, still strippable, an
 exactly like the wood it copies. Fireproof logs make fireproof planks make fireproof stairs — the
 whole vanilla recipe tree, at vanilla ratios.
 
-Got a stack to treat rather than a wall? **Any wooden block + magma cream** on the bench does the
-same job without placing a thing.
+Got a stack to treat rather than a wall? Ring **eight wooden blocks around one magma cream** on the
+bench — same layout as stained glass — and all eight come out fireproof, without placing a thing.
 
 Changed your mind? A **Wet Sponge** soaks the magma cream back out and gives you plain wood again —
-in world, or on the bench. And the sponge **isn't used up**: it comes back out of the grid ready for
-the next one, the way a water bucket leaves you the bucket. (Prefer it stricter? One config flip
-hands back a *dry* sponge you must re-soak.)
+one at a time in world, or eight at a time on the bench. And the sponge **isn't used up**: it comes
+back out of the grid ready for the next batch, the way a water bucket leaves you the bucket. (Prefer
+it stricter? One config flip hands back a *dry* sponge you must re-soak.)
 
 ## 🪵 It knows how logs work
 
