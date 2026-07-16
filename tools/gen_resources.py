@@ -114,7 +114,7 @@ for stale in [f"assets/{MODID}/blockstates", f"assets/{MODID}/models", f"assets/
 # TOML comment for the tooltip — so only the names live here. The logOrder values are named too,
 # via LogOrder implementing TranslatableEnum; otherwise the dropdown shows raw constants.
 CONFIG_LANG = {
-    "wooddye.configuration.title": "WoodDye",
+    "wooddye.configuration.title": "WoodDye ReForged",
     "wooddye.configuration.useItems": "Consume Items",
     "wooddye.configuration.fireProof": "Allow Fireproofing",
     "wooddye.configuration.spongeDries": "Sponges Dry Out",
@@ -128,7 +128,7 @@ CONFIG_LANG = {
     "wooddye.configuration.debugMode": "Debug Logging",
 }
 
-lang = {"itemGroup.wooddye": "WoodDye", **CONFIG_LANG}
+lang = {"itemGroup.wooddye": "WoodDye ReForged", **CONFIG_LANG}
 tagged = {}       # vanilla tag path -> [fireproof block names]
 everything = []
 fireproofable = set()   # every vanilla block name that has a fireproof counterpart

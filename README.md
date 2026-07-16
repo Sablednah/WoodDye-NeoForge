@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/wood-dye-banner.png" alt="WoodDye" width="420">
+  <img src="docs/wood-dye-banner.png" alt="WoodDye ReForged" width="420">
 </p>
 
-# WoodDye (NeoForge)
+# WoodDye ReForged
 
 *No mod does wood more good!* Stain your wood with dyes, bleach it with bone meal, and fireproof it with magma cream.
 
@@ -122,7 +122,7 @@ result. Use a wet sponge if you want the plain wood back deliberately.
 | `debugMode` | `false` | Extra logging. |
 
 Settings are read live; edits to the TOML apply on save. You can also edit them **in-game** from the
-Mods menu → WoodDye → **Config** (single-player / LAN host), where each option has a readable name
+Mods menu → WoodDye ReForged → **Config** (single-player / LAN host), where each option has a readable name
 and its comment above as the tooltip. On a dedicated server, edit `config/wooddye-common.toml`
 directly.
 

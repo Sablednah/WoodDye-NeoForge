@@ -1,11 +1,11 @@
-# WoodDye
+# WoodDye ReForged
 
 ### *No mod does wood more good!*
 
 Ever built half a house in oak and wished it were spruce? Ever watched a lightning strike take the
 whole thing with it?
 
-**WoodDye** lets you stain any wood any shade — right there in the wall, no rebuilding — and make it
+**WoodDye ReForged** lets you stain any wood any shade — right there in the wall, no rebuilding — and make it
 immune to fire forever.
 
 ---
@@ -60,7 +60,7 @@ it stricter? One config flip hands back a *dry* sponge you must re-soak.)
 A log's **bark** and its **end-grain rings** run through *different* colour orders — so any single
 order can only ever look right on one of them.
 
-WoodDye's default **Intelligent** mode reads the face you clicked: hit the **side** and it follows the
+The default **Intelligent** mode reads the face you clicked: hit the **side** and it follows the
 **bark** order; hit the **end** and it follows the **rings**. Your log always shades the way it looks.
 
 Or pin it to bark order or plank order in the config, if you'd rather.
