@@ -25,24 +25,27 @@ it:
 No breaking blocks. No re-placing. No hauling stacks back to a crafting table. Walk along a wall and
 recolour it as you go.
 
-**Everything wooden works** — planks, slabs, stairs, logs, stripped logs, wood, fences, fence gates,
-doors, trapdoors, pressure plates, buttons, signs *and* shelves. All ten woods, every form.
+**Everything wooden works** — planks, slabs, stairs, logs, stripped logs, wood, stripped wood, fences,
+fence gates, doors, trapdoors, pressure plates, buttons, signs *and* shelves. All ten woods, every
+form.
 
 Blocks you'd normally *use* — doors, gates, buttons, signs, shelves — dye on **sneak + right-click**,
 so an ordinary click still just opens the door. Your builds keep working while you redecorate.
 
-Prefer the crafting bench? Every conversion has a shapeless recipe too: **any wooden block + a dye**
-of the colour you want.
+Prefer the crafting bench? Everything but logs has a shapeless recipe too — **any wooden block + a
+dye** of the colour you want. (Logs stay a right-click job: only the face you click can say whether
+you meant the bark or the rings.)
 
 ## 🔥 Fireproof your builds
 
-Right-click any wood with **Magma Cream** and it becomes fireproof — permanently. It will not burn,
-will not catch, and will not spread. Build in a nether hub. Build next to your lava feature. Build
-under a campfire chandelier and sleep easy.
+Right-click a wooden block with **Magma Cream** and it becomes fireproof — permanently. It will not
+burn, will not catch, and will not spread. Build in a nether hub. Build next to your lava feature.
+Build under a campfire chandelier and sleep easy. *(Signs and shelves are the exception — vanilla
+already made those fireproof, so they only need the dye.)*
 
-Fireproof wood is **still fully dyeable**, still craftable, still strippable, and mines and builds
-exactly like the wood it copies. Fireproof logs make fireproof planks make fireproof stairs — the
-whole vanilla recipe tree, at vanilla ratios.
+Fireproof wood is **still fully dyeable** — and dyeing it keeps it fireproof — still craftable, still
+strippable, and mines and builds exactly like the wood it copies. Fireproof logs make fireproof planks
+make fireproof stairs — the whole vanilla recipe tree, at vanilla ratios.
 
 Got a stack to treat rather than a wall? Ring **eight wooden blocks around one magma cream** on the
 bench — same layout as stained glass — and all eight come out fireproof, without placing a thing.
