@@ -32,6 +32,18 @@ Pale Oak → Cherry → Birch → Bamboo → Oak → Jungle → Acacia → Spruc
 - **Un-fireproof** it again by right-clicking with a **Wet Sponge**, which soaks the magma cream back
   out and returns the plain vanilla wood (always available, even if fireproofing is disabled).
 
+Both also work **on the crafting bench**, for wood still in your bag:
+
+| Recipe | Gives |
+|--------|-------|
+| any wooden block **+ Magma Cream** | its fireproof form |
+| any fireproof block **+ Wet Sponge** | the plain wood back — **and the sponge**, which is not consumed |
+
+The sponge comes back wet by default, so it works indefinitely. Set `spongeDries` to hand back a dry
+**Sponge** instead, which must be re-soaked between uses. The magma cream recipes obey the
+`fireProof` option: switch it off and there is *no* route to fireproof wood, in world or on the
+bench. Restoring with a sponge is never blocked, so fireproofing is always reversible.
+
 Every successful treatment plays a particle + sound and shows a configurable action-bar message.
 
 ### What can be treated
@@ -92,8 +104,9 @@ result. Use a wet sponge if you want the plain wood back deliberately.
 
 | Option | Default | Purpose |
 |--------|---------|---------|
-| `useItems` | `false` | Consume the dye / magma cream / sponge when used (never in creative). |
-| `fireProof` | `true` | Enable Magma Cream fireproofing. |
+| `useItems` | `false` | Consume the dye / magma cream / sponge when used in world (never in creative). |
+| `fireProof` | `true` | Enable Magma Cream fireproofing — both in world and on the bench. |
+| `spongeDries` | `false` | Hand back a dry Sponge instead of the Wet Sponge when restoring wood on the bench. |
 | `logOrder` | `INTELLIGENT` | Dye order for logs (see below). |
 | `showEffects` | `true` | Play a particle + sound when wood is treated. |
 | `showMessage` | `true` | Show an action-bar message on success. |
@@ -151,7 +164,14 @@ any special in-world handling. Everything else is driven from it:
 | `registry/WoodDyeItems.java` | Their block items (doors get a `DoubleHighBlockItem`). |
 | `neoforge/WoodTransforms.java` | The lookup tables: dye chains, vanilla↔fireproof, sneak/door/sign/shelf sets. |
 | `neoforge/WoodDyeInteractions.java` | The right-click behaviour. |
+| `crafting/DelegatingShapelessRecipe.java` | Base for the two recipes JSON can't express (below). |
 | `tools/gen_resources.py` | Generates all assets/data by cloning vanilla's. Mirrors `WoodType.Form`. |
+
+Almost every recipe is a plain vanilla type in JSON. Two need a Java serializer, because they do one
+thing a shapeless recipe cannot: `wooddye:fireproofing` refuses to match while `fireProof` is off,
+and `wooddye:sponge_restore` returns the sponge rather than eating it. Both delegate everything else
+to a real `ShapelessRecipe` and report themselves as `minecraft:crafting`, so the recipe book and JEI
+treat them as ordinary.
 
 `gen_resources.py` clones rather than authors: it copies each vanilla blockstate and item model
 verbatim (pointing at vanilla's models — the mod ships no textures), and remaps the ids in vanilla's

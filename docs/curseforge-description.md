@@ -44,7 +44,13 @@ Fireproof wood is **still fully dyeable**, still craftable, still strippable, an
 exactly like the wood it copies. Fireproof logs make fireproof planks make fireproof stairs — the
 whole vanilla recipe tree, at vanilla ratios.
 
-Changed your mind? A **Wet Sponge** soaks the magma cream back out and gives you plain wood again.
+Got a stack to treat rather than a wall? **Any wooden block + magma cream** on the bench does the
+same job without placing a thing.
+
+Changed your mind? A **Wet Sponge** soaks the magma cream back out and gives you plain wood again —
+in world, or on the bench. And the sponge **isn't used up**: it comes back out of the grid ready for
+the next one, the way a water bucket leaves you the bucket. (Prefer it stricter? One config flip
+hands back a *dry* sponge you must re-soak.)
 
 ## 🪵 It knows how logs work
 
@@ -69,7 +75,9 @@ Or pin it to bark order or plank order in the config, if you'd rather.
 
 * Live config — edit and save, no restart. Or use `/wooddye reload`
 * Permission node `wooddye.candye` gates who may dye, for LuckPerms and friends
-* Turn fireproofing off entirely, or make dyeing consume the dye, if you want it rarer
+* Turn fireproofing off and it's off **everywhere** — in world *and* on the bench. Restoring wood
+  always still works, so nobody is ever stuck with it
+* Make dyeing consume the dye, or the sponge dry out, if you want it rarer
 * Fireproof wood is never craftable from scratch — magma cream is the only way in
 
 ---

@@ -1,0 +1,13 @@
+{
+  "type": "wooddye:sponge_restore",
+  "category": "misc",
+  "group": "wooddye_restoring_fence_gate",
+  "ingredients": [
+    "wooddye:fireproof_pale_oak_fence_gate",
+    "minecraft:wet_sponge"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:pale_oak_fence_gate"
+  }
+}

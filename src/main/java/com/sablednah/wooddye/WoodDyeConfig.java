@@ -22,6 +22,13 @@ public final class WoodDyeConfig {
             .comment("Enable Magma Cream fireproofing.")
             .define("fireProof", true);
 
+    /** Whether the Wet Sponge dries out when used to restore fireproof wood in a crafting grid. */
+    public static final ModConfigSpec.BooleanValue SPONGE_DRIES = BUILDER
+            .comment("When a Wet Sponge restores fireproof wood in a crafting grid, the sponge is",
+                    "left behind rather than consumed. Set true to hand back a dry Sponge instead,",
+                    "so it must be re-soaked between uses.")
+            .define("spongeDries", false);
+
     /** How dyeing steps through logs, whose bark and end-grain colours run in different orders. */
     public static final ModConfigSpec.EnumValue<LogOrder> LOG_ORDER = BUILDER
             .comment("Dye order for logs (bark vs end-grain colours differ):",

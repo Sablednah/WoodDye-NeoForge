@@ -1,0 +1,13 @@
+{
+  "type": "wooddye:fireproofing",
+  "category": "misc",
+  "group": "wooddye_fireproofing_button",
+  "ingredients": [
+    "minecraft:spruce_button",
+    "minecraft:magma_cream"
+  ],
+  "result": {
+    "count": 1,
+    "id": "wooddye:fireproof_spruce_button"
+  }
+}

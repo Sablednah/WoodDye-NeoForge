@@ -1,0 +1,13 @@
+{
+  "type": "wooddye:fireproofing",
+  "category": "misc",
+  "group": "wooddye_fireproofing_pressure_plate",
+  "ingredients": [
+    "minecraft:jungle_pressure_plate",
+    "minecraft:magma_cream"
+  ],
+  "result": {
+    "count": 1,
+    "id": "wooddye:fireproof_jungle_pressure_plate"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "wooddye:fireproofing",
+  "category": "misc",
+  "group": "wooddye_fireproofing_log",
+  "ingredients": [
+    "minecraft:oak_log",
+    "minecraft:magma_cream"
+  ],
+  "result": {
+    "count": 1,
+    "id": "wooddye:fireproof_oak_log"
+  }
+}

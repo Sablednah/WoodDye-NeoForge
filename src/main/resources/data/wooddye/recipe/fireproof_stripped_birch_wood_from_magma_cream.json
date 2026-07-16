@@ -1,0 +1,13 @@
+{
+  "type": "wooddye:fireproofing",
+  "category": "misc",
+  "group": "wooddye_fireproofing_stripped_wood",
+  "ingredients": [
+    "minecraft:stripped_birch_wood",
+    "minecraft:magma_cream"
+  ],
+  "result": {
+    "count": 1,
+    "id": "wooddye:fireproof_stripped_birch_wood"
+  }
+}

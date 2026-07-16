@@ -233,6 +233,36 @@ with zipfile.ZipFile(MJAR) as z:
         write(f"data/{MODID}/recipe/fireproof_{entry.split('/')[-1]}", cloned)
         built += 1
 
+# ===================== fireproofing recipes (wood + magma cream -> fireproof wood) =====================
+# The bench equivalent of right-clicking a placed block with magma cream, for wood still in your bag.
+# Unlike dyeing, fireproofing must keep the wood it is given, so each recipe names its specific input
+# block rather than taking a tag — there is one per fireproof block.
+#
+# Both types below are shapeless recipes with one twist that JSON cannot express (see
+# crafting/DelegatingShapelessRecipe.java): wooddye:fireproofing obeys the fireProof config, and
+# wooddye:sponge_restore hands the sponge back rather than consuming it.
+for wood in WOODS:
+    for template in FORMS:
+        vanilla = vanilla_name(template, wood)
+        if vanilla is None:
+            continue
+        form = template.replace("%s_", "")
+        write(f"data/{MODID}/recipe/fireproof_{vanilla}_from_magma_cream.json", {
+            "type": f"{MODID}:fireproofing",
+            "category": "misc",
+            "group": f"wooddye_fireproofing_{form}",
+            "ingredients": [f"minecraft:{vanilla}", "minecraft:magma_cream"],
+            "result": {"count": 1, "id": f"{MODID}:fireproof_{vanilla}"},
+        })
+        # ...and back out again.
+        write(f"data/{MODID}/recipe/{vanilla}_from_fireproof_wet_sponge.json", {
+            "type": f"{MODID}:sponge_restore",
+            "category": "misc",
+            "group": f"wooddye_restoring_{form}",
+            "ingredients": [f"{MODID}:fireproof_{vanilla}", "minecraft:wet_sponge"],
+            "result": {"count": 1, "id": f"minecraft:{vanilla}"},
+        })
+
 # ===================== dye recipes (shapeless: convertible wood + dye -> target wood) =====================
 # Two families, kept mutually exclusive: fireproof wood dyes to fireproof wood, everything else to
 # plain wood. The fireproof blocks are members of the vanilla tags, so the plain recipe has to

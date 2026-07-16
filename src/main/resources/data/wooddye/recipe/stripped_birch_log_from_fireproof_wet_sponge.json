@@ -1,0 +1,13 @@
+{
+  "type": "wooddye:sponge_restore",
+  "category": "misc",
+  "group": "wooddye_restoring_stripped_log",
+  "ingredients": [
+    "wooddye:fireproof_stripped_birch_log",
+    "minecraft:wet_sponge"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:stripped_birch_log"
+  }
+}

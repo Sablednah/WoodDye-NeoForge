@@ -8,6 +8,7 @@ import com.sablednah.wooddye.neoforge.WoodDyeServerEvents;
 import com.sablednah.wooddye.registry.WoodDyeBlocks;
 import com.sablednah.wooddye.registry.WoodDyeCreativeTab;
 import com.sablednah.wooddye.registry.WoodDyeItems;
+import com.sablednah.wooddye.registry.WoodDyeRecipes;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -43,6 +44,7 @@ public class WoodDye {
         WoodDyeBlocks.register(modEventBus);
         WoodDyeItems.register(modEventBus);
         WoodDyeCreativeTab.register(modEventBus);
+        WoodDyeRecipes.register(modEventBus);
 
         // Game-bus glue: permission nodes, the /wooddye command, and the right-click handler.
         NeoForge.EVENT_BUS.register(WoodDyeServerEvents.class);
