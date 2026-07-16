@@ -73,11 +73,13 @@ Or pin it to bark order or plank order in the config, if you'd rather.
 
 ## ⚙️ Made for servers
 
-* Live config — edit and save, no restart. Or use `/wooddye reload`
+* Live config — edit and save, no restart. Or use `/wooddye reload`. Every option has a plain-English
+  name and tooltip in the in-game Mods → Config screen
 * Permission node `wooddye.candye` gates who may dye, for LuckPerms and friends
 * Turn fireproofing off and it's off **everywhere** — in world *and* on the bench. Restoring wood
   always still works, so nobody is ever stuck with it
-* Make dyeing consume the dye, or the sponge dry out, if you want it rarer
+* Make treatments consume their dye or magma cream, if you want it rarer — a wet sponge just dries
+  out and can be re-soaked, never destroyed
 * Fireproof wood is never craftable from scratch — magma cream is the only way in
 
 ---

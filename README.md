@@ -108,7 +108,7 @@ result. Use a wet sponge if you want the plain wood back deliberately.
 
 | Option | Default | Purpose |
 |--------|---------|---------|
-| `useItems` | `false` | Consume the dye / magma cream / sponge when used in world (never in creative). |
+| `useItems` | `false` | Consume the dye / magma cream when treating a block in world (never in creative). A Wet Sponge only **dries out** rather than being used up. |
 | `fireProof` | `true` | Enable Magma Cream fireproofing — both in world and on the bench. |
 | `spongeDries` | `false` | Hand back a dry Sponge instead of the Wet Sponge when restoring wood on the bench. |
 | `logOrder` | `INTELLIGENT` | Dye order for logs (see below). |
@@ -118,8 +118,12 @@ result. Use a wet sponge if you want the plain wood back deliberately.
 | `debugMode` | `false` | Extra logging. |
 
 Settings are read live; edits to the TOML apply on save. You can also edit them **in-game** from the
-Mods menu → WoodDye → **Config** (single-player / LAN host). On a dedicated server, edit
-`config/wooddye-common.toml` directly.
+Mods menu → WoodDye → **Config** (single-player / LAN host), where each option has a readable name
+and its comment above as the tooltip. On a dedicated server, edit `config/wooddye-common.toml`
+directly.
+
+*(Those names come from `wooddye.configuration.*` keys in the lang file — NeoForge derives the key
+from the option name, so a new option only needs a lang entry adding to `gen_resources.py`.)*
 
 ### Log dye order
 

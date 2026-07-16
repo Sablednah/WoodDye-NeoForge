@@ -109,7 +109,26 @@ for stale in [f"assets/{MODID}/blockstates", f"assets/{MODID}/models", f"assets/
               f"data/{MODID}/recipe", "data/minecraft", "data/neoforge"]:
     shutil.rmtree(os.path.join(RES, stale), ignore_errors=True)
 
-lang = {"itemGroup.wooddye": "WoodDye"}
+# Names for the in-game config screen (Mods -> WoodDye -> Config). NeoForge derives each key as
+# "<modid>.configuration.<option>" with no call needed on the builder, and falls back to the option's
+# TOML comment for the tooltip — so only the names live here. The logOrder values are named too,
+# via LogOrder implementing TranslatableEnum; otherwise the dropdown shows raw constants.
+CONFIG_LANG = {
+    "wooddye.configuration.title": "WoodDye",
+    "wooddye.configuration.useItems": "Consume Items",
+    "wooddye.configuration.fireProof": "Allow Fireproofing",
+    "wooddye.configuration.spongeDries": "Sponges Dry Out",
+    "wooddye.configuration.logOrder": "Log Dye Order",
+    "wooddye.configuration.logOrder.SAME_AS_PLANKS": "Match Plank Colour",
+    "wooddye.configuration.logOrder.BARK": "Match Bark Colour",
+    "wooddye.configuration.logOrder.INTELLIGENT": "Intelligent (by face)",
+    "wooddye.configuration.showEffects": "Particles & Sound",
+    "wooddye.configuration.showMessage": "Show Message",
+    "wooddye.configuration.message": "Message Text",
+    "wooddye.configuration.debugMode": "Debug Logging",
+}
+
+lang = {"itemGroup.wooddye": "WoodDye", **CONFIG_LANG}
 tagged = {}       # vanilla tag path -> [fireproof block names]
 everything = []
 fireproofable = set()   # every vanilla block name that has a fireproof counterpart

@@ -12,21 +12,25 @@ public final class WoodDyeConfig {
 
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
-    /** Consume the dye / magma cream when used (never consumed in creative). */
+    /** Consume the dye / magma cream when used in world (never consumed in creative). */
     public static final ModConfigSpec.BooleanValue USE_ITEMS = BUILDER
-            .comment("Consume the dye / magma cream when used. Never consumed in creative mode.")
+            .comment("Consume the dye / magma cream when treating a block in world. A Wet Sponge is",
+                    "not used up — it only dries out, and can be re-soaked. Never consumed in",
+                    "creative mode. Crafting recipes always use their ingredients regardless.")
             .define("useItems", false);
 
-    /** Enable Magma Cream fireproofing (right-click wood with magma cream to make it fireproof). */
+    /** Enable Magma Cream fireproofing, in world and on the crafting bench. */
     public static final ModConfigSpec.BooleanValue FIREPROOF = BUILDER
-            .comment("Enable Magma Cream fireproofing.")
+            .comment("Enable Magma Cream fireproofing, both in world and on the crafting bench.",
+                    "Restoring wood with a Wet Sponge always stays possible, so wood that is already",
+                    "fireproof is never stuck that way.")
             .define("fireProof", true);
 
     /** Whether the Wet Sponge dries out when used to restore fireproof wood in a crafting grid. */
     public static final ModConfigSpec.BooleanValue SPONGE_DRIES = BUILDER
             .comment("When a Wet Sponge restores fireproof wood in a crafting grid, the sponge is",
-                    "left behind rather than consumed. Set true to hand back a dry Sponge instead,",
-                    "so it must be re-soaked between uses.")
+                    "handed back rather than consumed. Set true to hand back a dry Sponge instead,",
+                    "so it must be re-soaked between batches.")
             .define("spongeDries", false);
 
     /** How dyeing steps through logs, whose bark and end-grain colours run in different orders. */

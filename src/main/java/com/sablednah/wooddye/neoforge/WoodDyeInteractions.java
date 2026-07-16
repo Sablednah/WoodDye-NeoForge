@@ -18,6 +18,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -113,7 +114,7 @@ public final class WoodDyeInteractions {
         }
 
         if (WoodDyeConfig.USE_ITEMS.get() && !player.getAbilities().instabuild) {
-            held.shrink(1);
+            spend(player, event.getHand(), held, kind);
         }
         player.swing(event.getHand());
         event.setCanceled(true);
@@ -122,6 +123,26 @@ public final class WoodDyeInteractions {
 
         if (WoodDyeConfig.DEBUG.get()) {
             WoodDye.LOGGER.info("WoodDye: {} -> {} at {}", block, target, pos);
+        }
+    }
+
+    /**
+     * Charge the player for a treatment, under the {@code useItems} config.
+     *
+     * <p>A dye or magma cream is used up. A wet sponge is not: it only gives up its water, becoming a
+     * plain sponge the player can re-soak and use again — destroying a whole sponge to wring out one
+     * block would be a strange price.
+     */
+    private static void spend(Player player, InteractionHand hand, ItemStack held, Kind kind) {
+        held.shrink(1);
+        if (kind != Kind.RESTORE) {
+            return;
+        }
+        ItemStack dried = new ItemStack(Items.SPONGE);
+        if (held.isEmpty()) {
+            player.setItemInHand(hand, dried); // the hand is free now — put it straight back
+        } else if (!player.getInventory().add(dried)) {
+            player.drop(dried, false); // holding more sponges and no room: hand it to the world
         }
     }
 
