@@ -75,6 +75,38 @@ on all the NeoForge lines):
   need a production client too. The NeoForge lines have no such limit — BOP loads straight
   into `run/mods`.
 
+## Stage 2 prototype: fireproofing as data — branch `fireproof-data` (2026-10-03)
+
+Sable's goal: fireproof *any* wood, a mod's included, "without cloning all the wood items for
+every modded set". The prototype lives on branch `fireproof-data` (worktree
+`WoodDye-worktrees/fireproof-data`), cut from `mc1.21.1` because Create 6 exists for NeoForge
+1.21.1 only. Its commit message is the design summary; the code is `fireproof/*`, `mixin/*`,
+`compat/CreateFireproof`, `crafting/FireproofStampRecipe`.
+
+**How it works:** a `SavedData` set of fireproofed positions per dimension; four mixin
+injections make fire and lava skip those positions; events keep marks in step with placing,
+breaking, drops and pistons; Create's `MovementBehaviour` API carries a mark through a
+contraption; a `wooddye:fireproof` item component (plus vanilla `fire_resistant` and an
+`item_name` of "%s (Fireproof)") carries it through inventories and, via a mixin on shaped and
+shapeless `assemble`, through crafting.
+
+**Verified over RCON with Create 6.0.10** (`rcontest.sh`): fire, lava, vanilla piston, drops, a
+bearing lifting and returning, and a radial-chassis quarter turn moving the mark to the new
+position. Crafting carry-through and stamped placement were checked with a temporary self-check.
+
+**Not done / to decide before it ships:**
+- Migration of 2.x `fireproof_*` blocks and items. They stay registered and a sponge still
+  restores them; nothing converts them to marks yet.
+- The in-world "is this fireproof?" question: nothing visual marks a fireproofed block (magma
+  cream on one says "Already fireproof"). A Jade plugin or a particle on look would help.
+- Forward-port to `main` and the 26.x lines (should be close to mechanical), and to 1.20.1
+  Forge, which needs mixin refmaps in the legacy ModDevGradle build — unexplored.
+- Create's **mechanical piston** could not be exercised headless (it never assembled a
+  contraption, even for plain stone); the bearing did. Test it with a client.
+- Other block movers (Create deployers breaking blocks, schematicannon, other mods) are
+  covered only as far as they go through `BlockDropsEvent` / `EntityPlaceEvent`.
+- `/wooddye fireproof <pos> [set|clear]` is the admin/test tool.
+
 ## Fixed 2026-10-02: the config message ate ampersands
 
 `WoodDyeInteractions.colourCodes()` now translates `&` only where a real format code follows, and

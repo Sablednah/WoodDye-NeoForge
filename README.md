@@ -143,6 +143,11 @@ and Cataclysm installed — the one gap is Cataclysm's chorus wood, which has no
 
 ![Every wood on 1.20.1 in a city](docs/screenshots/showcase-1.20.1-cityworld.png)
 
+The same, taken unattended on the test machine with a production Forge 1.20.1 client — 27 woods
+from Biomes O' Plenty, Alex's Caves and Cataclysm:
+
+![Every wood on 1.20.1, unattended](docs/screenshots/showcase-1.20.1-vivo.png)
+
 The dye→wood conversions are also available as **shapeless crafting recipes** (any wood block + dye)
 for every form above except logs — a log's bark and end-grain run in different colour orders, a
 choice only the in-world click can make:
