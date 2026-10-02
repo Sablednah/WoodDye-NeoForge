@@ -193,6 +193,21 @@ with zipfile.ZipFile(MJAR) as z:
     present = set(z.namelist())
     vanilla_lang = json.loads(z.read("assets/minecraft/lang/en_us.json"))
 
+    # ---- per-version formats, decided by what this version's jar actually contains ----
+    # Item models: 1.21.4 introduced client items (assets/<ns>/items/<name>.json). Before that an
+    # item's model is simply assets/<ns>/models/item/<name>.json. Either way ours is a verbatim clone
+    # of vanilla's file, written to the same place under our namespace.
+    CLIENT_ITEMS = "assets/minecraft/items/oak_planks.json" in present
+    ITEM_MODEL_DIR = "items" if CLIENT_ITEMS else "models/item"
+    # Recipe ingredients: 1.21.2 made them bare strings ("minecraft:x" / "#minecraft:tag"). Before
+    # that each is an object ({"item": "minecraft:x"} / {"tag": "minecraft:tag"}, no '#'). Vanilla's
+    # own oak planks recipe says which this version speaks. NeoForge's custom ingredients changed
+    # with it: their discriminator is "type" in the object format (where it cannot clash with a
+    # vanilla field) and "neoforge:ingredient_type" in the string format.
+    OBJECT_INGREDIENTS = isinstance(
+        json.loads(z.read("data/minecraft/recipe/oak_planks.json"))["ingredients"][0], dict)
+    INGREDIENT_TYPE = "type" if OBJECT_INGREDIENTS else "neoforge:ingredient_type"
+
     WOODS = [w for w in ALL_WOODS if f"assets/minecraft/blockstates/{w}_planks.json" in present]
     DYE_MAP = {color: wood for color, wood in DYE_MAP.items() if wood in WOODS}
 
@@ -206,8 +221,8 @@ with zipfile.ZipFile(MJAR) as z:
             # Blockstate + item model: verbatim clones, still pointing at the vanilla models.
             write(f"assets/{MODID}/blockstates/{name}.json",
                   json.loads(z.read(f"assets/minecraft/blockstates/{vanilla}.json")))
-            write(f"assets/{MODID}/items/{name}.json",
-                  json.loads(z.read(f"assets/minecraft/items/{vanilla}.json")))
+            write(f"assets/{MODID}/{ITEM_MODEL_DIR}/{name}.json",
+                  json.loads(z.read(f"assets/minecraft/{ITEM_MODEL_DIR}/{vanilla}.json")))
 
             # Loot table: vanilla's, with its ids repointed at us.
             loot = json.loads(z.read(f"data/minecraft/loot_table/blocks/{vanilla}.json"))
@@ -392,7 +407,13 @@ with zipfile.ZipFile(MJAR) as z:
         if isinstance(node, dict):
             out, hit = {}, False
             for k, v in node.items():
-                out[k], changed = remap_recipe(v)
+                # Object format only: a tag is {"tag": "minecraft:oak_logs"}, with no '#' to tell
+                # it from an item id, so it is recognised by its key instead.
+                if (OBJECT_INGREDIENTS and k == "tag" and isinstance(v, str)
+                        and v.removeprefix("minecraft:") in VANILLA_LOG_TAGS):
+                    out[k], changed = f"{MODID}:fireproof_{v.removeprefix('minecraft:')}", True
+                else:
+                    out[k], changed = remap_recipe(v)
                 hit |= changed
             return out, hit
         if isinstance(node, list):
@@ -443,6 +464,16 @@ with zipfile.ZipFile(MJAR) as z:
 # wooddye:sponge_restore hands the sponge back rather than consuming it.
 EIGHT_AROUND_ONE = ["###", "#X#", "###"]
 
+
+# An ingredient in this version's format (see OBJECT_INGREDIENTS above).
+def item_ingredient(item_id):
+    return {"item": item_id} if OBJECT_INGREDIENTS else item_id
+
+
+def tag_ingredient(tag_id):
+    return {"tag": tag_id} if OBJECT_INGREDIENTS else f"#{tag_id}"
+
+
 for wood in WOODS:
     for template in FORMS:
         vanilla = vanilla_name(template, wood)
@@ -454,7 +485,8 @@ for wood in WOODS:
             "category": "misc",
             "group": f"wooddye_fireproofing_{form}",
             "pattern": EIGHT_AROUND_ONE,
-            "key": {"#": f"minecraft:{vanilla}", "X": "minecraft:magma_cream"},
+            "key": {"#": item_ingredient(f"minecraft:{vanilla}"),
+                    "X": item_ingredient("minecraft:magma_cream")},
             "result": {"count": 8, "id": f"{MODID}:fireproof_{vanilla}"},
         })
         # ...and back out again. The sponge is handed back, so this costs nothing but the wood.
@@ -463,7 +495,8 @@ for wood in WOODS:
             "category": "misc",
             "group": f"wooddye_restoring_{form}",
             "pattern": EIGHT_AROUND_ONE,
-            "key": {"#": f"{MODID}:fireproof_{vanilla}", "X": "minecraft:wet_sponge"},
+            "key": {"#": item_ingredient(f"{MODID}:fireproof_{vanilla}"),
+                    "X": item_ingredient("minecraft:wet_sponge")},
             "result": {"count": 8, "id": f"minecraft:{vanilla}"},
         })
 
@@ -480,10 +513,10 @@ for color, wood in DYE_MAP.items():
             "category": "misc",
             "group": f"wooddye_{form}",
             "ingredients": [
-                {"neoforge:ingredient_type": "neoforge:difference",
-                 "base": f"#minecraft:{tag}",
-                 "subtracted": f"#{MODID}:fireproof_{tag}"},
-                f"minecraft:{color}_dye",
+                {INGREDIENT_TYPE: "neoforge:difference",
+                 "base": tag_ingredient(f"minecraft:{tag}"),
+                 "subtracted": tag_ingredient(f"{MODID}:fireproof_{tag}")},
+                item_ingredient(f"minecraft:{color}_dye"),
             ],
             "result": {"count": 1, "id": f"minecraft:{result}"},
         })
@@ -491,7 +524,8 @@ for color, wood in DYE_MAP.items():
             "type": "minecraft:crafting_shapeless",
             "category": "misc",
             "group": f"wooddye_fireproof_{form}",
-            "ingredients": [f"#{MODID}:fireproof_{tag}", f"minecraft:{color}_dye"],
+            "ingredients": [tag_ingredient(f"{MODID}:fireproof_{tag}"),
+                            item_ingredient(f"minecraft:{color}_dye")],
             "result": {"count": 1, "id": f"{MODID}:fireproof_{result}"},
         })
 
