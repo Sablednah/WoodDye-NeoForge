@@ -21,6 +21,7 @@ One build per Minecraft line, each on its own branch; the jar name says which it
 | 26.2 | NeoForge 26.2 | 25 | `mc26.2` | 10 |
 | 26.1 | NeoForge 26.1 | 25 | `mc26.1` | 10 |
 | 1.21.11 | NeoForge 21.11 | 21 | `main` | 10 |
+| 1.21.1 | NeoForge 21.1 | 21 | `mc1.21.1` | 9 — no pale oak, and no shelves to dye |
 
 "Woods" counts the vanilla woods that can be fireproofed. Any wood in the game can be dyed, including
 crimson and warped and woods from other mods, if you switch them on — see
