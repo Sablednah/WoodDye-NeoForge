@@ -43,6 +43,7 @@ bin/
 
 ### Minecraft Modding ###
 run/
+runBuddy/
 !**/src/**/run/
 **/src/generated/**/.cache/
 repo/
