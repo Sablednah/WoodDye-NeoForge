@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_pressure_plate",
+  "ingredients": [
+    {
+      "type": "forge:difference",
+      "base": {
+        "tag": "minecraft:wooden_pressure_plates"
+      },
+      "subtracted": {
+        "tag": "wooddye:fireproof_wooden_pressure_plates"
+      }
+    },
+    {
+      "item": "minecraft:pink_dye"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "minecraft:cherry_pressure_plate"
+  }
+}

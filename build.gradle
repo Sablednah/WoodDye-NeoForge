@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.141'
+    id 'net.neoforged.moddev.legacyforge' version '2.0.147'
     id 'idea'
 }
 
@@ -11,8 +11,11 @@ tasks.named('wrapper', Wrapper).configure {
 
 // The jar carries the Minecraft version it was built against, on every line including this one.
 // All lines share a mod version, and two files both called wooddye-2.1.0.jar are indistinguishable
-// in a mods folder or on a releases page. The mod's own version (in neoforge.mods.toml) stays a
-// plain ${mod_version}.
+// in a mods folder or on a releases page. The mod's own version (in mods.toml) stays a plain
+// ${mod_version}.
+//
+// The jar to ship is build/libs (reobfuscated to SRG names, which is what Forge 1.20.1 runs);
+// build/devlibs holds the unobfuscated jar and does not load outside a dev environment.
 version = "${mod_version}+mc${minecraft_version}"
 group = mod_group_id
 
@@ -31,11 +34,11 @@ base {
     archivesName = mod_id
 }
 
-// Mojang ships Java 21 to end users, so mods should target Java 21.
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+// Minecraft 1.20.1 ships Java 17 to end users, so Forge mods target Java 17.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-neoForge {
-    version = project.neo_version
+legacyForge {
+    version = project.forge_version
 
     // Parchment gives human-readable parameter names/javadocs. Optional.
     // Enabled only when both properties are set in gradle.properties (some MC
@@ -95,13 +98,12 @@ dependencies {
     // (mod/library dependencies go here)
 }
 
-// Expand mod metadata properties into the generated neoforge.mods.toml.
+// Expand mod metadata properties into the generated mods.toml.
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
-            neo_version            : neo_version,
-            neo_version_range      : neo_version_range,
+            forge_version_range    : forge_version_range,
             loader_version_range   : loader_version_range,
             mod_id                 : mod_id,
             mod_name               : mod_name,
@@ -116,7 +118,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     into "build/generated/sources/modMetadata"
 }
 sourceSets.main.resources.srcDir generateModMetadata
-neoForge.ideSyncTask generateModMetadata
+legacyForge.ideSyncTask generateModMetadata
 
 publishing {
     publications {

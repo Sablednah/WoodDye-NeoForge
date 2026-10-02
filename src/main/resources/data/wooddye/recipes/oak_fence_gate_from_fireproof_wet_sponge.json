@@ -1,0 +1,22 @@
+{
+  "type": "wooddye:sponge_restore",
+  "category": "misc",
+  "group": "wooddye_restoring_fence_gate",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "wooddye:fireproof_oak_fence_gate"
+    },
+    "X": {
+      "item": "minecraft:wet_sponge"
+    }
+  },
+  "result": {
+    "count": 8,
+    "item": "minecraft:oak_fence_gate"
+  }
+}

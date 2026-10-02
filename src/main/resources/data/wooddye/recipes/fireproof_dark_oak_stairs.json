@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "fireproof_wooden_stairs",
+  "key": {
+    "#": {
+      "item": "wooddye:fireproof_dark_oak_planks"
+    }
+  },
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "show_notification": true,
+  "result": {
+    "count": 4,
+    "item": "wooddye:fireproof_dark_oak_stairs"
+  }
+}

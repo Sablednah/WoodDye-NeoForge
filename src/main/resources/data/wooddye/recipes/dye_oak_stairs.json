@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_stairs",
+  "ingredients": [
+    {
+      "type": "forge:difference",
+      "base": {
+        "tag": "minecraft:wooden_stairs"
+      },
+      "subtracted": {
+        "tag": "wooddye:fireproof_wooden_stairs"
+      }
+    },
+    {
+      "item": "minecraft:light_gray_dye"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "minecraft:oak_stairs"
+  }
+}

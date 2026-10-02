@@ -3,11 +3,9 @@ package com.sablednah.wooddye.crafting;
 import com.sablednah.wooddye.WoodDyeConfig;
 import com.sablednah.wooddye.registry.WoodDyeRecipes;
 
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipePattern;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
 
 /**
@@ -21,13 +19,12 @@ import net.minecraft.world.level.Level;
  */
 public class FireproofingRecipe extends DelegatingShapedRecipe {
 
-    public FireproofingRecipe(String group, CraftingBookCategory category, ShapedRecipePattern pattern,
-            ItemStack result) {
-        super(group, category, pattern, result);
+    public FireproofingRecipe(ShapedRecipe shaped) {
+        super(shaped);
     }
 
     @Override
-    public boolean matches(CraftingInput input, Level level) {
+    public boolean matches(CraftingContainer input, Level level) {
         return WoodDyeConfig.FIREPROOF.get() && super.matches(input, level);
     }
 

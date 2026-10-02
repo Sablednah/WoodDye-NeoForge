@@ -139,7 +139,7 @@ public final class WoodFamilies {
 
     private static TagKey<Block> tag(Form form) {
         return TagKey.create(Registries.BLOCK,
-                ResourceLocation.fromNamespaceAndPath(WoodDye.MODID, "dyeable/" + form.tag()));
+                new ResourceLocation(WoodDye.MODID, "dyeable/" + form.tag()));
     }
 
     private static boolean enabled(String id, Block planks) {

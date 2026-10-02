@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "fireproof_planks",
+  "ingredients": [
+    {
+      "tag": "wooddye:fireproof_jungle_logs"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "item": "wooddye:fireproof_jungle_planks"
+  }
+}

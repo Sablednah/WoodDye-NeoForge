@@ -4,12 +4,11 @@ import com.sablednah.wooddye.WoodDyeConfig;
 import com.sablednah.wooddye.registry.WoodDyeRecipes;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipePattern;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 
 /**
  * Restores eight fireproof blocks around one wet sponge, handing the sponge back instead of
@@ -22,15 +21,14 @@ import net.minecraft.world.item.crafting.ShapedRecipePattern;
  */
 public class SpongeRestoreRecipe extends DelegatingShapedRecipe {
 
-    public SpongeRestoreRecipe(String group, CraftingBookCategory category, ShapedRecipePattern pattern,
-            ItemStack result) {
-        super(group, category, pattern, result);
+    public SpongeRestoreRecipe(ShapedRecipe shaped) {
+        super(shaped);
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
+    public NonNullList<ItemStack> getRemainingItems(CraftingContainer input) {
         NonNullList<ItemStack> remaining = super.getRemainingItems(input);
-        for (int slot = 0; slot < input.size(); slot++) {
+        for (int slot = 0; slot < input.getContainerSize(); slot++) {
             if (input.getItem(slot).is(Items.WET_SPONGE)) {
                 remaining.set(slot, new ItemStack(
                         WoodDyeConfig.SPONGE_DRIES.get() ? Items.SPONGE : Items.WET_SPONGE));

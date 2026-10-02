@@ -1,0 +1,22 @@
+{
+  "type": "wooddye:sponge_restore",
+  "category": "misc",
+  "group": "wooddye_restoring_stripped_log",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "wooddye:fireproof_stripped_acacia_log"
+    },
+    "X": {
+      "item": "minecraft:wet_sponge"
+    }
+  },
+  "result": {
+    "count": 8,
+    "item": "minecraft:stripped_acacia_log"
+  }
+}

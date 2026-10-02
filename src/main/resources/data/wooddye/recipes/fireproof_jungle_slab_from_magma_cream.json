@@ -1,0 +1,22 @@
+{
+  "type": "wooddye:fireproofing",
+  "category": "misc",
+  "group": "wooddye_fireproofing_slab",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:jungle_slab"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
+  },
+  "result": {
+    "count": 8,
+    "item": "wooddye:fireproof_jungle_slab"
+  }
+}

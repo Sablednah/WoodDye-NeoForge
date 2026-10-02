@@ -1,0 +1,22 @@
+{
+  "type": "wooddye:fireproofing",
+  "category": "misc",
+  "group": "wooddye_fireproofing_pressure_plate",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:dark_oak_pressure_plate"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
+  },
+  "result": {
+    "count": 8,
+    "item": "wooddye:fireproof_dark_oak_pressure_plate"
+  }
+}

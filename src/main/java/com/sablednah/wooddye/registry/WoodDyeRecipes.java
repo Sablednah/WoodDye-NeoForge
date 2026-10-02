@@ -7,9 +7,9 @@ import com.sablednah.wooddye.crafting.SpongeRestoreRecipe;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 /**
  * WoodDye's recipe serializers — the two shaped variants that need behaviour JSON cannot express.
@@ -22,12 +22,12 @@ public final class WoodDyeRecipes {
             DeferredRegister.create(Registries.RECIPE_SERIALIZER, WoodDye.MODID);
 
     /** {@code wooddye:sponge_restore} — shaped, but the sponge survives the craft. */
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SpongeRestoreRecipe>>
+    public static final RegistryObject<RecipeSerializer<SpongeRestoreRecipe>>
             SPONGE_RESTORE = SERIALIZERS.register("sponge_restore",
                     () -> new DelegatingShapedRecipe.Serializer<>(SpongeRestoreRecipe::new));
 
     /** {@code wooddye:fireproofing} — shaped, but only while the {@code fireProof} config is on. */
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<FireproofingRecipe>>
+    public static final RegistryObject<RecipeSerializer<FireproofingRecipe>>
             FIREPROOFING = SERIALIZERS.register("fireproofing",
                     () -> new DelegatingShapedRecipe.Serializer<>(FireproofingRecipe::new));
 

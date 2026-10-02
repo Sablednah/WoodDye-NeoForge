@@ -7,7 +7,6 @@ import com.sablednah.wooddye.core.LogOrder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -32,7 +31,7 @@ import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 /**
  * The in-world dyeing/fireproofing behaviour: right-click a wooden block with a dye to shade it, with
@@ -49,7 +48,9 @@ public final class WoodDyeInteractions {
     private enum Kind {
         DYE(ParticleTypes.HAPPY_VILLAGER, SoundEvents.DYE_USE),
         FIREPROOF(ParticleTypes.FLAME, SoundEvents.FIRECHARGE_USE),
-        RESTORE(ParticleTypes.SPLASH, SoundEvents.SPONGE_ABSORB);
+        // 1.20.1 has no sponge sound (block.sponge.absorb arrived in 1.20.5); a bucket filling is
+        // the nearest thing it has to water being drawn up.
+        RESTORE(ParticleTypes.SPLASH, SoundEvents.BUCKET_FILL);
 
         final ParticleOptions particle;
         final SoundEvent sound;
@@ -197,11 +198,10 @@ public final class WoodDyeInteractions {
         if (!(old instanceof SignBlockEntity)) {
             return false;
         }
-        HolderLookup.Provider registries = level.registryAccess();
-        CompoundTag data = old.saveCustomOnly(registries);
+        CompoundTag data = old.saveWithoutMetadata();
         level.setBlockAndUpdate(pos, newState);
         if (level.getBlockEntity(pos) instanceof SignBlockEntity sign) {
-            sign.loadCustomOnly(data, registries);
+            sign.load(data);
             sign.setChanged();
         }
         return true;

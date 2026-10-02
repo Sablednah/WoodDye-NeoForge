@@ -7,9 +7,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 /**
  * A single "WoodDye" creative tab listing every fireproof block.
@@ -19,7 +19,7 @@ public final class WoodDyeCreativeTab {
     public static final DeferredRegister<CreativeModeTab> TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, WoodDye.MODID);
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> WOODDYE = TABS.register(
+    public static final RegistryObject<CreativeModeTab> WOODDYE = TABS.register(
             "wooddye",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.wooddye"))

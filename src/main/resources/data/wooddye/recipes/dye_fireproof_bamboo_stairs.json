@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_fireproof_stairs",
+  "ingredients": [
+    {
+      "tag": "wooddye:fireproof_wooden_stairs"
+    },
+    {
+      "item": "minecraft:lime_dye"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "wooddye:fireproof_bamboo_stairs"
+  }
+}

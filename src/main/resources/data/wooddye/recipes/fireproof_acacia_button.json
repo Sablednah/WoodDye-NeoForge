@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "group": "fireproof_wooden_button",
+  "ingredients": [
+    {
+      "item": "wooddye:fireproof_acacia_planks"
+    }
+  ],
+  "result": {
+    "item": "wooddye:fireproof_acacia_button"
+  }
+}

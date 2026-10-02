@@ -1,0 +1,22 @@
+{
+  "type": "wooddye:sponge_restore",
+  "category": "misc",
+  "group": "wooddye_restoring_fence",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "wooddye:fireproof_bamboo_fence"
+    },
+    "X": {
+      "item": "minecraft:wet_sponge"
+    }
+  },
+  "result": {
+    "count": 8,
+    "item": "minecraft:bamboo_fence"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "wooddye:sponge_restore",
+  "category": "misc",
+  "group": "wooddye_restoring_button",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "wooddye:fireproof_dark_oak_button"
+    },
+    "X": {
+      "item": "minecraft:wet_sponge"
+    }
+  },
+  "result": {
+    "count": 8,
+    "item": "minecraft:dark_oak_button"
+  }
+}

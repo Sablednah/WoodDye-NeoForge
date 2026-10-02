@@ -5,25 +5,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
-import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.common.TranslatableEnum;
-
 /**
  * Which way a dye chain runs. Either way it is one line of woods that a lightening dye steps back
  * along and a darkening dye steps forward along; this only decides how the line is sorted.
- *
- * <p>Implements {@link TranslatableEnum} for the config screen, as {@link LogOrder} does.
  */
-public enum DyeOrder implements TranslatableEnum {
+public enum DyeOrder {
     /** Lightest wood first, darkest last. */
     SHADE,
     /** Around the colour wheel. Greyish woods have no real hue, so they lead, lightest first. */
     RAINBOW;
-
-    @Override
-    public Component getTranslatedName() {
-        return Component.translatable("wooddye.configuration.dyeOrder." + name());
-    }
 
     /**
      * Sort {@code items} into this order. Ties, which are common between near-identical woods, fall

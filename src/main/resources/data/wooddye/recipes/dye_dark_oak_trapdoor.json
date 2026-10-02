@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_trapdoor",
+  "ingredients": [
+    {
+      "type": "forge:difference",
+      "base": {
+        "tag": "minecraft:wooden_trapdoors"
+      },
+      "subtracted": {
+        "tag": "wooddye:fireproof_wooden_trapdoors"
+      }
+    },
+    {
+      "item": "minecraft:black_dye"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "minecraft:dark_oak_trapdoor"
+  }
+}

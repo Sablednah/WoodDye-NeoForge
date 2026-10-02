@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "fireproof_wooden_slab",
+  "key": {
+    "#": {
+      "item": "wooddye:fireproof_spruce_planks"
+    }
+  },
+  "pattern": [
+    "###"
+  ],
+  "show_notification": true,
+  "result": {
+    "count": 6,
+    "item": "wooddye:fireproof_spruce_slab"
+  }
+}

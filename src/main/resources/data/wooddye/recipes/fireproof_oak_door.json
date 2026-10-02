@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "fireproof_wooden_door",
+  "key": {
+    "#": {
+      "item": "wooddye:fireproof_oak_planks"
+    }
+  },
+  "pattern": [
+    "##",
+    "##",
+    "##"
+  ],
+  "show_notification": true,
+  "result": {
+    "count": 3,
+    "item": "wooddye:fireproof_oak_door"
+  }
+}

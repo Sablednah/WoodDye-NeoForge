@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_fireproof_pressure_plate",
+  "ingredients": [
+    {
+      "tag": "wooddye:fireproof_wooden_pressure_plates"
+    },
+    {
+      "item": "minecraft:brown_dye"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "wooddye:fireproof_spruce_pressure_plate"
+  }
+}

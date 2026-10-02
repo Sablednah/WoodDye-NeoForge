@@ -10,9 +10,10 @@ import com.sablednah.wooddye.core.WoodType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredItem;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 /**
  * {@link BlockItem}s for every fireproof block. The items are also {@code fireResistant()} so a
@@ -20,10 +21,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  */
 public final class WoodDyeItems {
 
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(WoodDye.MODID);
+    public static final DeferredRegister<Item> ITEMS =
+            DeferredRegister.create(ForgeRegistries.ITEMS, WoodDye.MODID);
 
     /** Every registered block item, in the same order as {@link WoodDyeBlocks#ALL}. */
-    public static final List<DeferredItem<? extends BlockItem>> ALL = new ArrayList<>();
+    public static final List<RegistryObject<? extends BlockItem>> ALL = new ArrayList<>();
 
     static {
         for (WoodDyeBlocks.Entry entry : WoodDyeBlocks.ALL) {
@@ -31,12 +33,13 @@ public final class WoodDyeItems {
             if (entry.form() == WoodType.Form.DOOR) {
                 // Doors are two blocks tall; vanilla places them with a DoubleHighBlockItem, which
                 // clears the space above before the door block fills it in.
-                ALL.add(ITEMS.registerItem(name,
-                        props -> new DoubleHighBlockItem(entry.block().get(), props),
-                        new Item.Properties().fireResistant()));
+                ALL.add(ITEMS.register(name,
+                        () -> new DoubleHighBlockItem(entry.block().get(),
+                                new Item.Properties().fireResistant())));
             } else {
-                ALL.add(ITEMS.registerSimpleBlockItem(name, entry.block(),
-                        new Item.Properties().fireResistant()));
+                ALL.add(ITEMS.register(name,
+                        () -> new BlockItem(entry.block().get(),
+                                new Item.Properties().fireResistant())));
             }
         }
     }

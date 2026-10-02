@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_fireproof_slab",
+  "ingredients": [
+    {
+      "tag": "wooddye:fireproof_wooden_slabs"
+    },
+    {
+      "item": "minecraft:pink_dye"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "wooddye:fireproof_cherry_slab"
+  }
+}

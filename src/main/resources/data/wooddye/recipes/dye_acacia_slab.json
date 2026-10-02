@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_slab",
+  "ingredients": [
+    {
+      "type": "forge:difference",
+      "base": {
+        "tag": "minecraft:wooden_slabs"
+      },
+      "subtracted": {
+        "tag": "wooddye:fireproof_wooden_slabs"
+      }
+    },
+    {
+      "item": "minecraft:orange_dye"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "minecraft:acacia_slab"
+  }
+}

@@ -20,6 +20,11 @@ The script is the same file on every version branch. It reads the Minecraft vers
 gradle.properties, works from that version's client jar, and skips whatever that version lacks (a
 wood, a form, a tag), so retargeting a branch is: change gradle.properties, run this.
 
+Formats are decided from the jar (folder names, ingredient and result shapes, item model location,
+the stripping mechanism). The one thing a vanilla jar cannot say is which mod loader the branch
+builds for; that is read from gradle.properties too, as forge_version being set (MinecraftForge,
+the 1.20.1 line) rather than neo_version (NeoForge, every other line).
+
 Run from the repo root:  python3 tools/gen_resources.py
 """
 import json, math, os, shutil, zipfile
@@ -31,16 +36,24 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RES = os.path.join(ROOT, "src/main/resources")
 
 
-def gradle_property(name):
+_MISSING = object()
+
+
+def gradle_property(name, default=_MISSING):
     with open(os.path.join(ROOT, "gradle.properties")) as f:
         for line in f:
             key, _, value = line.partition("=")
             if key.strip() == name:
                 return value.strip()
-    raise SystemExit(f"gradle.properties has no {name}")
+    if default is _MISSING:
+        raise SystemExit(f"gradle.properties has no {name}")
+    return default
 
 
 MC_VERSION = gradle_property("minecraft_version")
+# MinecraftForge rather than NeoForge (see the note at the top). Three things follow from it, each
+# marked FORGE below: the difference ingredient's id, no data maps, and a pack.mcmeta of our own.
+FORGE = gradle_property("forge_version", None) is not None
 MJAR = os.path.expanduser(f"~/.gradle/caches/neoformruntime/artifacts/minecraft_{MC_VERSION}_client.jar")
 if not os.path.exists(MJAR):
     raise SystemExit(f"No client jar for {MC_VERSION} at {MJAR} — run a Gradle build on this branch first.")
@@ -153,9 +166,12 @@ def remap_loot(node, vanilla, fireproof):
 
 # Regenerate from scratch so blocks/forms dropped from the lists above leave no orphans behind.
 # Only the generated trees are cleared; hand-kept files (e.g. wooddye.png) are untouched.
+# The data folders are cleared under both of their names: 1.21 renamed them from plural to singular
+# (see PLURAL_DATA_DIRS below), and this runs before the jar has said which this version uses.
 for stale in [f"assets/{MODID}/blockstates", f"assets/{MODID}/models", f"assets/{MODID}/items",
-              f"assets/{MODID}/lang", f"data/{MODID}/loot_table", f"data/{MODID}/tags",
-              f"data/{MODID}/recipe", "data/minecraft", "data/neoforge", MODID]:
+              f"assets/{MODID}/lang", f"data/{MODID}/loot_table", f"data/{MODID}/loot_tables",
+              f"data/{MODID}/tags", f"data/{MODID}/recipe", f"data/{MODID}/recipes",
+              "data/minecraft", "data/neoforge", MODID]:
     shutil.rmtree(os.path.join(RES, stale), ignore_errors=True)
 
 # Names for the in-game config screen (Mods -> WoodDye -> Config). NeoForge derives each key as
@@ -199,14 +215,26 @@ with zipfile.ZipFile(MJAR) as z:
     # of vanilla's file, written to the same place under our namespace.
     CLIENT_ITEMS = "assets/minecraft/items/oak_planks.json" in present
     ITEM_MODEL_DIR = "items" if CLIENT_ITEMS else "models/item"
+    # Data folders: 1.21 renamed them all at once, from plural (recipes, loot_tables, tags/blocks,
+    # tags/items) to singular. Where vanilla's own oak planks recipe sits says which this is, and
+    # ours go in folders of the same names — a file in the other spelling is silently never read.
+    PLURAL_DATA_DIRS = "data/minecraft/recipes/oak_planks.json" in present
+    RECIPE_DIR, LOOT_DIR, BLOCK_TAGS, ITEM_TAGS = (
+        ("recipes", "loot_tables", "tags/blocks", "tags/items") if PLURAL_DATA_DIRS
+        else ("recipe", "loot_table", "tags/block", "tags/item"))
+    VANILLA_PLANKS_RECIPE = json.loads(z.read(f"data/minecraft/{RECIPE_DIR}/oak_planks.json"))
     # Recipe ingredients: 1.21.2 made them bare strings ("minecraft:x" / "#minecraft:tag"). Before
     # that each is an object ({"item": "minecraft:x"} / {"tag": "minecraft:tag"}, no '#'). Vanilla's
     # own oak planks recipe says which this version speaks. NeoForge's custom ingredients changed
     # with it: their discriminator is "type" in the object format (where it cannot clash with a
     # vanilla field) and "neoforge:ingredient_type" in the string format.
-    OBJECT_INGREDIENTS = isinstance(
-        json.loads(z.read("data/minecraft/recipe/oak_planks.json"))["ingredients"][0], dict)
+    OBJECT_INGREDIENTS = isinstance(VANILLA_PLANKS_RECIPE["ingredients"][0], dict)
     INGREDIENT_TYPE = "type" if OBJECT_INGREDIENTS else "neoforge:ingredient_type"
+    # FORGE: the same ingredient (base minus subtracted, the same two fields) under Forge's id.
+    DIFFERENCE_INGREDIENT = "forge:difference" if FORGE else "neoforge:difference"
+    # Recipe results: 1.20.5 turned a result into an item stack, naming its item "id". Before that
+    # the field is "item". Again vanilla's own recipe says which.
+    RESULT_ITEM = "id" if "id" in VANILLA_PLANKS_RECIPE["result"] else "item"
 
     WOODS = [w for w in ALL_WOODS if f"assets/minecraft/blockstates/{w}_planks.json" in present]
     DYE_MAP = {color: wood for color, wood in DYE_MAP.items() if wood in WOODS}
@@ -225,8 +253,8 @@ with zipfile.ZipFile(MJAR) as z:
                   json.loads(z.read(f"assets/minecraft/{ITEM_MODEL_DIR}/{vanilla}.json")))
 
             # Loot table: vanilla's, with its ids repointed at us.
-            loot = json.loads(z.read(f"data/minecraft/loot_table/blocks/{vanilla}.json"))
-            write(f"data/{MODID}/loot_table/blocks/{name}.json", remap_loot(loot, vanilla, name))
+            loot = json.loads(z.read(f"data/minecraft/{LOOT_DIR}/blocks/{vanilla}.json"))
+            write(f"data/{MODID}/{LOOT_DIR}/blocks/{name}.json", remap_loot(loot, vanilla, name))
 
             lang[f"block.{MODID}.{name}"] = vanilla_lang[f"block.minecraft.{vanilla}"] + " (Fireproof)"
             tagged.setdefault(tag, []).append(name)
@@ -250,20 +278,20 @@ with zipfile.ZipFile(MJAR) as z:
     # to vanilla's planks recipe, so joining them would let a fireproof log craft plain planks —
     # ambiguous against the fireproof planks recipe below.
     for tag, names in tagged.items():
-        for domain in ("block", "item"):
-            write(f"data/minecraft/tags/{domain}/{tag}.json", taglist(names))
-    write("data/minecraft/tags/block/mineable/axe.json", taglist(everything))
+        for tags_dir in (BLOCK_TAGS, ITEM_TAGS):
+            write(f"data/minecraft/{tags_dir}/{tag}.json", taglist(names))
+    write(f"data/minecraft/{BLOCK_TAGS}/mineable/axe.json", taglist(everything))
 
     # Our own tags, naming just the fireproof blocks, so recipes can require a fireproof input.
     for tag, names in tagged.items():
-        write(f"data/{MODID}/tags/item/fireproof_{tag}.json", taglist(names))
+        write(f"data/{MODID}/{ITEM_TAGS}/fireproof_{tag}.json", taglist(names))
 
     # The dyeable tags: references to vanilla's, and only to those this version has — a tag that
     # names a missing tag fails to load whole. A form with nothing to refer to (shelves, before
     # they existed) still gets its tag, empty, so a pack has somewhere to add to.
     for tag, refs in DYEABLE_TAGS.items():
-        write(f"data/{MODID}/tags/block/dyeable/{tag}.json", {"values": [
-            f"#minecraft:{ref}" for ref in refs if f"data/minecraft/tags/block/{ref}.json" in present]})
+        write(f"data/{MODID}/{BLOCK_TAGS}/dyeable/{tag}.json", {"values": [
+            f"#minecraft:{ref}" for ref in refs if f"data/minecraft/{BLOCK_TAGS}/{ref}.json" in present]})
 
     # ===================== tones =====================
     # The average colour of every vanilla plank and log texture, which the mod sorts its dye chains
@@ -326,7 +354,7 @@ with zipfile.ZipFile(MJAR) as z:
 
     def tag_members(tag):
         """A vanilla block tag, flattened: block names without the namespace."""
-        node = read_json(f"data/minecraft/tags/block/{tag}.json")
+        node = read_json(f"data/minecraft/{BLOCK_TAGS}/{tag}.json")
         members = []
         for value in (node or {}).get("values", []):
             value = value["id"] if isinstance(value, dict) else value
@@ -354,6 +382,10 @@ with zipfile.ZipFile(MJAR) as z:
     # data map that appends a rule to a transformer. Where the jar has that file, each fireproof
     # log gets vanilla's own rule for its original, with the ids repointed — so whatever vanilla
     # attaches to stripping (the sound, the tool damage) comes along.
+    #
+    # FORGE: MinecraftForge has no data maps at all, so nothing is written here and the same pairs
+    # are stripped in code instead (neoforge/WoodDyeStripping.java, from the blocks the mod
+    # registered). A data/neoforge folder would be dead weight in that jar.
     AXE_TRANSFORMER = "data/minecraft/block_transformer/axe.json"
     strip_pairs = []
     for wood in WOODS:
@@ -362,7 +394,9 @@ with zipfile.ZipFile(MJAR) as z:
             if frm in fireproofable and to in fireproofable:
                 strip_pairs.append((frm, to))
 
-    if AXE_TRANSFORMER in present:
+    if FORGE:
+        pass   # stripped in code, as above
+    elif AXE_TRANSFORMER in present:
         vanilla_rules = {}   # vanilla block -> (its rule, the transform entry the rule sits in)
         for entry in json.loads(z.read(AXE_TRANSFORMER)):
             for rule in entry["block_state_provider"].get("rules", []):
@@ -392,8 +426,8 @@ with zipfile.ZipFile(MJAR) as z:
     # Per-wood fireproof log tags, cloned from vanilla's, for the fireproof planks recipe.
     for wood in WOODS:
         vt = logs_tag(wood)
-        values = json.loads(z.read(f"data/minecraft/tags/item/{vt}.json"))["values"]
-        write(f"data/{MODID}/tags/item/fireproof_{vt}.json", taglist(
+        values = json.loads(z.read(f"data/minecraft/{ITEM_TAGS}/{vt}.json"))["values"]
+        write(f"data/{MODID}/{ITEM_TAGS}/fireproof_{vt}.json", taglist(
             [f"fireproof_{v.removeprefix('minecraft:')}" for v in values
              if isinstance(v, str) and v.removeprefix("minecraft:") in fireproofable]))
 
@@ -432,11 +466,11 @@ with zipfile.ZipFile(MJAR) as z:
 
     built = 0
     for entry in sorted(z.namelist()):
-        if not (entry.startswith("data/minecraft/recipe/") and entry.endswith(".json")):
+        if not (entry.startswith(f"data/minecraft/{RECIPE_DIR}/") and entry.endswith(".json")):
             continue
         recipe = json.loads(z.read(entry))
         result = recipe.get("result")
-        if not isinstance(result, dict) or result.get("id", "").removeprefix("minecraft:") not in fireproofable:
+        if not isinstance(result, dict) or result.get(RESULT_ITEM, "").removeprefix("minecraft:") not in fireproofable:
             continue
         inputs = {k: v for k, v in recipe.items() if k != "result"}
         cloned, has_fireproof_input = remap_recipe(inputs)
@@ -448,8 +482,24 @@ with zipfile.ZipFile(MJAR) as z:
         cloned["result"], _ = remap_recipe(result)
         if "group" in cloned:
             cloned["group"] = f"fireproof_{cloned['group']}"
-        write(f"data/{MODID}/recipe/fireproof_{entry.split('/')[-1]}", cloned)
+        write(f"data/{MODID}/{RECIPE_DIR}/fireproof_{entry.split('/')[-1]}", cloned)
         built += 1
+
+    # ===================== pack metadata =====================
+    # FORGE: Minecraft drops a pack that has no pack.mcmeta, and Forge 1.20.1 builds a mod's pack
+    # without supplying one (ResourcePackLoader.createPackForMod makes a bare PathPackResources). The
+    # log then says only "Missing metadata in pack mod:wooddye", and every tag, recipe and loot table
+    # above is silently gone. NeoForge synthesises the metadata itself, so no other line ships this
+    # file — and it must not be written there, where the mod pack's format is the loader's business.
+    # The format number is this version's own, read from the jar; one pack serves both assets and
+    # data, so the two formats have to agree for a single number to be right.
+    if FORGE:
+        formats = json.loads(z.read("version.json"))["pack_version"]
+        if formats["data"] != formats["resource"]:
+            raise SystemExit(f"{MC_VERSION}: data pack format {formats['data']} and resource pack format "
+                             f"{formats['resource']} differ; pack.mcmeta needs Forge's per-type keys")
+        write("pack.mcmeta", {"pack": {"description": "WoodDye ReForged resources",
+                                       "pack_format": formats["data"]}})
 
 # ===================== fireproofing recipes (wood + magma cream -> fireproof wood) =====================
 # The bench equivalent of right-clicking a placed block, for wood still in your bag. Eight blocks
@@ -480,24 +530,24 @@ for wood in WOODS:
         if vanilla not in fireproofable:
             continue
         form = template.replace("%s_", "")
-        write(f"data/{MODID}/recipe/fireproof_{vanilla}_from_magma_cream.json", {
+        write(f"data/{MODID}/{RECIPE_DIR}/fireproof_{vanilla}_from_magma_cream.json", {
             "type": f"{MODID}:fireproofing",
             "category": "misc",
             "group": f"wooddye_fireproofing_{form}",
             "pattern": EIGHT_AROUND_ONE,
             "key": {"#": item_ingredient(f"minecraft:{vanilla}"),
                     "X": item_ingredient("minecraft:magma_cream")},
-            "result": {"count": 8, "id": f"{MODID}:fireproof_{vanilla}"},
+            "result": {"count": 8, RESULT_ITEM: f"{MODID}:fireproof_{vanilla}"},
         })
         # ...and back out again. The sponge is handed back, so this costs nothing but the wood.
-        write(f"data/{MODID}/recipe/{vanilla}_from_fireproof_wet_sponge.json", {
+        write(f"data/{MODID}/{RECIPE_DIR}/{vanilla}_from_fireproof_wet_sponge.json", {
             "type": f"{MODID}:sponge_restore",
             "category": "misc",
             "group": f"wooddye_restoring_{form}",
             "pattern": EIGHT_AROUND_ONE,
             "key": {"#": item_ingredient(f"{MODID}:fireproof_{vanilla}"),
                     "X": item_ingredient("minecraft:wet_sponge")},
-            "result": {"count": 8, "id": f"minecraft:{vanilla}"},
+            "result": {"count": 8, RESULT_ITEM: f"minecraft:{vanilla}"},
         })
 
 # ===================== dye recipes (shapeless: convertible wood + dye -> target wood) =====================
@@ -508,25 +558,25 @@ for color, wood in DYE_MAP.items():
     for template, tag in RECIPE_FORMS.items():
         form = template.replace("%s_", "")
         result = vanilla_name(template, wood)
-        write(f"data/{MODID}/recipe/dye_{wood}_{form}.json", {
+        write(f"data/{MODID}/{RECIPE_DIR}/dye_{wood}_{form}.json", {
             "type": "minecraft:crafting_shapeless",
             "category": "misc",
             "group": f"wooddye_{form}",
             "ingredients": [
-                {INGREDIENT_TYPE: "neoforge:difference",
+                {INGREDIENT_TYPE: DIFFERENCE_INGREDIENT,
                  "base": tag_ingredient(f"minecraft:{tag}"),
                  "subtracted": tag_ingredient(f"{MODID}:fireproof_{tag}")},
                 item_ingredient(f"minecraft:{color}_dye"),
             ],
-            "result": {"count": 1, "id": f"minecraft:{result}"},
+            "result": {"count": 1, RESULT_ITEM: f"minecraft:{result}"},
         })
-        write(f"data/{MODID}/recipe/dye_fireproof_{wood}_{form}.json", {
+        write(f"data/{MODID}/{RECIPE_DIR}/dye_fireproof_{wood}_{form}.json", {
             "type": "minecraft:crafting_shapeless",
             "category": "misc",
             "group": f"wooddye_fireproof_{form}",
             "ingredients": [tag_ingredient(f"{MODID}:fireproof_{tag}"),
                             item_ingredient(f"minecraft:{color}_dye")],
-            "result": {"count": 1, "id": f"{MODID}:fireproof_{result}"},
+            "result": {"count": 1, RESULT_ITEM: f"{MODID}:fireproof_{result}"},
         })
 
 write(f"assets/{MODID}/lang/en_us.json", lang)

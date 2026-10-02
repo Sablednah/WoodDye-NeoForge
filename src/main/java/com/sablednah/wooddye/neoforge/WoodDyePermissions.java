@@ -3,17 +3,17 @@ package com.sablednah.wooddye.neoforge;
 import com.sablednah.wooddye.WoodDye;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.server.permission.PermissionAPI;
-import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
-import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
-import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
+import net.minecraftforge.server.permission.PermissionAPI;
+import net.minecraftforge.server.permission.events.PermissionGatherEvent;
+import net.minecraftforge.server.permission.nodes.PermissionNode;
+import net.minecraftforge.server.permission.nodes.PermissionTypes;
 
 /**
  * The {@code wooddye.candye} permission node.
  *
- * <p>Uses NeoForge's {@link PermissionAPI}. With no permissions manager installed, the node's
+ * <p>Uses Forge's {@link PermissionAPI}. With no permissions manager installed, the node's
  * default resolver applies (here: everyone may dye). Install a manager such as LuckPerms (which has
- * a NeoForge build) to restrict {@code wooddye.candye} per group — no extra code required.
+ * a Forge build) to restrict {@code wooddye.candye} per group — no extra code required.
  */
 public final class WoodDyePermissions {
 

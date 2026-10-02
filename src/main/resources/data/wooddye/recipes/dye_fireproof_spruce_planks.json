@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_fireproof_planks",
+  "ingredients": [
+    {
+      "tag": "wooddye:fireproof_planks"
+    },
+    {
+      "item": "minecraft:brown_dye"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "wooddye:fireproof_spruce_planks"
+  }
+}

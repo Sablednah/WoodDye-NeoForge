@@ -20,8 +20,8 @@ import com.google.gson.JsonParser;
 import com.sablednah.wooddye.core.Tone;
 
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.fml.ModList;
-import net.neoforged.neoforgespi.language.IModFileInfo;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.forgespi.language.IModFileInfo;
 
 /**
  * Measures the tone of a modded wood straight from its texture.
@@ -60,7 +60,7 @@ final class TextureTones {
             ResourceLocation texture = texture(block, bark ? BARK_SLOTS : WOOD_SLOTS);
             if (texture == null) {
                 // No model we could follow: fall back on the near-universal naming convention.
-                texture = ResourceLocation.fromNamespaceAndPath(block.getNamespace(), "block/" + block.getPath());
+                texture = new ResourceLocation(block.getNamespace(), "block/" + block.getPath());
             }
             return average(texture);
         } catch (IOException | RuntimeException e) {

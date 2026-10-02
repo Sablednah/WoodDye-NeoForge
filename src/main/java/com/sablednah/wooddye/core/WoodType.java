@@ -212,7 +212,7 @@ public enum WoodType {
         if (name == null) {
             return null;
         }
-        Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.withDefaultNamespace(name));
+        Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(name));
         return block == Blocks.AIR ? null : block;
     }
 }

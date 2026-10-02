@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "wooddye_fence_gate",
+  "ingredients": [
+    {
+      "type": "forge:difference",
+      "base": {
+        "tag": "minecraft:fence_gates"
+      },
+      "subtracted": {
+        "tag": "wooddye:fireproof_fence_gates"
+      }
+    },
+    {
+      "item": "minecraft:brown_dye"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "minecraft:spruce_fence_gate"
+  }
+}

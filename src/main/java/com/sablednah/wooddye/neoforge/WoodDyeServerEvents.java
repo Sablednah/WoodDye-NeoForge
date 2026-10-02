@@ -1,19 +1,20 @@
 package com.sablednah.wooddye.neoforge;
 
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.TagsUpdatedEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
-import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 
 /**
- * Server-side registrations on the NeoForge game event bus: permission nodes, the {@code /wooddye}
- * command, the right-click dyeing handler, and rebuilding the dye chains. Registered from
- * {@link com.sablednah.wooddye.WoodDye}.
+ * Server-side registrations on the Forge game event bus: permission nodes, the {@code /wooddye}
+ * command, the right-click dyeing handler, axe stripping, and rebuilding the dye chains. Registered
+ * from {@link com.sablednah.wooddye.WoodDye}.
  *
- * <p>Axe stripping of the fireproof logs needs no handler here — it is data-driven, via the
- * {@code neoforge:strippables} data map that {@code tools/gen_resources.py} generates.
+ * <p>Axe stripping of the fireproof logs is a handler on this version, where the NeoForge lines
+ * use a data map: Forge 1.20.1 has no data maps. See {@link WoodDyeStripping}.
  */
 public final class WoodDyeServerEvents {
 
@@ -32,6 +33,12 @@ public final class WoodDyeServerEvents {
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         WoodDyeInteractions.handle(event);
+    }
+
+    /** Not server-only: an axe is used on both sides, and the client predicts the result. */
+    @SubscribeEvent
+    public static void onToolModification(BlockEvent.BlockToolModificationEvent event) {
+        WoodDyeStripping.handle(event);
     }
 
     /** The dye chains are built from block tags, so a datapack (re)load makes them stale. */

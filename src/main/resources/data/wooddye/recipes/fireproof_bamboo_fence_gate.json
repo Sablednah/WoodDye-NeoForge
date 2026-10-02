@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "fireproof_wooden_custom_fence_gate",
+  "key": {
+    "#": {
+      "item": "minecraft:stick"
+    },
+    "W": {
+      "item": "wooddye:fireproof_bamboo_planks"
+    }
+  },
+  "pattern": [
+    "#W#",
+    "#W#"
+  ],
+  "show_notification": true,
+  "result": {
+    "item": "wooddye:fireproof_bamboo_fence_gate"
+  }
+}

@@ -1,23 +1,20 @@
 package com.sablednah.wooddye.crafting;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonObject;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.crafting.IShapedRecipe;
 
 /**
  * Base for WoodDye's two shaped recipes that need one behaviour a plain shaped recipe cannot express
@@ -26,34 +23,34 @@ import net.minecraft.world.level.Level;
  * so the recipe book and JEI treat these as ordinary crafting recipes.
  *
  * <p>Subclasses override just the method they change, plus {@link #getSerializer()}.
+ *
+ * <p>1.20.1 predates recipe codecs, so there are no separate fields to encode here: the wrapped
+ * {@link ShapedRecipe} is read and written whole by vanilla's own shaped serializer. Being an
+ * {@link IShapedRecipe} is how this version's recipe book (and JEI) learn the grid's width and
+ * height, which they would otherwise take from the {@code ShapedRecipe} class itself.
  */
-public abstract class DelegatingShapedRecipe implements CraftingRecipe {
+public abstract class DelegatingShapedRecipe implements CraftingRecipe, IShapedRecipe<CraftingContainer> {
 
-    // Package-private, not private: the nested Serializer reads them through the type variable T,
-    // which private access does not reach. Vanilla's ShapedRecipe scopes its fields the same way.
-    final String group;
-    final CraftingBookCategory category;
-    final ShapedRecipePattern pattern;
-    final ItemStack result;
+    // Package-private, not private: the nested Serializer reads it through the type variable T,
+    // which private access does not reach.
+    final ShapedRecipe delegate;
 
-    private final ShapedRecipe delegate;
-
-    protected DelegatingShapedRecipe(String group, CraftingBookCategory category,
-            ShapedRecipePattern pattern, ItemStack result) {
-        this.group = group;
-        this.category = category;
-        this.pattern = pattern;
-        this.result = result;
-        this.delegate = new ShapedRecipe(group, category, pattern, result);
+    protected DelegatingShapedRecipe(ShapedRecipe delegate) {
+        this.delegate = delegate;
     }
 
     @Override
-    public boolean matches(CraftingInput input, Level level) {
+    public ResourceLocation getId() {
+        return delegate.getId();
+    }
+
+    @Override
+    public boolean matches(CraftingContainer input, Level level) {
         return delegate.matches(input, level);
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
+    public ItemStack assemble(CraftingContainer input, RegistryAccess registries) {
         return delegate.assemble(input, registries);
     }
 
@@ -63,7 +60,7 @@ public abstract class DelegatingShapedRecipe implements CraftingRecipe {
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider registries) {
+    public ItemStack getResultItem(RegistryAccess registries) {
         return delegate.getResultItem(registries);
     }
 
@@ -80,55 +77,61 @@ public abstract class DelegatingShapedRecipe implements CraftingRecipe {
 
     @Override
     public String getGroup() {
-        return group;
+        return delegate.getGroup();
     }
 
     @Override
     public CraftingBookCategory category() {
-        return category;
+        return delegate.category();
+    }
+
+    @Override
+    public boolean showNotification() {
+        return delegate.showNotification();
+    }
+
+    @Override
+    public int getRecipeWidth() {
+        return delegate.getRecipeWidth();
+    }
+
+    @Override
+    public int getRecipeHeight() {
+        return delegate.getRecipeHeight();
     }
 
     /**
      * Serializer for any subclass — the JSON is exactly a vanilla shaped recipe's, so only the
-     * {@code type} field distinguishes them.
+     * {@code type} field distinguishes them. Vanilla's shaped serializer does all three jobs (JSON,
+     * and the network encoding in each direction); this only wraps what it produces.
      */
     public static final class Serializer<T extends DelegatingShapedRecipe> implements RecipeSerializer<T> {
 
-        /** Builds a recipe from the four fields every shaped recipe carries. */
+        /** Builds a recipe around the shaped recipe it behaves like. */
         @FunctionalInterface
         public interface Factory<T extends DelegatingShapedRecipe> {
-            T create(String group, CraftingBookCategory category, ShapedRecipePattern pattern, ItemStack result);
+            T create(ShapedRecipe shaped);
         }
 
-        private final MapCodec<T> codec;
-        private final StreamCodec<RegistryFriendlyByteBuf, T> streamCodec;
+        private final Factory<T> factory;
 
         public Serializer(Factory<T> factory) {
-            this.codec = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
-                    CraftingBookCategory.CODEC.fieldOf("category")
-                            .orElse(CraftingBookCategory.MISC).forGetter(recipe -> recipe.category),
-                    // Reads the "pattern" and "key" fields.
-                    ShapedRecipePattern.MAP_CODEC.forGetter(recipe -> recipe.pattern),
-                    ItemStack.STRICT_CODEC.fieldOf("result").forGetter(recipe -> recipe.result))
-                    .apply(instance, factory::create));
-
-            this.streamCodec = StreamCodec.composite(
-                    ByteBufCodecs.STRING_UTF8, recipe -> recipe.group,
-                    CraftingBookCategory.STREAM_CODEC, recipe -> recipe.category,
-                    ShapedRecipePattern.STREAM_CODEC, recipe -> recipe.pattern,
-                    ItemStack.STREAM_CODEC, recipe -> recipe.result,
-                    factory::create);
+            this.factory = factory;
         }
 
         @Override
-        public MapCodec<T> codec() {
-            return codec;
+        public T fromJson(ResourceLocation id, JsonObject json) {
+            return factory.create(RecipeSerializer.SHAPED_RECIPE.fromJson(id, json));
         }
 
         @Override
-        public StreamCodec<RegistryFriendlyByteBuf, T> streamCodec() {
-            return streamCodec;
+        public T fromNetwork(ResourceLocation id, FriendlyByteBuf buffer) {
+            return factory.create(RecipeSerializer.SHAPED_RECIPE.fromNetwork(id, buffer));
+        }
+
+        @Override
+        public void toNetwork(FriendlyByteBuf buffer, T recipe) {
+            RecipeSerializer.SHAPED_RECIPE.toNetwork(buffer, recipe.delegate);
         }
     }
 }
