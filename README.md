@@ -10,15 +10,26 @@ A modern **NeoForge** rewrite of the classic [WoodDye](https://github.com/Sabled
 
 | | |
 |---|---|
-| Minecraft | 1.21.11 |
-| Loader | NeoForge 21.11.42+ |
-| Java | 21 |
 | License | MIT |
 | Side | Server-side logic; the client needs it installed too (it adds blocks) |
 
+One build per Minecraft line, each on its own branch; the jar name says which it is for.
+
+| Minecraft | Loader | Java | Branch | Woods |
+|-----------|--------|------|--------|-------|
+| 26.3 | NeoForge 26.3.0.33-beta – .36 | 25 | `mc26.3` | 11 — adds **poplar** |
+| 26.2 | NeoForge 26.2 | 25 | `mc26.2` | 10 |
+| 26.1 | NeoForge 26.1 | 25 | `mc26.1` | 10 |
+| 1.21.11 | NeoForge 21.11 | 21 | `main` | 10 |
+
+"Woods" counts the vanilla woods that can be fireproofed. Any wood in the game can be dyed, including
+crimson and warped and woods from other mods, if you switch them on — see
+[Which woods, and in what order](#which-woods-and-in-what-order).
+
 ## Install
 
-Drop `wooddye-<version>.jar` into `mods/` on both the server and the client. No dependencies.
+Drop `wooddye-<version>+mc<minecraft>.jar` into `mods/` on both the server and the client. No
+dependencies.
 
 ## What it does
 
@@ -122,6 +133,7 @@ choice only the in-world click can make:
 | Yellow | Jungle | | Red | Mangrove |
 | Orange | Acacia | | Lime | Bamboo |
 | Brown | Spruce | | Gray | Pale Oak |
+| Green | Poplar *(26.3+)* | | | |
 
 **Dyeing preserves fireproofing:** dye a *fireproof* block on the bench and you get the fireproof
 form of the new wood. Only the magma cream / wet sponge decide whether wood is fireproof.
@@ -135,7 +147,8 @@ existence; it only ever enters via magma cream. (Non-wood parts, like the sticks
 ordinary — there is no fireproof stick.)
 
 An **axe strips fireproof logs and wood** just as it strips the vanilla ones, keeping both the
-fireproofing and the block's orientation.
+fireproofing and the block's orientation. (Data-only on every line: the `neoforge:strippables` data
+map up to 26.2, and vanilla's own block transformers through `neoforge:transformables` from 26.3.)
 
 Fireproof blocks also join the vanilla wood tags (`#minecraft:planks`, `#minecraft:wooden_doors`,
 `#minecraft:mineable/axe`, …), so they mine and build like the wood they copy — but never the
@@ -190,7 +203,8 @@ one fixed order can only look right on one of them. `logOrder` chooses how logs 
 
 ## Building from source
 
-Requires JDK 21. Standard NeoForge ModDevGradle setup:
+Requires the JDK for the line you are building: 21 for 1.21.x, 25 for 26.x. Standard NeoForge
+ModDevGradle setup:
 
 ```
 ./gradlew build             # jar in build/libs/wooddye-<version>+mc<minecraft>.jar
