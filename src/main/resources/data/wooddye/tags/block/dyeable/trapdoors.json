@@ -1,5 +1,9 @@
 {
   "values": [
-    "#minecraft:wooden_trapdoors"
+    "#minecraft:wooden_trapdoors",
+    {
+      "id": "cataclysm:chorus_trapdoor",
+      "required": false
+    }
   ]
 }

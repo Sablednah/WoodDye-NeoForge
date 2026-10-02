@@ -107,6 +107,15 @@ DYE_MAP = {
 # These are how the mod finds wood: it never lists blocks, so anything tagged properly — a wood from
 # a later Minecraft, or from another mod — is picked up. A pack adds to or removes from these.
 # Bamboo's pillars are not in #minecraft:logs, hence the second entry.
+# Blocks that belong in a dyeable tag but whose mod never tagged them, listed as optional entries
+# ("required": false), which the tag loader skips without complaint when the mod is absent. Only
+# for mods that put the wood's OTHER blocks in the vanilla tags; a mod that tags nothing is better
+# served by a datapack of its own. Found by looking at /wooddye showcase with the mod installed.
+DYEABLE_EXTRAS = {
+    "logs":      ["cataclysm:chorus_stem"],       # Cataclysm tags its planks, slab, stairs and fence, not the stem
+    "trapdoors": ["cataclysm:chorus_trapdoor"],   # ...nor the trapdoor
+}
+
 DYEABLE_TAGS = {
     "planks":             ["planks"],
     "slabs":              ["wooden_slabs"],
@@ -291,7 +300,8 @@ with zipfile.ZipFile(MJAR) as z:
     # they existed) still gets its tag, empty, so a pack has somewhere to add to.
     for tag, refs in DYEABLE_TAGS.items():
         write(f"data/{MODID}/{BLOCK_TAGS}/dyeable/{tag}.json", {"values": [
-            f"#minecraft:{ref}" for ref in refs if f"data/minecraft/{BLOCK_TAGS}/{ref}.json" in present]})
+            f"#minecraft:{ref}" for ref in refs if f"data/minecraft/{BLOCK_TAGS}/{ref}.json" in present]
+            + [{"id": extra, "required": False} for extra in DYEABLE_EXTRAS.get(tag, [])]})
 
     # ===================== tones =====================
     # The average colour of every vanilla plank and log texture, which the mod sorts its dye chains
