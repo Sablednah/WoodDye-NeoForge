@@ -1,5 +1,51 @@
 # WoodDye — notes for the next session
 
+## Version branches (set up 2026-10-02)
+
+One branch per Minecraft line, each checked out permanently under
+`/mnt/d/Repos/sable/WoodDye-worktrees/<branch>`. **Do not switch branches in this checkout.**
+
+| Branch | Minecraft | Loader | JDK |
+|---|---|---|---|
+| `main` (trunk) | 1.21.11 | NeoForge 21.11.42 | 21 |
+| `mc26.1` | 26.1.2 | NeoForge 26.1.2.95 | 25 |
+| `mc26.2` | 26.2 | NeoForge 26.2.0.59 | 25 |
+| `mc26.3` | 26.3 | NeoForge 26.3.0.33-beta (range capped below .37-beta) | 25 |
+| `mc1.21.1` | 1.21.1 | NeoForge 21.1.251 | 21 |
+| `mc1.20.1` | 1.20.1 | MinecraftForge 47.4.23 | 17 |
+
+- **Features land on `main` and are cherry-picked** (`git cherry-pick -x <sha>`) into each
+  worktree. Documentation lives on `main` only. The family standard is
+  `SableCraft-Standards/CROSS-VERSION.md`.
+- The branches chain: `mc26.1` → `mc26.2` → `mc26.3` each add to the one before, and
+  `mc1.20.1` was cut from `mc1.21.1`.
+- **`tools/gen_resources.py` is one file, identical on every branch.** It reads
+  `minecraft_version` from `gradle.properties` and adapts to what that version's client jar
+  contains (woods, forms, tags, item-model location, ingredient format, how stripping is
+  declared). Change it on `main`, check `main`'s output is unchanged, cherry-pick, and re-run
+  it on each branch. After a cherry-pick that touches it, `git status` after regenerating must
+  be clean.
+- JDKs are borrowed: `MobHealth-Forge/tools/{jdk21,jdk25}`, `CityWorld-ReForged/tools/jdk17`.
+  `deploy.sh` picks the JDK and the CurseForge instance from `minecraft_version`.
+- `WoodDye-worktrees/runserver.sh <worktree> <jdk>` starts the dev server headless, waits for
+  "Done", stops it and prints the lines that matter. Gradle does not forward stdin, so console
+  commands cannot be scripted; the mod logs its wood order on server start for that reason.
+  Each worktree's `run/server.properties` has its own port so runs can overlap.
+
+What each line needed beyond a retarget (the trunk's tag and tone engine compiled unchanged
+on all the NeoForge lines):
+
+- **26.1** — the recipe API: `Recipe.CommonInfo` + `CraftingBookInfo`, `ItemStackTemplate`
+  results, `RecipeSerializer` is a record. `displayClientMessage(t, true)` → `sendOverlayMessage(t)`.
+- **26.2** — dye items are a `ColorCollection`: `Items.DYE.pick(DyeColor.BLACK)`.
+- **26.3** — poplar arrived with no code. `swing` and `drop` gained arguments. ⚠ The
+  `neoforge:strippables` data map is **gone**: stripping is vanilla block transformers, appended
+  to through `neoforge:transformables`. The old file only produced a WARN
+  (`non-existent data map type`), i.e. fireproof logs would silently have stopped stripping.
+  Grep each new line's server log for that warning.
+- **1.21.1** — `ResourceLocation`, older registry/recipe signatures, item models in
+  `models/item`, ingredients as `{item}`/`{tag}` objects, `IModFile.findResource`.
+
 ## Fixed 2026-10-02: the config message ate ampersands
 
 `WoodDyeInteractions.colourCodes()` now translates `&` only where a real format code follows, and
