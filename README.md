@@ -138,6 +138,11 @@ the rainbow option:
 
 ![Every wood from light to dark](docs/screenshots/showcase-shade.png)
 
+And the same command on **1.20.1 Forge** in a CityWorld street, with Biomes O' Plenty, Alex's Caves
+and Cataclysm installed — the one gap is Cataclysm's chorus wood, which has no stripped log:
+
+![Every wood on 1.20.1 in a city](docs/screenshots/showcase-1.20.1-cityworld.png)
+
 The dye→wood conversions are also available as **shapeless crafting recipes** (any wood block + dye)
 for every form above except logs — a log's bark and end-grain run in different colour orders, a
 choice only the in-world click can make:
