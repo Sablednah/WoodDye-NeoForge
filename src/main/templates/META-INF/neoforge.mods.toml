@@ -23,6 +23,9 @@ logoBlur=false
 # WoodDye is a common (server + client) mod. Blocks render from data-driven JSON, so no
 # client-only entrypoint is required; it runs fully on dedicated servers and vanilla clients.
 
+[[mixins]]
+config="wooddye.mixins.json"
+
 [[dependencies.${mod_id}]]
     modId="neoforge"
     type="required"

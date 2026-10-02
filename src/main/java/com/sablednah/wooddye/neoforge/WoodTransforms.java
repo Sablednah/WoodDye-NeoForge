@@ -54,6 +54,9 @@ public final class WoodTransforms {
         final Map<Block, Block> toFireproof = new HashMap<>();
         final Map<Block, Block> fromFireproof = new HashMap<>();
 
+        /** Every block WoodDye knows to be wood: all forms of all tagged families, plus the legacy fireproof blocks. */
+        final Set<Block> wood = new HashSet<>();
+
         List<Family> woodOrder = List.of();
         List<Family> barkOrder = List.of();
     }
@@ -128,6 +131,7 @@ public final class WoodTransforms {
     }
 
     private static void classify(Tables t, Form form, Block block) {
+        t.wood.add(block);
         if (isBarkForm(form)) {
             t.barkCapable.add(block);
         }
@@ -204,6 +208,16 @@ public final class WoodTransforms {
                 ? (shift == Shift.LIGHTEN ? t.barkLighter : t.barkDarker)
                 : (shift == Shift.LIGHTEN ? t.woodLighter : t.woodDarker);
         return map.get(block);
+    }
+
+    /** Whether WoodDye knows this block as wood of any form, in any family, dyeable or not. */
+    public static boolean isWood(Block block) {
+        return tables().wood.contains(block);
+    }
+
+    /** Whether this is one of the registered legacy {@code fireproof_*} blocks. */
+    public static boolean isLegacyFireproof(Block block) {
+        return tables().fromFireproof.containsKey(block);
     }
 
     /** The fireproof counterpart of a vanilla wood block, or {@code null} if not applicable. */
