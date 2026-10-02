@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import com.sablednah.wooddye.neoforge.WoodDyeServerEvents;
+import com.sablednah.wooddye.neoforge.WoodTransforms;
 import com.sablednah.wooddye.registry.WoodDyeBlocks;
 import com.sablednah.wooddye.registry.WoodDyeCreativeTab;
 import com.sablednah.wooddye.registry.WoodDyeItems;
@@ -14,6 +15,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 /**
@@ -48,6 +50,9 @@ public class WoodDye {
 
         // Game-bus glue: permission nodes, the /wooddye command, and the right-click handler.
         NeoForge.EVENT_BUS.register(WoodDyeServerEvents.class);
+
+        // Which woods dye, and in what order, is config; a change there makes the chains stale.
+        modEventBus.addListener(ModConfigEvent.class, event -> WoodTransforms.invalidate());
 
         LOGGER.info("WoodDye {} initialising", modContainer.getModInfo().getVersion());
     }

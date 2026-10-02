@@ -4,6 +4,7 @@ import com.sablednah.wooddye.WoodDye;
 import com.sablednah.wooddye.WoodDyeConfig;
 import com.sablednah.wooddye.core.LogOrder;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -226,10 +227,27 @@ public final class WoodDyeInteractions {
         if (WoodDyeConfig.SHOW_MESSAGE.get()) {
             String message = WoodDyeConfig.MESSAGE.get();
             if (message != null && !message.isEmpty()) {
-                String text = message.replace('&', '§').replace("%P", player.getName().getString());
+                // The name goes in after the colour codes, so a player's name cannot inject one.
+                String text = colourCodes(message).replace("%P", player.getName().getString());
                 player.displayClientMessage(Component.literal(text), true);
             }
         }
+    }
+
+    /**
+     * Turn {@code &} into a section sign only where a real format code follows it. The message is
+     * written by the server owner, so an ampersand may just be an ampersand: translating blindly
+     * turned "Treated by %P &amp; co." into "Treated by Steve § co." with the space eaten as a code.
+     */
+    static String colourCodes(String message) {
+        StringBuilder text = new StringBuilder(message.length());
+        for (int i = 0; i < message.length(); i++) {
+            char c = message.charAt(i);
+            boolean code = c == '&' && i + 1 < message.length()
+                    && ChatFormatting.getByCode(message.charAt(i + 1)) != null;
+            text.append(code ? '§' : c);
+        }
+        return text.toString();
     }
 
     /**

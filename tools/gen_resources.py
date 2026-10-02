@@ -12,18 +12,44 @@ two). Cloning also means a resource pack that retextures oak planks retextures f
 
 The block list here mirrors the fireproof() forms of core/WoodType.java — keep the two in step.
 
+It also measures the tone of every vanilla plank and log texture into wooddye/tones.json, which is
+what the dye order is sorted on (see core/Tone.java — the arithmetic here must match it). That needs
+Pillow to read the PNGs:  pip install pillow
+
+The script is the same file on every version branch. It reads the Minecraft version from
+gradle.properties, works from that version's client jar, and skips whatever that version lacks (a
+wood, a form, a tag), so retargeting a branch is: change gradle.properties, run this.
+
 Run from the repo root:  python3 tools/gen_resources.py
 """
-import json, os, shutil, zipfile
+import json, math, os, shutil, zipfile
+
+from PIL import Image
 
 MODID = "wooddye"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RES = os.path.join(ROOT, "src/main/resources")
-MJAR = "/home/sable/.gradle/caches/neoformruntime/artifacts/minecraft_1.21.11_client.jar"
 
-# light -> dark shade order. Order here is cosmetic (per-block files and tags are order-independent);
-# the actual dye chain is defined by the WoodType enum order in core/WoodType.java.
-WOODS = ["pale_oak", "cherry", "birch", "bamboo", "oak", "jungle", "acacia", "spruce", "mangrove", "dark_oak"]
+
+def gradle_property(name):
+    with open(os.path.join(ROOT, "gradle.properties")) as f:
+        for line in f:
+            key, _, value = line.partition("=")
+            if key.strip() == name:
+                return value.strip()
+    raise SystemExit(f"gradle.properties has no {name}")
+
+
+MC_VERSION = gradle_property("minecraft_version")
+MJAR = os.path.expanduser(f"~/.gradle/caches/neoformruntime/artifacts/minecraft_{MC_VERSION}_client.jar")
+if not os.path.exists(MJAR):
+    raise SystemExit(f"No client jar for {MC_VERSION} at {MJAR} — run a Gradle build on this branch first.")
+
+# Every wood any supported version has, in rough light -> dark order. The order is cosmetic (it sets
+# the creative tab order via the matching enum); the dye chain itself is sorted from measured tones.
+# Woods this version lacks are dropped below, once the jar is open.
+ALL_WOODS = ["pale_oak", "cherry", "birch", "bamboo", "poplar", "oak", "jungle", "acacia", "spruce",
+             "mangrove", "dark_oak"]
 
 # The per-wood vanilla log tag, which the planks recipe takes as its input.
 def logs_tag(wood):
@@ -61,6 +87,29 @@ DYE_MAP = {
     "red": "mangrove",     # reddish wood
     "lime": "bamboo",      # green stalk
     "gray": "pale_oak",    # muted / pale
+    "green": "poplar",     # the one tall green tree left without a colour
+}
+
+# The wooddye:dyeable/* block tags, one per WoodType.Form#tag(), and the vanilla tags each refers to.
+# These are how the mod finds wood: it never lists blocks, so anything tagged properly — a wood from
+# a later Minecraft, or from another mod — is picked up. A pack adds to or removes from these.
+# Bamboo's pillars are not in #minecraft:logs, hence the second entry.
+DYEABLE_TAGS = {
+    "planks":             ["planks"],
+    "slabs":              ["wooden_slabs"],
+    "stairs":             ["wooden_stairs"],
+    "logs":               ["logs", "bamboo_blocks"],
+    "fences":             ["wooden_fences"],
+    "fence_gates":        ["fence_gates"],
+    "doors":              ["wooden_doors"],
+    "trapdoors":          ["wooden_trapdoors"],
+    "pressure_plates":    ["wooden_pressure_plates"],
+    "buttons":            ["wooden_buttons"],
+    "signs":              ["standing_signs"],
+    "wall_signs":         ["wall_signs"],
+    "hanging_signs":      ["ceiling_hanging_signs"],
+    "wall_hanging_signs": ["wall_hanging_signs"],
+    "shelves":            ["wooden_shelves"],
 }
 
 # Forms offering a crafting-bench equivalent of in-world dyeing. Logs are excluded: their bark and
@@ -106,7 +155,7 @@ def remap_loot(node, vanilla, fireproof):
 # Only the generated trees are cleared; hand-kept files (e.g. wooddye.png) are untouched.
 for stale in [f"assets/{MODID}/blockstates", f"assets/{MODID}/models", f"assets/{MODID}/items",
               f"assets/{MODID}/lang", f"data/{MODID}/loot_table", f"data/{MODID}/tags",
-              f"data/{MODID}/recipe", "data/minecraft", "data/neoforge"]:
+              f"data/{MODID}/recipe", "data/minecraft", "data/neoforge", MODID]:
     shutil.rmtree(os.path.join(RES, stale), ignore_errors=True)
 
 # Names for the in-game config screen (Mods -> WoodDye -> Config). NeoForge derives each key as
@@ -122,6 +171,13 @@ CONFIG_LANG = {
     "wooddye.configuration.logOrder.SAME_AS_PLANKS": "Match Plank Colour",
     "wooddye.configuration.logOrder.BARK": "Match Bark Colour",
     "wooddye.configuration.logOrder.INTELLIGENT": "Intelligent (by face)",
+    "wooddye.configuration.dyeOrder": "Wood Order",
+    "wooddye.configuration.dyeOrder.SHADE": "Light to Dark",
+    "wooddye.configuration.dyeOrder.RAINBOW": "Rainbow",
+    "wooddye.configuration.moddedWoods": "Modded Woods",
+    "wooddye.configuration.netherWoods": "Nether Woods",
+    "wooddye.configuration.excludedWoods": "Excluded Woods",
+    "wooddye.configuration.toneOverrides": "Colour Overrides",
     "wooddye.configuration.showEffects": "Particles & Sound",
     "wooddye.configuration.showMessage": "Show Message",
     "wooddye.configuration.message": "Message Text",
@@ -134,12 +190,16 @@ everything = []
 fireproofable = set()   # every vanilla block name that has a fireproof counterpart
 
 with zipfile.ZipFile(MJAR) as z:
+    present = set(z.namelist())
     vanilla_lang = json.loads(z.read("assets/minecraft/lang/en_us.json"))
+
+    WOODS = [w for w in ALL_WOODS if f"assets/minecraft/blockstates/{w}_planks.json" in present]
+    DYE_MAP = {color: wood for color, wood in DYE_MAP.items() if wood in WOODS}
 
     for wood in WOODS:
         for template, tag in FORMS.items():
             vanilla = vanilla_name(template, wood)
-            if vanilla is None:
+            if vanilla is None or f"assets/minecraft/blockstates/{vanilla}.json" not in present:
                 continue
             name = f"fireproof_{vanilla}"
 
@@ -183,6 +243,91 @@ with zipfile.ZipFile(MJAR) as z:
     for tag, names in tagged.items():
         write(f"data/{MODID}/tags/item/fireproof_{tag}.json", taglist(names))
 
+    # The dyeable tags: references to vanilla's, and only to those this version has — a tag that
+    # names a missing tag fails to load whole. A form with nothing to refer to (shelves, before
+    # they existed) still gets its tag, empty, so a pack has somewhere to add to.
+    for tag, refs in DYEABLE_TAGS.items():
+        write(f"data/{MODID}/tags/block/dyeable/{tag}.json", {"values": [
+            f"#minecraft:{ref}" for ref in refs if f"data/minecraft/tags/block/{ref}.json" in present]})
+
+    # ===================== tones =====================
+    # The average colour of every vanilla plank and log texture, which the mod sorts its dye chains
+    # by. Measured here because a dedicated server's jar has no textures to measure; modded woods
+    # are measured in game, from their own jars, by neoforge/TextureTones.java. Both follow the
+    # block the way the client does — blockstate -> model -> texture slot — and both must average
+    # the same way (core/Tone.java): alpha-weighted, in linear light.
+    def to_linear(c):
+        return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+    def to_srgb(c):
+        return c * 12.92 if c <= 0.0031308 else 1.055 * c ** (1 / 2.4) - 0.055
+
+    def split_id(ident):
+        ns, _, path = ident.rpartition(":")
+        return ns or "minecraft", path
+
+    def read_json(path):
+        return json.loads(z.read(path)) if path in present else None
+
+    def first_model(blockstate):
+        if "variants" in blockstate:
+            apply = next(iter(blockstate["variants"].values()))
+        else:
+            apply = blockstate["multipart"][0]["apply"]
+        if isinstance(apply, list):
+            apply = apply[0]
+        return apply["model"]
+
+    def texture_of(block, slots):
+        model = first_model(read_json(f"assets/minecraft/blockstates/{block}.json"))
+        textures = {}
+        while model:
+            ns, path = split_id(model)
+            node = read_json(f"assets/{ns}/models/{path}.json")
+            if node is None:
+                break
+            for slot, value in node.get("textures", {}).items():
+                textures.setdefault(slot, value)   # the child's choice wins over its parent's
+            model = node.get("parent")
+        for slot in slots:
+            value = textures.get(slot)
+            while value and value.startswith("#"):
+                value = textures.get(value[1:])
+            if value:
+                return value
+        raise SystemExit(f"{block}: none of the texture slots {slots} is set")
+
+    def average_hex(texture):
+        ns, path = split_id(texture)
+        with z.open(f"assets/{ns}/textures/{path}.png") as f:
+            raw = Image.open(f).convert("RGBA").tobytes()
+        total, weight = [0.0, 0.0, 0.0], 0.0
+        for r, g, b, a in zip(*[iter(raw)] * 4):
+            alpha = a / 255
+            for i, channel in enumerate((r, g, b)):
+                total[i] += alpha * to_linear(channel / 255)
+            weight += alpha
+        return "#%02x%02x%02x" % tuple(round(to_srgb(c / weight) * 255) for c in total)
+
+    def tag_members(tag):
+        """A vanilla block tag, flattened: block names without the namespace."""
+        node = read_json(f"data/minecraft/tags/block/{tag}.json")
+        members = []
+        for value in (node or {}).get("values", []):
+            value = value["id"] if isinstance(value, dict) else value
+            if value.startswith("#"):
+                members += tag_members(split_id(value[1:])[1])
+            else:
+                members.append(split_id(value)[1])
+        return members
+
+    tones = {}
+    for block in tag_members("planks"):
+        tones[f"minecraft:{block}"] = average_hex(texture_of(block, ["all", "texture", "side", "particle"]))
+    for block in tag_members("logs") + tag_members("bamboo_blocks"):
+        tones[f"minecraft:{block}"] = average_hex(texture_of(block, ["side", "all", "texture", "particle"]))
+    write(f"{MODID}/tones.json", dict(sorted(tones.items())))
+
     # ===================== axe stripping =====================
     # Vanilla's AxeItem resolves stripping through NeoForge's neoforge:strippables data map (its own
     # in-code map is deprecated and only a fallback), so a fireproof log is strippable purely by
@@ -192,7 +337,7 @@ with zipfile.ZipFile(MJAR) as z:
     for wood in WOODS:
         for base, stripped in (("%s_log", "stripped_%s_log"), ("%s_wood", "stripped_%s_wood")):
             frm, to = vanilla_name(base, wood), vanilla_name(stripped, wood)
-            if frm and to:
+            if frm in fireproofable and to in fireproofable:
                 strippables[f"{MODID}:fireproof_{frm}"] = {"stripped_block": f"{MODID}:fireproof_{to}"}
     write("data/neoforge/data_maps/block/strippables.json", {"values": strippables})
 
@@ -268,7 +413,7 @@ EIGHT_AROUND_ONE = ["###", "#X#", "###"]
 for wood in WOODS:
     for template in FORMS:
         vanilla = vanilla_name(template, wood)
-        if vanilla is None:
+        if vanilla not in fireproofable:
             continue
         form = template.replace("%s_", "")
         write(f"data/{MODID}/recipe/fireproof_{vanilla}_from_magma_cream.json", {
@@ -318,4 +463,5 @@ for color, wood in DYE_MAP.items():
         })
 
 write(f"assets/{MODID}/lang/en_us.json", lang)
-print(f"Generated {len(everything)} fireproof blocks, {built} cloned construction recipes under {RES}")
+print(f"Minecraft {MC_VERSION}: {len(WOODS)} woods, {len(everything)} fireproof blocks, "
+      f"{built} cloned construction recipes, {len(tones)} tones under {RES}")

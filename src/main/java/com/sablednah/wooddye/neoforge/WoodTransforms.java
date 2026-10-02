@@ -1,191 +1,228 @@
 package com.sablednah.wooddye.neoforge;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.sablednah.wooddye.WoodDye;
+import com.sablednah.wooddye.WoodDyeConfig;
+import com.sablednah.wooddye.core.DyeOrder;
 import com.sablednah.wooddye.core.WoodType;
+import com.sablednah.wooddye.core.WoodType.Form;
+import com.sablednah.wooddye.neoforge.WoodFamilies.Family;
 import com.sablednah.wooddye.registry.WoodDyeBlocks;
 
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.registries.DeferredBlock;
 
 /**
- * Lookup tables that drive every WoodDye transform, built once from the {@link WoodType} order.
+ * Lookup tables that drive every WoodDye transform.
  *
- * <p>Each wooden {@link WoodType.Form} dyes along a light&rarr;dark chain. Most forms use the plank
- * (inner-wood) order; unstripped logs and all-bark "wood" blocks additionally get a chain in bark
- * colour order (see {@link com.sablednah.wooddye.core.LogOrder}). Chains are built for both vanilla
- * and fireproof blocks. Separate maps convert vanilla&harr;fireproof, and block sets record which
- * blocks need sneak-to-dye or special in-world handling (doors, signs, shelves).
+ * <p>Each wooden {@link Form} dyes along a chain of woods. The chain is the {@linkplain WoodFamilies
+ * wood families found in the block tags}, sorted by measured tone in the configured {@link DyeOrder}.
+ * Most forms follow the inner-wood order; unstripped logs and all-bark "wood" blocks additionally
+ * get a chain in bark order (see {@link com.sablednah.wooddye.core.LogOrder}). Each chain exists
+ * twice, once for plain blocks and once for their fireproof counterparts, so dyeing never changes
+ * whether a block is fireproof. Separate maps convert plain&harr;fireproof, and block sets record
+ * which blocks need sneak-to-dye or special in-world handling (doors, signs, shelves).
  *
- * <p>Initialised lazily on first use, by when all fireproof blocks are registered.
+ * <p>The tables depend on tags and config, both of which can change while the server runs, so they
+ * are built on first use and thrown away by {@link #invalidate()} whenever either reloads.
  */
 public final class WoodTransforms {
 
-    /** Which way along a light&rarr;dark chain a dye moves a block. */
+    /** Which way along a chain a dye moves a block. */
     public enum Shift { LIGHTEN, DARKEN }
 
-    /** Plank/inner-wood colour order (lightest first) — the enum declaration order. */
-    private static final WoodType[] WOOD_ORDER = WoodType.values();
+    /** One immutable build of every table; swapped whole so a reader never sees a half-built set. */
+    private static final class Tables {
+        final Map<Block, Block> woodLighter = new HashMap<>();
+        final Map<Block, Block> woodDarker = new HashMap<>();
+        final Map<Block, Block> barkLighter = new HashMap<>();
+        final Map<Block, Block> barkDarker = new HashMap<>();
 
-    /** Bark colour order (lightest first). */
-    private static final WoodType[] BARK_ORDER = {
-            WoodType.BIRCH, WoodType.ACACIA, WoodType.PALE_OAK, WoodType.BAMBOO, WoodType.OAK,
-            WoodType.JUNGLE, WoodType.MANGROVE, WoodType.DARK_OAK, WoodType.SPRUCE, WoodType.CHERRY,
-    };
+        final Set<Block> barkCapable = new HashSet<>(); // unstripped logs + all-bark wood
+        final Set<Block> allBark = new HashSet<>();      // all-bark wood only
+        final Set<Block> sneakRequired = new HashSet<>();
+        final Set<Block> doors = new HashSet<>();
+        final Set<Block> signs = new HashSet<>();
+        final Set<Block> shelves = new HashSet<>();
 
-    private static final Map<Block, Block> WOOD_LIGHTER = new HashMap<>();
-    private static final Map<Block, Block> WOOD_DARKER = new HashMap<>();
-    private static final Map<Block, Block> BARK_LIGHTER = new HashMap<>();
-    private static final Map<Block, Block> BARK_DARKER = new HashMap<>();
+        final Map<Block, Block> toFireproof = new HashMap<>();
+        final Map<Block, Block> fromFireproof = new HashMap<>();
 
-    private static final Set<Block> BARK_CAPABLE = new HashSet<>(); // unstripped logs + all-bark wood
-    private static final Set<Block> ALL_BARK = new HashSet<>();      // all-bark wood only
-    private static final Set<Block> SNEAK_REQUIRED = new HashSet<>();
-    private static final Set<Block> DOORS = new HashSet<>();
-    private static final Set<Block> SIGNS = new HashSet<>();
-    private static final Set<Block> SHELVES = new HashSet<>();
+        List<Family> woodOrder = List.of();
+        List<Family> barkOrder = List.of();
+    }
 
-    private static final Map<Block, Block> TO_FIREPROOF = new HashMap<>();
-    private static final Map<Block, Block> FROM_FIREPROOF = new HashMap<>();
-
-    private static boolean initialised = false;
+    private static volatile Tables tables;
 
     private WoodTransforms() {}
 
-    private static synchronized void init() {
-        if (initialised) {
-            return;
-        }
-        for (WoodType.Form form : WoodType.Form.values()) {
-            // Wood-order chain for every form (vanilla + fireproof).
-            buildChain(chain(WOOD_ORDER, form, false), WOOD_LIGHTER, WOOD_DARKER);
-            if (form.fireproof()) {
-                buildChain(chain(WOOD_ORDER, form, true), WOOD_LIGHTER, WOOD_DARKER);
-            }
-            // Bark-order chain only for the bark-capable forms (unstripped logs + all-bark wood).
-            if (isBarkForm(form)) {
-                buildChain(chain(BARK_ORDER, form, false), BARK_LIGHTER, BARK_DARKER);
-                if (form.fireproof()) {
-                    buildChain(chain(BARK_ORDER, form, true), BARK_LIGHTER, BARK_DARKER);
-                }
-            }
-            for (WoodType wood : WOOD_ORDER) {
-                Block vanilla = wood.vanilla(form);
-                Block fireproof = form.fireproof() ? fireproof(wood, form) : null;
-                classify(form, vanilla);
-                classify(form, fireproof);
-                if (vanilla != null && fireproof != null) {
-                    TO_FIREPROOF.put(vanilla, fireproof);
-                    FROM_FIREPROOF.put(fireproof, vanilla);
-                }
-            }
-        }
-        initialised = true;
+    /** Drop the tables; the next query rebuilds them. Call when tags or config change. */
+    public static void invalidate() {
+        tables = null;
     }
 
-    private static boolean isBarkForm(WoodType.Form form) {
+    private static Tables tables() {
+        Tables current = tables;
+        if (current == null) {
+            synchronized (WoodTransforms.class) {
+                current = tables;
+                if (current == null) {
+                    current = build();
+                    tables = current;
+                }
+            }
+        }
+        return current;
+    }
+
+    private static Tables build() {
+        Tables t = new Tables();
+
+        // Plain <-> fireproof pairs come from our own registry, not from tags: they exist for
+        // exactly the vanilla blocks we registered a counterpart for.
+        for (WoodDyeBlocks.Entry entry : WoodDyeBlocks.ALL) {
+            Block vanilla = entry.wood().vanilla(entry.form());
+            Block fireproof = entry.block().get();
+            t.toFireproof.put(vanilla, fireproof);
+            t.fromFireproof.put(fireproof, vanilla);
+            classify(t, entry.form(), vanilla);
+            classify(t, entry.form(), fireproof);
+        }
+
+        // What each tagged block is matters even for a wood that may not be dyed, so that (say) a
+        // sneak is still needed to fireproof its door. Classify everything before filtering.
+        Map<String, Map<Form, Block>> discovered = WoodFamilies.discover();
+        for (Map<Form, Block> blocks : discovered.values()) {
+            blocks.forEach((form, block) -> classify(t, form, block));
+        }
+
+        List<Family> families = WoodFamilies.dyeable(discovered);
+        DyeOrder order = WoodDyeConfig.DYE_ORDER.get();
+        t.woodOrder = order.sort(families, family -> family.wood().tone(), Family::id);
+        t.barkOrder = order.sort(families, family -> family.bark().tone(), Family::id);
+
+        for (Form form : Form.values()) {
+            link(t, chain(t.woodOrder, form), t.woodLighter, t.woodDarker);
+            if (isBarkForm(form)) {
+                link(t, chain(t.barkOrder, form), t.barkLighter, t.barkDarker);
+            }
+        }
+
+        WoodDye.LOGGER.info("WoodDye: {} wood families, {} order. Planks: {}. Bark: {}.",
+                families.size(), order, describe(t.woodOrder), describe(t.barkOrder));
+        return t;
+    }
+
+    private static String describe(List<Family> order) {
+        return order.stream().map(Family::label).collect(Collectors.joining(" > "));
+    }
+
+    private static boolean isBarkForm(Form form) {
         return form.order() == WoodType.Order.LOG || form.order() == WoodType.Order.BARK;
     }
 
-    private static void classify(WoodType.Form form, Block block) {
-        if (block == null) {
-            return;
-        }
+    private static void classify(Tables t, Form form, Block block) {
         if (isBarkForm(form)) {
-            BARK_CAPABLE.add(block);
+            t.barkCapable.add(block);
         }
         if (form.order() == WoodType.Order.BARK) {
-            ALL_BARK.add(block);
+            t.allBark.add(block);
         }
         if (form.interactive()) {
-            SNEAK_REQUIRED.add(block);
+            t.sneakRequired.add(block);
         }
         switch (form.special()) {
-            case DOOR -> DOORS.add(block);
-            case SIGN -> SIGNS.add(block);
-            case SHELF -> SHELVES.add(block);
+            case DOOR -> t.doors.add(block);
+            case SIGN -> t.signs.add(block);
+            case SHELF -> t.shelves.add(block);
             default -> { }
         }
     }
 
-    private static void buildChain(Block[] ordered, Map<Block, Block> lighter, Map<Block, Block> darker) {
-        for (int i = 0; i < ordered.length - 1; i++) {
-            darker.put(ordered[i], ordered[i + 1]);
-            lighter.put(ordered[i + 1], ordered[i]);
+    /** The blocks of one form along an order, skipping woods that lack the form (bamboo has no wood). */
+    private static List<Block> chain(List<Family> order, Form form) {
+        return order.stream().map(family -> family.block(form)).filter(Objects::nonNull).toList();
+    }
+
+    /**
+     * Record each block's lighter and darker neighbour, then do the same for the fireproof
+     * counterparts of the same chain. A wood with no fireproof version (any modded wood, for now) is
+     * skipped in the fireproof chain rather than breaking it, so fireproof oak still dyes to
+     * fireproof spruce across a modded wood that sits between them.
+     */
+    private static void link(Tables t, List<Block> plain, Map<Block, Block> lighter, Map<Block, Block> darker) {
+        linkChain(plain, lighter, darker);
+        linkChain(plain.stream().map(t.toFireproof::get).filter(Objects::nonNull).toList(), lighter, darker);
+    }
+
+    private static void linkChain(List<Block> ordered, Map<Block, Block> lighter, Map<Block, Block> darker) {
+        for (int i = 0; i < ordered.size() - 1; i++) {
+            darker.put(ordered.get(i), ordered.get(i + 1));
+            lighter.put(ordered.get(i + 1), ordered.get(i));
         }
-    }
-
-    private static Block[] chain(WoodType[] order, WoodType.Form form, boolean fireproof) {
-        return Arrays.stream(order)
-                .map(wood -> fireproof ? fireproof(wood, form) : wood.vanilla(form))
-                .filter(Objects::nonNull)
-                .toArray(Block[]::new);
-    }
-
-    private static Block fireproof(WoodType wood, WoodType.Form form) {
-        DeferredBlock<? extends Block> holder = WoodDyeBlocks.get(form, wood);
-        return holder == null ? null : holder.get();
     }
 
     // --- queries used by the interaction handler ---
 
     /** Whether the block can dye along the bark order (unstripped log or all-bark wood). */
     public static boolean isBarkCapable(Block block) {
-        init();
-        return BARK_CAPABLE.contains(block);
+        return tables().barkCapable.contains(block);
     }
 
     /** Whether the block is an all-bark "wood" block (every face bark, no end grain). */
     public static boolean isAllBarkWood(Block block) {
-        init();
-        return ALL_BARK.contains(block);
+        return tables().allBark.contains(block);
     }
 
     /** Whether dyeing this block requires sneaking (it has a vanilla right-click action). */
     public static boolean requiresSneak(Block block) {
-        init();
-        return SNEAK_REQUIRED.contains(block);
+        return tables().sneakRequired.contains(block);
     }
 
     public static boolean isDoor(Block block) {
-        init();
-        return DOORS.contains(block);
+        return tables().doors.contains(block);
     }
 
     public static boolean isSign(Block block) {
-        init();
-        return SIGNS.contains(block);
+        return tables().signs.contains(block);
     }
 
     public static boolean isShelf(Block block) {
-        init();
-        return SHELVES.contains(block);
+        return tables().shelves.contains(block);
     }
 
-    /** The next block one shade lighter/darker, in the wood order (or bark order when {@code bark}). */
+    /** The next block one step lighter/darker, in the wood order (or bark order when {@code bark}). */
     public static Block shade(Block block, Shift shift, boolean bark) {
-        init();
+        Tables t = tables();
         Map<Block, Block> map = bark
-                ? (shift == Shift.LIGHTEN ? BARK_LIGHTER : BARK_DARKER)
-                : (shift == Shift.LIGHTEN ? WOOD_LIGHTER : WOOD_DARKER);
+                ? (shift == Shift.LIGHTEN ? t.barkLighter : t.barkDarker)
+                : (shift == Shift.LIGHTEN ? t.woodLighter : t.woodDarker);
         return map.get(block);
     }
 
     /** The fireproof counterpart of a vanilla wood block, or {@code null} if not applicable. */
     public static Block toFireproof(Block block) {
-        init();
-        return TO_FIREPROOF.get(block);
+        return tables().toFireproof.get(block);
     }
 
     /** The plain vanilla counterpart of a fireproof block, or {@code null} if not applicable. */
     public static Block fromFireproof(Block block) {
-        init();
-        return FROM_FIREPROOF.get(block);
+        return tables().fromFireproof.get(block);
     }
 
+    /** The dyeable woods in inner-wood order, for {@code /wooddye woods}. */
+    public static List<Family> woodOrder() {
+        return tables().woodOrder;
+    }
+
+    /** The dyeable woods in bark order, for {@code /wooddye woods}. */
+    public static List<Family> barkOrder() {
+        return tables().barkOrder;
+    }
 }

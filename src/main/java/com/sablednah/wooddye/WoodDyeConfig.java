@@ -1,5 +1,8 @@
 package com.sablednah.wooddye;
 
+import java.util.List;
+
+import com.sablednah.wooddye.core.DyeOrder;
 import com.sablednah.wooddye.core.LogOrder;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -41,6 +44,42 @@ public final class WoodDyeConfig {
                     "  INTELLIGENT    - bark order on side clicks, wood order on end clicks")
             .defineEnum("logOrder", LogOrder.INTELLIGENT);
 
+    /** How the chain of woods a dye steps along is sorted. */
+    public static final ModConfigSpec.EnumValue<DyeOrder> DYE_ORDER = BUILDER
+            .comment("How woods are ordered for dyeing. The order is measured from each wood's texture.",
+                    "  SHADE   - lightest to darkest",
+                    "  RAINBOW - around the colour wheel; greyish woods come first, lightest to darkest",
+                    "Run /wooddye woods to see the resulting order.")
+            .defineEnum("dyeOrder", DyeOrder.SHADE);
+
+    /** Let dyeing reach woods added by other mods. */
+    public static final ModConfigSpec.BooleanValue MODDED_WOODS = BUILDER
+            .comment("Include woods added by other mods in the dye order. Any mod that puts its blocks",
+                    "in the standard tags (#minecraft:planks, #minecraft:wooden_slabs, ...) is picked up",
+                    "automatically. Modded woods can be dyed but not yet fireproofed.")
+            .define("moddedWoods", false);
+
+    /** Let dyeing reach crimson and warped. */
+    public static final ModConfigSpec.BooleanValue NETHER_WOODS = BUILDER
+            .comment("Include crimson and warped (any wood tagged #minecraft:non_flammable_wood) in the",
+                    "dye order. Off by default: in SHADE order teal warped planks land between acacia",
+                    "and spruce, which surprises people. They suit RAINBOW order well.")
+            .define("netherWoods", false);
+
+    /** Woods, or whole mods, left out of dyeing. */
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> EXCLUDED_WOODS = BUILDER
+            .comment("Woods left out of the dye order. Each entry is a mod id, to leave out every wood",
+                    "from that mod (\"biomesoplenty\"), or a single wood (\"biomesoplenty:fir\",",
+                    "\"minecraft:bamboo\").")
+            .defineListAllowEmpty("excludedWoods", List.of(), () -> "", WoodDyeConfig::isString);
+
+    /** Hand-set colours that replace a measured tone. */
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> TONE_OVERRIDES = BUILDER
+            .comment("Replace a measured colour, to move a wood within the dye order. Each entry is",
+                    "\"<block id>=#rrggbb\". A planks block sets the wood's place in the plank order and",
+                    "a log block its place in the bark order, e.g. \"minecraft:oak_log=#715834\".")
+            .defineListAllowEmpty("toneOverrides", List.of(), () -> "", WoodDyeConfig::isString);
+
     /** Play a particle + sound effect at the block when a treatment succeeds. */
     public static final ModConfigSpec.BooleanValue SHOW_EFFECTS = BUILDER
             .comment("Play a particle + sound effect when wood is dyed, fireproofed, or restored.")
@@ -64,4 +103,8 @@ public final class WoodDyeConfig {
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     private WoodDyeConfig() {}
+
+    private static boolean isString(Object element) {
+        return element instanceof String;
+    }
 }
