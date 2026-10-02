@@ -13,6 +13,7 @@ import com.sablednah.wooddye.neoforge.WoodFamilies.Measured;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -23,6 +24,8 @@ import net.minecraft.network.chat.Component;
  *         acknowledges; edits to {@code wooddye-common.toml} apply on save regardless.</li>
  *     <li>{@code /wooddye woods} — op. Lists the woods in dye order, with how each one's place was
  *         worked out, so an owner can see why a modded wood landed where it did.</li>
+ *     <li>{@code /wooddye showcase} — op. Builds every dyeable wood side by side in dye order at
+ *         the caller's position (see {@link WoodShowcase}), and says where to stand to see it.</li>
  * </ul>
  */
 public final class WoodDyeCommands {
@@ -36,7 +39,10 @@ public final class WoodDyeCommands {
                         .executes(WoodDyeCommands::reload))
                 .then(Commands.literal("woods")
                         .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                        .executes(WoodDyeCommands::woods)));
+                        .executes(WoodDyeCommands::woods))
+                .then(Commands.literal("showcase")
+                        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .executes(WoodDyeCommands::showcase)));
     }
 
     private static int reload(CommandContext<CommandSourceStack> ctx) {
@@ -54,6 +60,14 @@ public final class WoodDyeCommands {
                         + "Planks: " + describe(wood, Family::wood) + "\n"
                         + "Bark: " + describe(WoodTransforms.barkOrder(), Family::bark)), false);
         return wood.size();
+    }
+
+    private static int showcase(CommandContext<CommandSourceStack> ctx) {
+        CommandSourceStack source = ctx.getSource();
+        WoodShowcase.Result built = WoodShowcase.build(source.getLevel(), BlockPos.containing(source.getPosition()));
+        source.sendSuccess(() -> Component.literal(
+                "WoodDye: built a showcase of " + built.woods() + " woods. See it all from: " + built.viewpoint()), true);
+        return built.woods();
     }
 
     /** One line per chain: each wood with its lightness, and a marker when it was not measured. */
