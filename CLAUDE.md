@@ -62,6 +62,18 @@ on all the NeoForge lines):
   Grep each new line's server log for that warning.
 - **1.21.1** — `ResourceLocation`, older registry/recipe signatures, item models in
   `models/item`, ingredients as `{item}`/`{tag}` objects, `IModFile.findResource`.
+- **1.20.1 (Forge)** — the biggest step: `net.minecraftforge.*`, `ForgeConfigSpec`,
+  `RegistryObject`, the pre-codec recipe API, plural data folders, `pack.mcmeta` (without it Forge
+  drops the whole datapack silently), `mods.toml`. Three real differences from the other lines:
+  **no in-game config screen** (Forge 47 has none; `client/WoodDyeClient` does not exist there),
+  **stripping is code** (`neoforge/WoodDyeStripping`, a `BlockToolModificationEvent` handler,
+  because Forge has no data maps), and the wet-sponge sound is `item.bucket.fill`
+  (`SPONGE_ABSORB` is newer). "Loaded N recipes" in its log counts recipe *types*, not recipes.
+  ⚠ **Production mod jars do not load in the 1.20.1 dev runtime**: their mixins are SRG-named
+  (`InvalidMixinException ... terrablender`). Testing with Biomes O' Plenty there needs a real
+  Forge server install running the reobfuscated jar from `build/libs`; photographing it would
+  need a production client too. The NeoForge lines have no such limit — BOP loads straight
+  into `run/mods`.
 
 ## Fixed 2026-10-02: the config message ate ampersands
 

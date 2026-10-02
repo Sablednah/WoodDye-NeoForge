@@ -22,6 +22,7 @@ One build per Minecraft line, each on its own branch; the jar name says which it
 | 26.1 | NeoForge 26.1 | 25 | `mc26.1` | 10 |
 | 1.21.11 | NeoForge 21.11 | 21 | `main` | 10 |
 | 1.21.1 | NeoForge 21.1 | 21 | `mc1.21.1` | 9 — no pale oak, and no shelves to dye |
+| 1.20.1 | **Forge** 47 | 17 | `mc1.20.1` | 9 — as 1.21.1; no in-game config screen (Forge has none), so edit the TOML |
 
 "Woods" counts the vanilla woods that can be fireproofed. Any wood in the game can be dyed, including
 crimson and warped and woods from other mods, if you switch them on — see
@@ -120,8 +121,22 @@ to a single colour, and the chain is sorted on it:
 
 Vanilla textures are measured when the mod is built; a modded wood's is read from that mod's own jar
 when the server starts, which works on a dedicated server too. If a texture cannot be found the
-block's map colour stands in. `/wooddye woods` prints the resulting order, and `toneOverrides`
-replaces any measurement you disagree with.
+block's map colour stands in. `/wooddye woods` prints the resulting order, `/wooddye showcase`
+builds it so you can look at it, and `toneOverrides` replaces any measurement you disagree with.
+
+Both pictures below are `/wooddye showcase` on Minecraft 26.2 with Biomes O' Plenty installed and
+`moddedWoods` and `netherWoods` on — 26 woods, none of them listed anywhere in the mod. The front
+row is logs in bark order; behind it stripped logs, planks, stairs, slabs, fence gates and fences in
+plank order.
+
+`dyeOrder = RAINBOW`:
+
+![Every wood in rainbow order](docs/screenshots/showcase-rainbow.png)
+
+`dyeOrder = SHADE`, lightest to darkest — correct by lightness, and the reason coloured woods want
+the rainbow option:
+
+![Every wood from light to dark](docs/screenshots/showcase-shade.png)
 
 The dye→wood conversions are also available as **shapeless crafting recipes** (any wood block + dye)
 for every form above except logs — a log's bark and end-grain run in different colour orders, a
@@ -148,8 +163,9 @@ existence; it only ever enters via magma cream. (Non-wood parts, like the sticks
 ordinary — there is no fireproof stick.)
 
 An **axe strips fireproof logs and wood** just as it strips the vanilla ones, keeping both the
-fireproofing and the block's orientation. (Data-only on every line: the `neoforge:strippables` data
-map up to 26.2, and vanilla's own block transformers through `neoforge:transformables` from 26.3.)
+fireproofing and the block's orientation. (Data-only on the NeoForge lines: the
+`neoforge:strippables` data map up to 26.2, and vanilla's own block transformers through
+`neoforge:transformables` from 26.3. Forge 1.20.1 has no data maps, so that line does it in code.)
 
 Fireproof blocks also join the vanilla wood tags (`#minecraft:planks`, `#minecraft:wooden_doors`,
 `#minecraft:mineable/axe`, …), so they mine and build like the wood they copy — but never the
@@ -199,13 +215,16 @@ one fixed order can only look right on one of them. `logOrder` chooses how logs 
 - `/wooddye reload` — re-reads config (op / permission level `LEVEL_GAMEMASTERS`).
 - `/wooddye woods` — lists the woods in dye order, plank and bark, with each one's measured
   lightness and a note where a colour came from the config or a map colour instead (op).
+- `/wooddye showcase` — builds every dyeable wood side by side in dye order where you stand (26
+  woods need a 26 × 8 × 7 space; it replaces what is there), and replies with a `/tp` to the spot
+  that frames it (op).
 - Permission node `wooddye.candye` — may a player dye wood in-world (default: allow). Install a
   permissions manager (e.g. LuckPerms for NeoForge) to restrict it per group.
 
 ## Building from source
 
-Requires the JDK for the line you are building: 21 for 1.21.x, 25 for 26.x. Standard NeoForge
-ModDevGradle setup:
+Requires the JDK for the line you are building: 17 for 1.20.1, 21 for 1.21.x, 25 for 26.x. Standard
+ModDevGradle setup (its legacy-Forge flavour on 1.20.1):
 
 ```
 ./gradlew build             # jar in build/libs/wooddye-<version>+mc<minecraft>.jar
