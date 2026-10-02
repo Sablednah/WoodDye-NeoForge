@@ -333,13 +333,46 @@ with zipfile.ZipFile(MJAR) as z:
     # in-code map is deprecated and only a fallback), so a fireproof log is strippable purely by
     # naming it here — no event handler needed. Stripping keeps the fireproofing, and the data map
     # copies the log's axis across for us. Both pillar shapes strip: the log and the all-bark wood.
-    strippables = {}
+    #
+    # 26.3 made stripping data-driven in vanilla itself: data/minecraft/block_transformer/axe.json
+    # holds a rule per log, and NeoForge dropped neoforge:strippables for a neoforge:transformables
+    # data map that appends a rule to a transformer. Where the jar has that file, each fireproof
+    # log gets vanilla's own rule for its original, with the ids repointed — so whatever vanilla
+    # attaches to stripping (the sound, the tool damage) comes along.
+    AXE_TRANSFORMER = "data/minecraft/block_transformer/axe.json"
+    strip_pairs = []
     for wood in WOODS:
         for base, stripped in (("%s_log", "stripped_%s_log"), ("%s_wood", "stripped_%s_wood")):
             frm, to = vanilla_name(base, wood), vanilla_name(stripped, wood)
             if frm in fireproofable and to in fireproofable:
-                strippables[f"{MODID}:fireproof_{frm}"] = {"stripped_block": f"{MODID}:fireproof_{to}"}
-    write("data/neoforge/data_maps/block/strippables.json", {"values": strippables})
+                strip_pairs.append((frm, to))
+
+    if AXE_TRANSFORMER in present:
+        vanilla_rules = {}   # vanilla block -> (its rule, the transform entry the rule sits in)
+        for entry in json.loads(z.read(AXE_TRANSFORMER)):
+            for rule in entry["block_state_provider"].get("rules", []):
+                vanilla_rules[rule["if_true"].get("blocks")] = (rule, entry)
+        transformables = {}
+        for frm, to in strip_pairs:
+            rule, entry = vanilla_rules[f"minecraft:{frm}"]
+            if rule["then"]["source"]["id"] != f"minecraft:{to}":
+                raise SystemExit(f"{frm}: vanilla strips it to {rule['then']['source']['id']}, expected {to}")
+            transformables[f"{MODID}:fireproof_{frm}"] = {
+                "transformer": "minecraft:axe",
+                "transform_data": {
+                    **{k: v for k, v in entry.items() if k != "block_state_provider"},
+                    "block_state_provider": {
+                        **{k: v for k, v in entry["block_state_provider"].items() if k != "rules"},
+                        "rules": [remap_loot(rule, frm, f"fireproof_{frm}") | {
+                            "then": remap_loot(rule["then"], to, f"fireproof_{to}")}],
+                    },
+                },
+            }
+        write("data/neoforge/data_maps/block/transformables.json", {"values": transformables})
+    else:
+        write("data/neoforge/data_maps/block/strippables.json", {"values": {
+            f"{MODID}:fireproof_{frm}": {"stripped_block": f"{MODID}:fireproof_{to}"}
+            for frm, to in strip_pairs}})
 
     # Per-wood fireproof log tags, cloned from vanilla's, for the fireproof planks recipe.
     for wood in WOODS:
