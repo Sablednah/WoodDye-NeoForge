@@ -17,7 +17,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 /**
  * Builds every dyeable wood side by side, in dye order: the picture on the mod page, generated from
  * whatever woods this server actually has. One column per wood running east, and a flight of steps
- * rising to the south, each step a different form.
+ * rising to the north, each step a different form. It is meant to be seen from the south, looking
+ * north, because that is the direction from which east is on the right and the order reads left to
+ * right.
  *
  * <p>It reads the same lists dyeing does, so it is also the quickest way to <em>see</em> an order —
  * where a modded wood landed, or what RAINBOW looks like — rather than read it off
@@ -38,7 +40,10 @@ final class WoodShowcase {
 
     private WoodShowcase() {}
 
-    /** Build the showcase with its front-left corner at {@code origin}, replacing what is there. */
+    /**
+     * Build the showcase with its front-left corner (as the viewer sees it) at {@code origin},
+     * replacing what is there.
+     */
     static Result build(ServerLevel level, BlockPos origin) {
         List<Family> wood = WoodTransforms.woodOrder();
         List<Family> bark = WoodTransforms.barkOrder();
@@ -54,7 +59,7 @@ final class WoodShowcase {
                     if (y == step && family.block(form) != null) {
                         state = facingViewer(family.block(form).defaultBlockState());
                     }
-                    level.setBlockAndUpdate(origin.offset(column, y, step), state);
+                    level.setBlockAndUpdate(origin.offset(column, y, -step), state);
                 }
             }
         }
@@ -63,7 +68,7 @@ final class WoodShowcase {
         // (and stairs) need a second look once the whole row exists to join up with each other.
         for (int column = 0; column < wood.size(); column++) {
             for (int step = 0; step < STEPS.length; step++) {
-                BlockPos pos = origin.offset(column, step, step);
+                BlockPos pos = origin.offset(column, step, -step);
                 BlockState state = level.getBlockState(pos);
                 BlockState joined = Block.updateFromNeighbourShapes(state, level, pos);
                 if (joined != state) {
@@ -77,20 +82,21 @@ final class WoodShowcase {
     /** Stairs climb away from the viewer and gates stand across their view. */
     private static BlockState facingViewer(BlockState state) {
         return state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)
-                ? state.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH)
+                ? state.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
                 : state;
     }
 
     /**
-     * A {@code /tp} that frames the whole build: centred, far enough back for the widest row to fit
-     * a normal field of view, and high enough to look down the steps.
+     * A {@code /tp} that frames the whole build: centred, south of it and facing north, just far
+     * enough back for the front row to fill most of a default field of view, and high enough to
+     * look down the steps.
      */
     private static String viewpoint(BlockPos origin, int woods) {
-        double back = woods * 0.55 + 6;
+        double back = woods * 0.36 + 3;
         double x = origin.getX() + woods / 2.0;
         double y = origin.getY() + back * 0.35 + 4;
-        double z = origin.getZ() - back;
+        double z = origin.getZ() + 1 + back;
         double pitch = Math.toDegrees(Math.atan2(y - (origin.getY() + 3), back + 3));
-        return String.format(Locale.ROOT, "/tp @s %.1f %.1f %.1f 0 %.0f", x, y, z, pitch);
+        return String.format(Locale.ROOT, "/tp @s %.1f %.1f %.1f 180 %.0f", x, y, z, pitch);
     }
 }

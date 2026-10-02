@@ -69,6 +69,9 @@ legacyForge {
             // logs/latest.log.
             gameDirectory = file('runBuddy')
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            // The dev-only "Warnings while loading mods" page waits for a click, which an
+            // unattended client never gives it; every mod still declaring logoFile triggers it.
+            systemProperty 'neoforge.warnings.logofile.hide', 'true'
         }
 
         server {
