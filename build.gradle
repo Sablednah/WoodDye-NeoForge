@@ -56,6 +56,19 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
+        // A dev client that joins the dev server by itself, as the sibling mods have: no account
+        // needed (the dev server is online-mode=false). This is the client a script can drive
+        // -- on the Vivo test machine, to photograph /wooddye showcase.
+        clientBuddy {
+            client()
+            programArguments.addAll '--username', 'TestBuddy',
+                    '--quickPlayMultiplayer', "127.0.0.1:${project.dev_server_port}".toString()
+            // Own game dir: sharing run/ with a live dev server means both fight over
+            // logs/latest.log.
+            gameDirectory = file('runBuddy')
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
         server {
             server()
             programArgument '--nogui'
