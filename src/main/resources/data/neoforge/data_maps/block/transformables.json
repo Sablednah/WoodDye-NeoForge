@@ -1,0 +1,571 @@
+{
+  "values": {
+    "wooddye:fireproof_pale_oak_log": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_pale_oak_log"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_pale_oak_log",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_pale_oak_wood": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_pale_oak_wood"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_pale_oak_wood",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_cherry_log": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_cherry_log"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_cherry_log",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_cherry_wood": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_cherry_wood"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_cherry_wood",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_birch_log": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_birch_log"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_birch_log",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_birch_wood": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_birch_wood"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_birch_wood",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_bamboo_block": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_bamboo_block"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_bamboo_block",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_poplar_log": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_poplar_log"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_poplar_log",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_poplar_wood": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_poplar_wood"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_poplar_wood",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_oak_log": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_oak_log"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_oak_log",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_oak_wood": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_oak_wood"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_oak_wood",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_jungle_log": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_jungle_log"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_jungle_log",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_jungle_wood": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_jungle_wood"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_jungle_wood",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_acacia_log": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_acacia_log"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_acacia_log",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_acacia_wood": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_acacia_wood"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_acacia_wood",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_spruce_log": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_spruce_log"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_spruce_log",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_spruce_wood": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_spruce_wood"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_spruce_wood",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_mangrove_log": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_mangrove_log"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_mangrove_log",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_mangrove_wood": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_mangrove_wood"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_mangrove_wood",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_dark_oak_log": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_dark_oak_log"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_dark_oak_log",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "wooddye:fireproof_dark_oak_wood": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "item_damage_per_use": 1,
+        "sound": "minecraft:item.axe.strip",
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "wooddye:fireproof_dark_oak_wood"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "wooddye:fireproof_stripped_dark_oak_wood",
+                  "properties": {
+                    "axis": "y"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

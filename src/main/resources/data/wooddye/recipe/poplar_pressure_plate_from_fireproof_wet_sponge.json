@@ -1,0 +1,18 @@
+{
+  "type": "wooddye:sponge_restore",
+  "category": "misc",
+  "group": "wooddye_restoring_pressure_plate",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": "wooddye:fireproof_poplar_pressure_plate",
+    "X": "minecraft:wet_sponge"
+  },
+  "result": {
+    "count": 8,
+    "id": "minecraft:poplar_pressure_plate"
+  }
+}

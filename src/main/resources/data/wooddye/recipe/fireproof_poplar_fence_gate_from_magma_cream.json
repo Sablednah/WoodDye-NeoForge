@@ -1,0 +1,18 @@
+{
+  "type": "wooddye:fireproofing",
+  "category": "misc",
+  "group": "wooddye_fireproofing_fence_gate",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": "minecraft:poplar_fence_gate",
+    "X": "minecraft:magma_cream"
+  },
+  "result": {
+    "count": 8,
+    "id": "wooddye:fireproof_poplar_fence_gate"
+  }
+}

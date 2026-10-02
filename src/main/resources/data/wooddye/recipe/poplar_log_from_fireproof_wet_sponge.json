@@ -1,0 +1,18 @@
+{
+  "type": "wooddye:sponge_restore",
+  "category": "misc",
+  "group": "wooddye_restoring_log",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": "wooddye:fireproof_poplar_log",
+    "X": "minecraft:wet_sponge"
+  },
+  "result": {
+    "count": 8,
+    "id": "minecraft:poplar_log"
+  }
+}

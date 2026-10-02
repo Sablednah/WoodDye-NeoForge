@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Prediction;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -25,6 +26,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoorBlock;
@@ -118,7 +120,8 @@ public final class WoodDyeInteractions {
         if (WoodDyeConfig.USE_ITEMS.get() && !player.getAbilities().instabuild) {
             spend(player, event.getHand(), held, kind);
         }
-        player.swing(event.getHand());
+        // As before 26.3: everyone else sees the arm swing; the player's own client is not told.
+        player.swing(event.getHand(), SwingAnimation.DEFAULT, false);
         event.setCanceled(true);
 
         feedback(level, player, pos, kind);
@@ -144,7 +147,7 @@ public final class WoodDyeInteractions {
         if (held.isEmpty()) {
             player.setItemInHand(hand, dried); // the hand is free now — put it straight back
         } else if (!player.getInventory().add(dried)) {
-            player.drop(dried, false); // holding more sponges and no room: hand it to the world
+            player.drop(dried, false, Prediction.SERVER_ONLY); // holding more sponges and no room: hand it to the world
         }
     }
 

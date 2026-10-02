@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "fireproof_wooden_pressure_plate",
+  "key": {
+    "#": "wooddye:fireproof_poplar_planks"
+  },
+  "pattern": [
+    "##"
+  ],
+  "result": {
+    "id": "wooddye:fireproof_poplar_pressure_plate"
+  }
+}

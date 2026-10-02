@@ -1,0 +1,18 @@
+{
+  "type": "wooddye:fireproofing",
+  "category": "misc",
+  "group": "wooddye_fireproofing_planks",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": "minecraft:poplar_planks",
+    "X": "minecraft:magma_cream"
+  },
+  "result": {
+    "count": 8,
+    "id": "wooddye:fireproof_poplar_planks"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "group": "fireproof_wooden_button",
+  "ingredients": [
+    "wooddye:fireproof_poplar_planks"
+  ],
+  "result": {
+    "id": "wooddye:fireproof_poplar_button"
+  }
+}

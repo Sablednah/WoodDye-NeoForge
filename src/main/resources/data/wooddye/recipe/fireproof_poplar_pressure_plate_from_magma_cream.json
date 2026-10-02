@@ -1,0 +1,18 @@
+{
+  "type": "wooddye:fireproofing",
+  "category": "misc",
+  "group": "wooddye_fireproofing_pressure_plate",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": "minecraft:poplar_pressure_plate",
+    "X": "minecraft:magma_cream"
+  },
+  "result": {
+    "count": 8,
+    "id": "wooddye:fireproof_poplar_pressure_plate"
+  }
+}

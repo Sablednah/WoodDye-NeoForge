@@ -1,0 +1,18 @@
+{
+  "type": "wooddye:sponge_restore",
+  "category": "misc",
+  "group": "wooddye_restoring_fence_gate",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": "wooddye:fireproof_poplar_fence_gate",
+    "X": "minecraft:wet_sponge"
+  },
+  "result": {
+    "count": 8,
+    "id": "minecraft:poplar_fence_gate"
+  }
+}

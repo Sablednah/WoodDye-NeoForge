@@ -1,0 +1,18 @@
+{
+  "type": "wooddye:sponge_restore",
+  "category": "misc",
+  "group": "wooddye_restoring_slab",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": "wooddye:fireproof_poplar_slab",
+    "X": "minecraft:wet_sponge"
+  },
+  "result": {
+    "count": 8,
+    "id": "minecraft:poplar_slab"
+  }
+}
