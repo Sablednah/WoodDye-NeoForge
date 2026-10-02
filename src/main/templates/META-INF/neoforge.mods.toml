@@ -13,6 +13,10 @@ description='''
 ${mod_description}
 '''
 displayURL="https://github.com/Sablednah/WoodDye-NeoForge"
+# The mod list changed shape in 26.2: iconFile is the small square beside the name there, and
+# without one ours would be the only row with no icon. Older loaders ignore the key and keep
+# using logoFile. (There is no wide banner artwork yet, so no bannerFile.)
+iconFile="wooddye.png"
 logoFile="wooddye.png"
 logoBlur=false
 
