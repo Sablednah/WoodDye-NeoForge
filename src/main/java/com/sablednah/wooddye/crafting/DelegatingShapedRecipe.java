@@ -2,19 +2,18 @@ package com.sablednah.wooddye.crafting;
 
 import java.util.List;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.PlacementInfo;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
@@ -28,25 +27,28 @@ import net.minecraft.world.level.Level;
  * so the recipe book and JEI treat these as ordinary crafting recipes.
  *
  * <p>Subclasses override just the method they change, plus {@link #getSerializer()}.
+ *
+ * <p>Delegating rather than subclassing {@link ShapedRecipe}: its {@code getSerializer()} is typed to
+ * itself, so a subclass could not return its own serializer.
  */
 public abstract class DelegatingShapedRecipe implements CraftingRecipe {
 
-    // Package-private, not private: the nested Serializer reads them through the type variable T,
-    // which private access does not reach. Vanilla's ShapedRecipe scopes its fields the same way.
-    final String group;
-    final CraftingBookCategory category;
+    // Package-private, not private: the serializer reads them through the type variable T, which
+    // private access does not reach.
+    final Recipe.CommonInfo commonInfo;
+    final CraftingRecipe.CraftingBookInfo bookInfo;
     final ShapedRecipePattern pattern;
-    final ItemStack result;
+    final ItemStackTemplate result;
 
     private final ShapedRecipe delegate;
 
-    protected DelegatingShapedRecipe(String group, CraftingBookCategory category,
-            ShapedRecipePattern pattern, ItemStack result) {
-        this.group = group;
-        this.category = category;
+    protected DelegatingShapedRecipe(Recipe.CommonInfo commonInfo, CraftingRecipe.CraftingBookInfo bookInfo,
+            ShapedRecipePattern pattern, ItemStackTemplate result) {
+        this.commonInfo = commonInfo;
+        this.bookInfo = bookInfo;
         this.pattern = pattern;
         this.result = result;
-        this.delegate = new ShapedRecipe(group, category, pattern, result);
+        this.delegate = new ShapedRecipe(commonInfo, bookInfo, pattern, result);
     }
 
     @Override
@@ -55,8 +57,8 @@ public abstract class DelegatingShapedRecipe implements CraftingRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        return delegate.assemble(input, registries);
+    public ItemStack assemble(CraftingInput input) {
+        return delegate.assemble(input);
     }
 
     @Override
@@ -70,58 +72,47 @@ public abstract class DelegatingShapedRecipe implements CraftingRecipe {
     }
 
     @Override
+    public boolean showNotification() {
+        return commonInfo.showNotification();
+    }
+
+    @Override
     public String group() {
-        return group;
+        return bookInfo.group();
     }
 
     @Override
     public CraftingBookCategory category() {
-        return category;
+        return bookInfo.category();
+    }
+
+    /** Builds a recipe from the four parts every shaped recipe carries. */
+    @FunctionalInterface
+    public interface Factory<T extends DelegatingShapedRecipe> {
+        T create(Recipe.CommonInfo commonInfo, CraftingRecipe.CraftingBookInfo bookInfo,
+                ShapedRecipePattern pattern, ItemStackTemplate result);
     }
 
     /**
      * Serializer for any subclass — the JSON is exactly a vanilla shaped recipe's, so only the
-     * {@code type} field distinguishes them.
+     * {@code type} field distinguishes them. Mirrors {@link ShapedRecipe#MAP_CODEC} field for field.
      */
-    public static final class Serializer<T extends DelegatingShapedRecipe> implements RecipeSerializer<T> {
+    public static <T extends DelegatingShapedRecipe> RecipeSerializer<T> serializer(Factory<T> factory) {
+        MapCodec<T> codec = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                Recipe.CommonInfo.MAP_CODEC.forGetter(recipe -> recipe.commonInfo),
+                CraftingRecipe.CraftingBookInfo.MAP_CODEC.forGetter(recipe -> recipe.bookInfo),
+                // Reads the "pattern" and "key" fields.
+                ShapedRecipePattern.MAP_CODEC.forGetter(recipe -> recipe.pattern),
+                ItemStackTemplate.CODEC.fieldOf("result").forGetter(recipe -> recipe.result))
+                .apply(instance, factory::create));
 
-        /** Builds a recipe from the four fields every shaped recipe carries. */
-        @FunctionalInterface
-        public interface Factory<T extends DelegatingShapedRecipe> {
-            T create(String group, CraftingBookCategory category, ShapedRecipePattern pattern, ItemStack result);
-        }
+        StreamCodec<RegistryFriendlyByteBuf, T> streamCodec = StreamCodec.composite(
+                Recipe.CommonInfo.STREAM_CODEC, recipe -> recipe.commonInfo,
+                CraftingRecipe.CraftingBookInfo.STREAM_CODEC, recipe -> recipe.bookInfo,
+                ShapedRecipePattern.STREAM_CODEC, recipe -> recipe.pattern,
+                ItemStackTemplate.STREAM_CODEC, recipe -> recipe.result,
+                factory::create);
 
-        private final MapCodec<T> codec;
-        private final StreamCodec<RegistryFriendlyByteBuf, T> streamCodec;
-
-        public Serializer(Factory<T> factory) {
-            this.codec = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
-                    CraftingBookCategory.CODEC.fieldOf("category")
-                            .orElse(CraftingBookCategory.MISC).forGetter(recipe -> recipe.category),
-                    // Reads the "pattern" and "key" fields.
-                    ShapedRecipePattern.MAP_CODEC.forGetter(recipe -> recipe.pattern),
-                    ItemStack.STRICT_CODEC.fieldOf("result").forGetter(recipe -> recipe.result))
-                    .apply(instance, factory::create));
-
-            this.streamCodec = StreamCodec.composite(
-                    ByteBufCodecs.STRING_UTF8, recipe -> recipe.group,
-                    CraftingBookCategory.STREAM_CODEC, recipe -> recipe.category,
-                    ShapedRecipePattern.STREAM_CODEC, recipe -> recipe.pattern,
-                    ItemStack.STREAM_CODEC, recipe -> recipe.result,
-                    factory::create);
-        }
-
-        @Override
-        public MapCodec<T> codec() {
-            return codec;
-        }
-
-        /** Deprecated upstream, but still abstract on the interface — vanilla's serializers implement it too. */
-        @Deprecated
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, T> streamCodec() {
-            return streamCodec;
-        }
+        return new RecipeSerializer<>(codec, streamCodec);
     }
 }

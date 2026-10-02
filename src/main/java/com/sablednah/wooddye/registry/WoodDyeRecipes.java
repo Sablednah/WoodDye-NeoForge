@@ -24,12 +24,12 @@ public final class WoodDyeRecipes {
     /** {@code wooddye:sponge_restore} — shaped, but the sponge survives the craft. */
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SpongeRestoreRecipe>>
             SPONGE_RESTORE = SERIALIZERS.register("sponge_restore",
-                    () -> new DelegatingShapedRecipe.Serializer<>(SpongeRestoreRecipe::new));
+                    () -> DelegatingShapedRecipe.serializer(SpongeRestoreRecipe::new));
 
     /** {@code wooddye:fireproofing} — shaped, but only while the {@code fireProof} config is on. */
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<FireproofingRecipe>>
             FIREPROOFING = SERIALIZERS.register("fireproofing",
-                    () -> new DelegatingShapedRecipe.Serializer<>(FireproofingRecipe::new));
+                    () -> DelegatingShapedRecipe.serializer(FireproofingRecipe::new));
 
     private WoodDyeRecipes() {}
 

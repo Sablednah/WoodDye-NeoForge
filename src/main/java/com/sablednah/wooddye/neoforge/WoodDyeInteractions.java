@@ -229,7 +229,7 @@ public final class WoodDyeInteractions {
             if (message != null && !message.isEmpty()) {
                 // The name goes in after the colour codes, so a player's name cannot inject one.
                 String text = colourCodes(message).replace("%P", player.getName().getString());
-                player.displayClientMessage(Component.literal(text), true);
+                player.sendOverlayMessage(Component.literal(text));
             }
         }
     }
