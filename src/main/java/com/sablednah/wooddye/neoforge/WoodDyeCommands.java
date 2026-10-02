@@ -7,14 +7,18 @@ import java.util.stream.Collectors;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.sablednah.wooddye.WoodDyeConfig;
+import com.sablednah.wooddye.fireproof.Fireproofing;
 import com.sablednah.wooddye.neoforge.WoodFamilies.Family;
 import com.sablednah.wooddye.neoforge.WoodFamilies.Measured;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 
 /**
  * The {@code /wooddye} command tree.
@@ -42,7 +46,14 @@ public final class WoodDyeCommands {
                         .executes(WoodDyeCommands::woods))
                 .then(Commands.literal("showcase")
                         .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                        .executes(WoodDyeCommands::showcase)));
+                        .executes(WoodDyeCommands::showcase))
+                .then(Commands.literal("fireproof")
+                        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .executes(WoodDyeCommands::fireproofCount)
+                        .then(Commands.argument("pos", BlockPosArgument.blockPos())
+                                .executes(ctx -> fireproof(ctx, null))
+                                .then(Commands.literal("set").executes(ctx -> fireproof(ctx, true)))
+                                .then(Commands.literal("clear").executes(ctx -> fireproof(ctx, false))))));
     }
 
     private static int reload(CommandContext<CommandSourceStack> ctx) {
@@ -68,6 +79,33 @@ public final class WoodDyeCommands {
         source.sendSuccess(() -> Component.literal(
                 "WoodDye: built a showcase of " + built.woods() + " woods. See it all from: " + built.viewpoint()), true);
         return built.woods();
+    }
+
+    private static int fireproofCount(CommandContext<CommandSourceStack> ctx) {
+        int count = Fireproofing.count(ctx.getSource().getLevel());
+        ctx.getSource().sendSuccess(() -> Component.literal("WoodDye: " + count + " fireproof positions in this dimension."), false);
+        return count;
+    }
+
+    /** Report, set or clear the fireproofing of one position: an admin tool, and how tests ask. */
+    private static int fireproof(CommandContext<CommandSourceStack> ctx, Boolean set) throws CommandSyntaxException {
+        ServerLevel level = ctx.getSource().getLevel();
+        BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, "pos");
+        if (set != null) {
+            if (set && !Fireproofing.canMark(level.getBlockState(pos).getBlock())) {
+                ctx.getSource().sendFailure(Component.literal("WoodDye: " + pos.toShortString() + " is not wood that can be fireproofed."));
+                return 0;
+            }
+            if (set) {
+                Fireproofing.mark(level, pos);
+            } else {
+                Fireproofing.unmark(level, pos);
+            }
+        }
+        boolean fireproof = Fireproofing.isFireproof(level, pos);
+        ctx.getSource().sendSuccess(() -> Component.literal(
+                "WoodDye: " + pos.toShortString() + " is " + (fireproof ? "fireproof" : "not fireproof") + "."), set != null);
+        return fireproof ? 1 : 0;
     }
 
     /** One line per chain: each wood with its lightness, and a marker when it was not measured. */

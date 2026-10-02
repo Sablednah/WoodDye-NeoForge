@@ -3,6 +3,7 @@ package com.sablednah.wooddye.neoforge;
 import com.sablednah.wooddye.WoodDye;
 import com.sablednah.wooddye.WoodDyeConfig;
 import com.sablednah.wooddye.core.LogOrder;
+import com.sablednah.wooddye.fireproof.Fireproofing;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -86,7 +87,9 @@ public final class WoodDyeInteractions {
             return;
         }
 
-        Block target = null;
+        Block target = null;   // the block to swap in, for a dye or a legacy restore
+        boolean mark = false;  // or: fireproof the block where it stands, by marking its position
+        boolean unmark = false;
         Kind kind = null;
         WoodTransforms.Shift shift = dyeShift(held.getItem());
         if (shift != null) {
@@ -96,15 +99,18 @@ public final class WoodDyeInteractions {
             target = WoodTransforms.shade(block, shift, bark);
             kind = Kind.DYE;
         } else if (held.is(Items.MAGMA_CREAM) && WoodDyeConfig.FIREPROOF.get()) {
-            target = WoodTransforms.toFireproof(block);
+            // Fireproofing is a mark on the position, so any wood takes it, a mod's included.
+            mark = Fireproofing.canMark(block);
             kind = Kind.FIREPROOF;
         } else if (held.is(Items.WET_SPONGE)) {
-            // A wet sponge soaks the magma cream back out — revert fireproof wood to plain wood.
-            // Always allowed (even if fireProof creation is disabled) so fireproofing is reversible.
+            // A wet sponge soaks the magma cream back out. Always allowed (even if fireProof
+            // creation is disabled) so fireproofing is reversible. Legacy fireproof_* blocks
+            // become their vanilla block; marked wood simply loses its mark.
             target = WoodTransforms.fromFireproof(block);
+            unmark = target == null && Fireproofing.canMark(block);
             kind = Kind.RESTORE;
         }
-        if (target == null) {
+        if (target == null && !mark && !unmark) {
             return; // not a relevant item/block combination
         }
 
@@ -113,7 +119,16 @@ public final class WoodDyeInteractions {
             return;
         }
 
-        if (!replace(level, pos, state, target)) {
+        if (level instanceof ServerLevel serverLevel && (mark || unmark)) {
+            boolean changed = mark ? Fireproofing.mark(serverLevel, pos) : Fireproofing.unmark(serverLevel, pos);
+            if (!changed) {
+                if (mark) {
+                    player.displayClientMessage(Component.translatable("wooddye.already_fireproof"), true);
+                    event.setCanceled(true);
+                }
+                return; // nothing to undo on a block that was never fireproof
+            }
+        } else if (!replace(level, pos, state, target)) {
             return; // the block was not in a state we can safely convert
         }
 
@@ -127,7 +142,7 @@ public final class WoodDyeInteractions {
         feedback(level, player, pos, kind);
 
         if (WoodDyeConfig.DEBUG.get()) {
-            WoodDye.LOGGER.info("WoodDye: {} -> {} at {}", block, target, pos);
+            WoodDye.LOGGER.info("WoodDye: {} -> {} at {}", block, mark ? "fireproof" : unmark ? "plain" : target, pos);
         }
     }
 

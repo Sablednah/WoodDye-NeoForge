@@ -207,6 +207,8 @@ CONFIG_LANG = {
     "wooddye.configuration.showMessage": "Show Message",
     "wooddye.configuration.message": "Message Text",
     "wooddye.configuration.debugMode": "Debug Logging",
+    "wooddye.already_fireproof": "Already fireproof",
+    "item.wooddye.fireproof_name": "%s (Fireproof)",
 }
 
 lang = {"itemGroup.wooddye": "WoodDye ReForged", **CONFIG_LANG}
@@ -534,22 +536,22 @@ def tag_ingredient(tag_id):
     return {"tag": tag_id} if OBJECT_INGREDIENTS else f"#{tag_id}"
 
 
+# Fireproofing on the bench is two recipes for every wood at once (crafting/FireproofStampRecipe):
+# eight of a wood item around a magma cream gives eight fireproof ones, with the fireproofing a
+# component on the same item rather than a block of its own; eight fireproof ones around a wet
+# sponge gives them back plain, sponge kept. Both are custom types, so the JSON is just the type.
+write(f"data/{MODID}/{RECIPE_DIR}/fireproof_stamp.json", {"type": f"{MODID}:fireproof_stamp", "category": "misc"})
+write(f"data/{MODID}/{RECIPE_DIR}/fireproof_unstamp.json", {"type": f"{MODID}:fireproof_unstamp", "category": "misc"})
+
+# The legacy fireproof_* blocks from 2.x still restore to plain wood on the bench, so nobody is
+# left holding blocks they cannot convert. (Their magma-cream recipes are gone: they would match
+# the very grid the generic recipe takes.)
 for wood in WOODS:
     for template in FORMS:
         vanilla = vanilla_name(template, wood)
         if vanilla not in fireproofable:
             continue
         form = template.replace("%s_", "")
-        write(f"data/{MODID}/{RECIPE_DIR}/fireproof_{vanilla}_from_magma_cream.json", {
-            "type": f"{MODID}:fireproofing",
-            "category": "misc",
-            "group": f"wooddye_fireproofing_{form}",
-            "pattern": EIGHT_AROUND_ONE,
-            "key": {"#": item_ingredient(f"minecraft:{vanilla}"),
-                    "X": item_ingredient("minecraft:magma_cream")},
-            "result": {"count": 8, RESULT_ITEM: f"{MODID}:fireproof_{vanilla}"},
-        })
-        # ...and back out again. The sponge is handed back, so this costs nothing but the wood.
         write(f"data/{MODID}/{RECIPE_DIR}/{vanilla}_from_fireproof_wet_sponge.json", {
             "type": f"{MODID}:sponge_restore",
             "category": "misc",
