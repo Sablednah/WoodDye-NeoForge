@@ -3,8 +3,12 @@
   "category": "redstone",
   "group": "fireproof_wooden_fence_gate",
   "key": {
-    "#": "minecraft:stick",
-    "W": "wooddye:fireproof_mangrove_planks"
+    "#": {
+      "item": "minecraft:stick"
+    },
+    "W": {
+      "item": "wooddye:fireproof_mangrove_planks"
+    }
   },
   "pattern": [
     "#W#",

@@ -3,8 +3,12 @@
   "category": "misc",
   "group": "wooddye_fireproof_planks",
   "ingredients": [
-    "#wooddye:fireproof_planks",
-    "minecraft:red_dye"
+    {
+      "tag": "wooddye:fireproof_planks"
+    },
+    {
+      "item": "minecraft:red_dye"
+    }
   ],
   "result": {
     "count": 1,

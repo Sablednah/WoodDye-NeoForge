@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:dark_oak_fence_gate",
-    "X": "minecraft:magma_cream"
+    "#": {
+      "item": "minecraft:dark_oak_fence_gate"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
   },
   "result": {
     "count": 8,

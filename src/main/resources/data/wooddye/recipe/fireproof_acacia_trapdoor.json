@@ -3,7 +3,9 @@
   "category": "redstone",
   "group": "fireproof_wooden_trapdoor",
   "key": {
-    "#": "wooddye:fireproof_acacia_planks"
+    "#": {
+      "item": "wooddye:fireproof_acacia_planks"
+    }
   },
   "pattern": [
     "###",

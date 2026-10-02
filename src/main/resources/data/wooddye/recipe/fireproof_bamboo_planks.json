@@ -3,7 +3,9 @@
   "category": "building",
   "group": "fireproof_planks",
   "ingredients": [
-    "#wooddye:fireproof_bamboo_blocks"
+    {
+      "tag": "wooddye:fireproof_bamboo_blocks"
+    }
   ],
   "result": {
     "count": 2,

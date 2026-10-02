@@ -1,12 +1,11 @@
 package com.sablednah.wooddye.crafting;
 
-import java.util.List;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -14,11 +13,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.PlacementInfo;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
-import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.level.Level;
 
 /**
@@ -60,17 +58,28 @@ public abstract class DelegatingShapedRecipe implements CraftingRecipe {
     }
 
     @Override
-    public PlacementInfo placementInfo() {
-        return delegate.placementInfo();
+    public boolean canCraftInDimensions(int width, int height) {
+        return delegate.canCraftInDimensions(width, height);
     }
 
     @Override
-    public List<RecipeDisplay> display() {
-        return delegate.display();
+    public ItemStack getResultItem(HolderLookup.Provider registries) {
+        return delegate.getResultItem(registries);
     }
 
     @Override
-    public String group() {
+    public NonNullList<Ingredient> getIngredients() {
+        return delegate.getIngredients();
+    }
+
+    /** A shaped pattern has empty cells; the default would call every such recipe incomplete. */
+    @Override
+    public boolean isIncomplete() {
+        return delegate.isIncomplete();
+    }
+
+    @Override
+    public String getGroup() {
         return group;
     }
 
@@ -117,8 +126,6 @@ public abstract class DelegatingShapedRecipe implements CraftingRecipe {
             return codec;
         }
 
-        /** Deprecated upstream, but still abstract on the interface — vanilla's serializers implement it too. */
-        @Deprecated
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, T> streamCodec() {
             return streamCodec;

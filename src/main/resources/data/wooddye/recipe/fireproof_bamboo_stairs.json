@@ -3,7 +3,9 @@
   "category": "building",
   "group": "fireproof_wooden_stairs",
   "key": {
-    "#": "wooddye:fireproof_bamboo_planks"
+    "#": {
+      "item": "wooddye:fireproof_bamboo_planks"
+    }
   },
   "pattern": [
     "#  ",

@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:dark_oak_pressure_plate",
-    "X": "minecraft:magma_cream"
+    "#": {
+      "item": "minecraft:dark_oak_pressure_plate"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
   },
   "result": {
     "count": 8,

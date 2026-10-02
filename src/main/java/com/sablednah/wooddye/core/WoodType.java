@@ -1,7 +1,7 @@
 package com.sablednah.wooddye.core;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -212,7 +212,7 @@ public enum WoodType {
         if (name == null) {
             return null;
         }
-        Block block = BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace(name));
+        Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.withDefaultNamespace(name));
         return block == Blocks.AIR ? null : block;
     }
 }

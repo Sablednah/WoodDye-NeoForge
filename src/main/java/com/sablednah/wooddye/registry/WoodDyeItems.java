@@ -33,10 +33,10 @@ public final class WoodDyeItems {
                 // clears the space above before the door block fills it in.
                 ALL.add(ITEMS.registerItem(name,
                         props -> new DoubleHighBlockItem(entry.block().get(), props),
-                        () -> new Item.Properties().fireResistant().useBlockDescriptionPrefix()));
+                        new Item.Properties().fireResistant()));
             } else {
                 ALL.add(ITEMS.registerSimpleBlockItem(name, entry.block(),
-                        () -> new Item.Properties().fireResistant()));
+                        new Item.Properties().fireResistant()));
             }
         }
     }

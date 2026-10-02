@@ -3,7 +3,9 @@
   "category": "building",
   "group": "fireproof_planks",
   "ingredients": [
-    "#wooddye:fireproof_dark_oak_logs"
+    {
+      "tag": "wooddye:fireproof_dark_oak_logs"
+    }
   ],
   "result": {
     "count": 4,

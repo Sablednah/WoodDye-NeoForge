@@ -3,8 +3,12 @@
   "category": "misc",
   "group": "wooddye_fireproof_door",
   "ingredients": [
-    "#wooddye:fireproof_wooden_doors",
-    "minecraft:yellow_dye"
+    {
+      "tag": "wooddye:fireproof_wooden_doors"
+    },
+    {
+      "item": "minecraft:yellow_dye"
+    }
   ],
   "result": {
     "count": 1,

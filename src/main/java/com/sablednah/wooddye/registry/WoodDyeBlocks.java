@@ -60,7 +60,7 @@ public final class WoodDyeBlocks {
                 DeferredBlock<? extends Block> holder = BLOCKS.registerBlock(
                         "fireproof_" + vanillaPath(vanilla),
                         factory(wood, form),
-                        () -> BlockBehaviour.Properties.ofFullCopy(vanilla));
+                        BlockBehaviour.Properties.ofFullCopy(vanilla));
                 byWood.put(wood, holder);
                 ALL.add(new Entry(form, wood, holder));
             }

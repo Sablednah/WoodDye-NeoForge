@@ -3,7 +3,9 @@
   "category": "redstone",
   "group": "fireproof_wooden_button",
   "ingredients": [
-    "wooddye:fireproof_spruce_planks"
+    {
+      "item": "wooddye:fireproof_spruce_planks"
+    }
   ],
   "result": {
     "count": 1,

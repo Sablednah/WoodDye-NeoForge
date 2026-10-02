@@ -4,11 +4,17 @@
   "group": "wooddye_door",
   "ingredients": [
     {
-      "neoforge:ingredient_type": "neoforge:difference",
-      "base": "#minecraft:wooden_doors",
-      "subtracted": "#wooddye:fireproof_wooden_doors"
+      "type": "neoforge:difference",
+      "base": {
+        "tag": "minecraft:wooden_doors"
+      },
+      "subtracted": {
+        "tag": "wooddye:fireproof_wooden_doors"
+      }
     },
-    "minecraft:orange_dye"
+    {
+      "item": "minecraft:orange_dye"
+    }
   ],
   "result": {
     "count": 1,

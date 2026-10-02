@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:cherry_log",
-    "X": "minecraft:magma_cream"
+    "#": {
+      "item": "minecraft:cherry_log"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
   },
   "result": {
     "count": 8,

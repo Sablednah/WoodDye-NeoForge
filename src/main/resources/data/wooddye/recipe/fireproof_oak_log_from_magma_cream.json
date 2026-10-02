@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:oak_log",
-    "X": "minecraft:magma_cream"
+    "#": {
+      "item": "minecraft:oak_log"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
   },
   "result": {
     "count": 8,

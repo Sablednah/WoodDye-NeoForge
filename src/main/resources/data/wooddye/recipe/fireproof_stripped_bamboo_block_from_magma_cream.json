@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:stripped_bamboo_block",
-    "X": "minecraft:magma_cream"
+    "#": {
+      "item": "minecraft:stripped_bamboo_block"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
   },
   "result": {
     "count": 8,

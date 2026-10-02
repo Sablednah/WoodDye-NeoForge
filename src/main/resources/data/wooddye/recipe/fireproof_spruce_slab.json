@@ -3,7 +3,9 @@
   "category": "building",
   "group": "fireproof_wooden_slab",
   "key": {
-    "#": "wooddye:fireproof_spruce_planks"
+    "#": {
+      "item": "wooddye:fireproof_spruce_planks"
+    }
   },
   "pattern": [
     "###"

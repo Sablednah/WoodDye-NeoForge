@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:mangrove_log",
-    "X": "minecraft:magma_cream"
+    "#": {
+      "item": "minecraft:mangrove_log"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
   },
   "result": {
     "count": 8,

@@ -3,7 +3,9 @@
   "category": "redstone",
   "group": "fireproof_wooden_trapdoor",
   "key": {
-    "#": "wooddye:fireproof_birch_planks"
+    "#": {
+      "item": "wooddye:fireproof_birch_planks"
+    }
   },
   "pattern": [
     "###",

@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "wooddye:fireproof_oak_stairs",
-    "X": "minecraft:wet_sponge"
+    "#": {
+      "item": "wooddye:fireproof_oak_stairs"
+    },
+    "X": {
+      "item": "minecraft:wet_sponge"
+    }
   },
   "result": {
     "count": 8,

@@ -8,7 +8,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 
@@ -30,7 +29,7 @@ public class SpongeRestoreRecipe extends DelegatingShapedRecipe {
 
     @Override
     public NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
-        NonNullList<ItemStack> remaining = CraftingRecipe.defaultCraftingReminder(input);
+        NonNullList<ItemStack> remaining = super.getRemainingItems(input);
         for (int slot = 0; slot < input.size(); slot++) {
             if (input.getItem(slot).is(Items.WET_SPONGE)) {
                 remaining.set(slot, new ItemStack(

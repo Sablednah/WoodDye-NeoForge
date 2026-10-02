@@ -3,7 +3,9 @@
   "category": "building",
   "group": "fireproof_bark",
   "key": {
-    "#": "wooddye:fireproof_stripped_jungle_log"
+    "#": {
+      "item": "wooddye:fireproof_stripped_jungle_log"
+    }
   },
   "pattern": [
     "##",

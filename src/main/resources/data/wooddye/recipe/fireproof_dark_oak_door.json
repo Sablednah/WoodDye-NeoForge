@@ -3,7 +3,9 @@
   "category": "redstone",
   "group": "fireproof_wooden_door",
   "key": {
-    "#": "wooddye:fireproof_dark_oak_planks"
+    "#": {
+      "item": "wooddye:fireproof_dark_oak_planks"
+    }
   },
   "pattern": [
     "##",

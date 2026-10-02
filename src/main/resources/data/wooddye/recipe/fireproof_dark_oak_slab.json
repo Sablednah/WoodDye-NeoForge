@@ -3,7 +3,9 @@
   "category": "building",
   "group": "fireproof_wooden_slab",
   "key": {
-    "#": "wooddye:fireproof_dark_oak_planks"
+    "#": {
+      "item": "wooddye:fireproof_dark_oak_planks"
+    }
   },
   "pattern": [
     "###"

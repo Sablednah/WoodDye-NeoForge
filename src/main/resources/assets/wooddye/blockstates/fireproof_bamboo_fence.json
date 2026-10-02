@@ -7,7 +7,8 @@
     },
     {
       "apply": {
-        "model": "minecraft:block/bamboo_fence_side_north"
+        "model": "minecraft:block/bamboo_fence_side_north",
+        "uvlock": false
       },
       "when": {
         "north": "true"
@@ -15,7 +16,8 @@
     },
     {
       "apply": {
-        "model": "minecraft:block/bamboo_fence_side_east"
+        "model": "minecraft:block/bamboo_fence_side_east",
+        "uvlock": false
       },
       "when": {
         "east": "true"
@@ -23,7 +25,8 @@
     },
     {
       "apply": {
-        "model": "minecraft:block/bamboo_fence_side_south"
+        "model": "minecraft:block/bamboo_fence_side_south",
+        "uvlock": false
       },
       "when": {
         "south": "true"
@@ -31,7 +34,8 @@
     },
     {
       "apply": {
-        "model": "minecraft:block/bamboo_fence_side_west"
+        "model": "minecraft:block/bamboo_fence_side_west",
+        "uvlock": false
       },
       "when": {
         "west": "true"

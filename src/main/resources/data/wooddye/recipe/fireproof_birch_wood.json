@@ -3,7 +3,9 @@
   "category": "building",
   "group": "fireproof_bark",
   "key": {
-    "#": "wooddye:fireproof_birch_log"
+    "#": {
+      "item": "wooddye:fireproof_birch_log"
+    }
   },
   "pattern": [
     "##",

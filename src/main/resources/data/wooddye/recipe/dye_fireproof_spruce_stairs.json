@@ -3,8 +3,12 @@
   "category": "misc",
   "group": "wooddye_fireproof_stairs",
   "ingredients": [
-    "#wooddye:fireproof_wooden_stairs",
-    "minecraft:brown_dye"
+    {
+      "tag": "wooddye:fireproof_wooden_stairs"
+    },
+    {
+      "item": "minecraft:brown_dye"
+    }
   ],
   "result": {
     "count": 1,

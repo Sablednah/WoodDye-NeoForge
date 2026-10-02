@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:stripped_acacia_log",
-    "X": "minecraft:magma_cream"
+    "#": {
+      "item": "minecraft:stripped_acacia_log"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
   },
   "result": {
     "count": 8,

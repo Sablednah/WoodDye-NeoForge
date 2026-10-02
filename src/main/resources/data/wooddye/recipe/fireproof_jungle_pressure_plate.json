@@ -3,7 +3,9 @@
   "category": "redstone",
   "group": "fireproof_wooden_pressure_plate",
   "key": {
-    "#": "wooddye:fireproof_jungle_planks"
+    "#": {
+      "item": "wooddye:fireproof_jungle_planks"
+    }
   },
   "pattern": [
     "##"

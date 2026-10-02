@@ -3,7 +3,9 @@
   "category": "building",
   "group": "fireproof_bark",
   "key": {
-    "#": "wooddye:fireproof_acacia_log"
+    "#": {
+      "item": "wooddye:fireproof_acacia_log"
+    }
   },
   "pattern": [
     "##",

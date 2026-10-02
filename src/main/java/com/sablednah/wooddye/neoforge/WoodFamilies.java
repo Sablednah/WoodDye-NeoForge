@@ -25,7 +25,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.EmptyBlockGetter;
@@ -102,7 +102,7 @@ public final class WoodFamilies {
                 continue; // the four pillar forms share one tag; walk it once
             }
             for (Holder<Block> holder : BuiltInRegistries.BLOCK.getTagOrEmpty(tag(form))) {
-                Identifier id = BuiltInRegistries.BLOCK.getKey(holder.value());
+                ResourceLocation id = BuiltInRegistries.BLOCK.getKey(holder.value());
                 if (id.getNamespace().equals(WoodDye.MODID)) {
                     continue; // our fireproof blocks sit in the vanilla tags; they are paired up separately
                 }
@@ -139,12 +139,12 @@ public final class WoodFamilies {
 
     private static TagKey<Block> tag(Form form) {
         return TagKey.create(Registries.BLOCK,
-                Identifier.fromNamespaceAndPath(WoodDye.MODID, "dyeable/" + form.tag()));
+                ResourceLocation.fromNamespaceAndPath(WoodDye.MODID, "dyeable/" + form.tag()));
     }
 
     private static boolean enabled(String id, Block planks) {
         String namespace = id.substring(0, id.indexOf(':'));
-        if (!namespace.equals(Identifier.DEFAULT_NAMESPACE) && !WoodDyeConfig.MODDED_WOODS.get()) {
+        if (!namespace.equals(ResourceLocation.DEFAULT_NAMESPACE) && !WoodDyeConfig.MODDED_WOODS.get()) {
             return false;
         }
         if (!WoodDyeConfig.NETHER_WOODS.get() && planks.asItem().getDefaultInstance().is(ItemTags.NON_FLAMMABLE_WOOD)) {
@@ -160,7 +160,7 @@ public final class WoodFamilies {
     }
 
     private static Measured tone(Block block, boolean bark, Map<String, Tone> overrides) {
-        Identifier id = BuiltInRegistries.BLOCK.getKey(block);
+        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
         String key = id.toString();
 
         Tone tone = overrides.get(key);

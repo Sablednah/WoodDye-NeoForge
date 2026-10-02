@@ -4,11 +4,17 @@
   "group": "wooddye_button",
   "ingredients": [
     {
-      "neoforge:ingredient_type": "neoforge:difference",
-      "base": "#minecraft:wooden_buttons",
-      "subtracted": "#wooddye:fireproof_wooden_buttons"
+      "type": "neoforge:difference",
+      "base": {
+        "tag": "minecraft:wooden_buttons"
+      },
+      "subtracted": {
+        "tag": "wooddye:fireproof_wooden_buttons"
+      }
     },
-    "minecraft:lime_dye"
+    {
+      "item": "minecraft:lime_dye"
+    }
   ],
   "result": {
     "count": 1,

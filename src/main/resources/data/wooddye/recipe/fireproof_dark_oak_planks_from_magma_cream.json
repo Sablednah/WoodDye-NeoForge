@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:dark_oak_planks",
-    "X": "minecraft:magma_cream"
+    "#": {
+      "item": "minecraft:dark_oak_planks"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
   },
   "result": {
     "count": 8,

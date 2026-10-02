@@ -3,7 +3,9 @@
   "category": "building",
   "group": "fireproof_wooden_slab",
   "key": {
-    "#": "wooddye:fireproof_bamboo_planks"
+    "#": {
+      "item": "wooddye:fireproof_bamboo_planks"
+    }
   },
   "pattern": [
     "###"

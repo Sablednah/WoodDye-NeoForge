@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +19,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sablednah.wooddye.core.Tone;
 
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.jarcontents.JarContents;
 import net.neoforged.neoforgespi.language.IModFileInfo;
 
 /**
@@ -54,12 +55,12 @@ final class TextureTones {
      *
      * @param bark measure the bark (a log's side) rather than the inner wood
      */
-    static Tone measure(Identifier block, boolean bark) {
+    static Tone measure(ResourceLocation block, boolean bark) {
         try {
-            Identifier texture = texture(block, bark ? BARK_SLOTS : WOOD_SLOTS);
+            ResourceLocation texture = texture(block, bark ? BARK_SLOTS : WOOD_SLOTS);
             if (texture == null) {
                 // No model we could follow: fall back on the near-universal naming convention.
-                texture = Identifier.fromNamespaceAndPath(block.getNamespace(), "block/" + block.getPath());
+                texture = ResourceLocation.fromNamespaceAndPath(block.getNamespace(), "block/" + block.getPath());
             }
             return average(texture);
         } catch (IOException | RuntimeException e) {
@@ -67,7 +68,7 @@ final class TextureTones {
         }
     }
 
-    private static Tone average(Identifier texture) throws IOException {
+    private static Tone average(ResourceLocation texture) throws IOException {
         String path = "assets/" + texture.getNamespace() + "/textures/" + texture.getPath() + ".png";
         try (InputStream in = open(texture.getNamespace(), path)) {
             BufferedImage image = in == null ? null : ImageIO.read(in);
@@ -82,10 +83,10 @@ final class TextureTones {
     }
 
     /** Follow blockstate &rarr; model &rarr; parents, and pick the first of {@code slots} that is set. */
-    private static Identifier texture(Identifier block, List<String> slots) throws IOException {
+    private static ResourceLocation texture(ResourceLocation block, List<String> slots) throws IOException {
         JsonObject blockstate = json(block.getNamespace(),
                 "assets/" + block.getNamespace() + "/blockstates/" + block.getPath() + ".json");
-        Identifier model = blockstate == null ? null : firstModel(blockstate);
+        ResourceLocation model = blockstate == null ? null : firstModel(blockstate);
 
         Map<String, String> textures = new HashMap<>();
         for (int depth = 0; model != null && depth < MAX_PARENTS; depth++) {
@@ -101,7 +102,7 @@ final class TextureTones {
                     }
                 }
             }
-            model = json.has("parent") ? Identifier.tryParse(json.get("parent").getAsString()) : null;
+            model = json.has("parent") ? ResourceLocation.tryParse(json.get("parent").getAsString()) : null;
         }
 
         for (String slot : slots) {
@@ -111,14 +112,14 @@ final class TextureTones {
                 value = textures.get(value.substring(1));
             }
             if (value != null && !value.startsWith("#")) {
-                return Identifier.tryParse(value);
+                return ResourceLocation.tryParse(value);
             }
         }
         return null;
     }
 
     /** The model of a blockstate's first variant (or first multipart case): any one will do. */
-    private static Identifier firstModel(JsonObject blockstate) {
+    private static ResourceLocation firstModel(JsonObject blockstate) {
         JsonElement apply = null;
         if (blockstate.has("variants") && blockstate.get("variants").isJsonObject()) {
             for (Map.Entry<String, JsonElement> variant : blockstate.getAsJsonObject("variants").entrySet()) {
@@ -137,7 +138,7 @@ final class TextureTones {
         if (apply == null || !apply.isJsonObject() || !apply.getAsJsonObject().has("model")) {
             return null;
         }
-        return Identifier.tryParse(apply.getAsJsonObject().get("model").getAsString());
+        return ResourceLocation.tryParse(apply.getAsJsonObject().get("model").getAsString());
     }
 
     private static JsonObject json(String namespace, String path) throws IOException {
@@ -175,7 +176,7 @@ final class TextureTones {
     }
 
     private static InputStream open(IModFileInfo file, String path) throws IOException {
-        JarContents contents = file.getFile().getContents();
-        return contents.containsFile(path) ? contents.openFile(path) : null;
+        Path found = file.getFile().findResource(path);
+        return Files.isRegularFile(found) ? Files.newInputStream(found) : null;
     }
 }

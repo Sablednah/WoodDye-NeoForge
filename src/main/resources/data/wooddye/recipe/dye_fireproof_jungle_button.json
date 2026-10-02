@@ -3,8 +3,12 @@
   "category": "misc",
   "group": "wooddye_fireproof_button",
   "ingredients": [
-    "#wooddye:fireproof_wooden_buttons",
-    "minecraft:yellow_dye"
+    {
+      "tag": "wooddye:fireproof_wooden_buttons"
+    },
+    {
+      "item": "minecraft:yellow_dye"
+    }
   ],
   "result": {
     "count": 1,

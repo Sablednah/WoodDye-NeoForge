@@ -3,8 +3,12 @@
   "category": "misc",
   "group": "wooddye_fireproof_slab",
   "ingredients": [
-    "#wooddye:fireproof_wooden_slabs",
-    "minecraft:red_dye"
+    {
+      "tag": "wooddye:fireproof_wooden_slabs"
+    },
+    {
+      "item": "minecraft:red_dye"
+    }
   ],
   "result": {
     "count": 1,

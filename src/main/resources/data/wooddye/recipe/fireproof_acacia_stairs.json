@@ -3,7 +3,9 @@
   "category": "building",
   "group": "fireproof_wooden_stairs",
   "key": {
-    "#": "wooddye:fireproof_acacia_planks"
+    "#": {
+      "item": "wooddye:fireproof_acacia_planks"
+    }
   },
   "pattern": [
     "#  ",

@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "wooddye:fireproof_birch_fence_gate",
-    "X": "minecraft:wet_sponge"
+    "#": {
+      "item": "wooddye:fireproof_birch_fence_gate"
+    },
+    "X": {
+      "item": "minecraft:wet_sponge"
+    }
   },
   "result": {
     "count": 8,

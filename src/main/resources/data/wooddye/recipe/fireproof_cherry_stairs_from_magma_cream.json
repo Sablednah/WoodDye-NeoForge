@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:cherry_stairs",
-    "X": "minecraft:magma_cream"
+    "#": {
+      "item": "minecraft:cherry_stairs"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
   },
   "result": {
     "count": 8,

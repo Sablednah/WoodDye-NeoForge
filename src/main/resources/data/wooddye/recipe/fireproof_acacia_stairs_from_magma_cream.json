@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:acacia_stairs",
-    "X": "minecraft:magma_cream"
+    "#": {
+      "item": "minecraft:acacia_stairs"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
   },
   "result": {
     "count": 8,

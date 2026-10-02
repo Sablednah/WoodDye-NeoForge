@@ -17,7 +17,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -33,7 +32,6 @@ import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.storage.TagValueInput;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 /**
@@ -203,7 +201,7 @@ public final class WoodDyeInteractions {
         CompoundTag data = old.saveCustomOnly(registries);
         level.setBlockAndUpdate(pos, newState);
         if (level.getBlockEntity(pos) instanceof SignBlockEntity sign) {
-            sign.loadCustomOnly(TagValueInput.create(ProblemReporter.DISCARDING, registries, data));
+            sign.loadCustomOnly(data, registries);
             sign.setChanged();
         }
         return true;

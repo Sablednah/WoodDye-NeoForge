@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:bamboo_trapdoor",
-    "X": "minecraft:magma_cream"
+    "#": {
+      "item": "minecraft:bamboo_trapdoor"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
   },
   "result": {
     "count": 8,

@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:mangrove_pressure_plate",
-    "X": "minecraft:magma_cream"
+    "#": {
+      "item": "minecraft:mangrove_pressure_plate"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
   },
   "result": {
     "count": 8,

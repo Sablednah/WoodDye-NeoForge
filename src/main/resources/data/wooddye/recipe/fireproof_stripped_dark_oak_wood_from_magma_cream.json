@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:stripped_dark_oak_wood",
-    "X": "minecraft:magma_cream"
+    "#": {
+      "item": "minecraft:stripped_dark_oak_wood"
+    },
+    "X": {
+      "item": "minecraft:magma_cream"
+    }
   },
   "result": {
     "count": 8,

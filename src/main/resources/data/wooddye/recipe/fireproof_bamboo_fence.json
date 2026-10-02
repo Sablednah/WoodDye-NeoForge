@@ -3,8 +3,12 @@
   "category": "misc",
   "group": "fireproof_wooden_fence",
   "key": {
-    "#": "minecraft:stick",
-    "W": "wooddye:fireproof_bamboo_planks"
+    "#": {
+      "item": "minecraft:stick"
+    },
+    "W": {
+      "item": "wooddye:fireproof_bamboo_planks"
+    }
   },
   "pattern": [
     "W#W",

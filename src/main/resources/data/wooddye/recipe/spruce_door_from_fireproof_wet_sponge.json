@@ -8,8 +8,12 @@
     "###"
   ],
   "key": {
-    "#": "wooddye:fireproof_spruce_door",
-    "X": "minecraft:wet_sponge"
+    "#": {
+      "item": "wooddye:fireproof_spruce_door"
+    },
+    "X": {
+      "item": "minecraft:wet_sponge"
+    }
   },
   "result": {
     "count": 8,

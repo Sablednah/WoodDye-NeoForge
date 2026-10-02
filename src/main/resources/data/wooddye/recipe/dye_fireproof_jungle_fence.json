@@ -3,8 +3,12 @@
   "category": "misc",
   "group": "wooddye_fireproof_fence",
   "ingredients": [
-    "#wooddye:fireproof_wooden_fences",
-    "minecraft:yellow_dye"
+    {
+      "tag": "wooddye:fireproof_wooden_fences"
+    },
+    {
+      "item": "minecraft:yellow_dye"
+    }
   ],
   "result": {
     "count": 1,

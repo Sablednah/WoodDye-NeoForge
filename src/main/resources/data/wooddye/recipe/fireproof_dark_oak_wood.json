@@ -3,7 +3,9 @@
   "category": "building",
   "group": "fireproof_bark",
   "key": {
-    "#": "wooddye:fireproof_dark_oak_log"
+    "#": {
+      "item": "wooddye:fireproof_dark_oak_log"
+    }
   },
   "pattern": [
     "##",
