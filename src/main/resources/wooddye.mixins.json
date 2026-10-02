@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.sablednah.wooddye.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "wooddye.refmap.json",
+  "mixins": [
+    "FireBlockMixin",
+    "LavaFluidMixin",
+    "ShapedRecipeMixin",
+    "ShapelessRecipeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
