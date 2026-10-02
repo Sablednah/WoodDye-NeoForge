@@ -27,7 +27,9 @@ sourceSets.main.resources {
 }
 
 repositories {
-    // Add additional repositories here if required by dependencies below.
+    // Create, for the optional contraption hook (compile-time only; see dependencies).
+    maven { url = 'https://maven.createmod.net' }
+    maven { url = 'https://maven.tterrag.com' }
 }
 
 base {
@@ -111,7 +113,10 @@ configurations {
 }
 
 dependencies {
-    // (mod/library dependencies go here)
+    // Create is optional at runtime: compat/CreateFireproof is only loaded when the mod list has
+    // it. It is needed here only so that class compiles. To test with it, drop Create, Flywheel
+    // and Ponder into run/mods.
+    compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
 }
 
 // Expand mod metadata properties into the generated mods.toml.

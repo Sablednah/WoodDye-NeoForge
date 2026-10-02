@@ -4,6 +4,9 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
+import com.sablednah.wooddye.compat.CreateFireproof;
+import com.sablednah.wooddye.fireproof.FireproofComponents;
+import com.sablednah.wooddye.fireproof.FireproofEvents;
 import com.sablednah.wooddye.neoforge.WoodDyeServerEvents;
 import com.sablednah.wooddye.neoforge.WoodTransforms;
 import com.sablednah.wooddye.registry.WoodDyeBlocks;
@@ -14,6 +17,7 @@ import com.sablednah.wooddye.registry.WoodDyeRecipes;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -57,9 +61,16 @@ public class WoodDye {
         WoodDyeItems.register(modEventBus);
         WoodDyeCreativeTab.register(modEventBus);
         WoodDyeRecipes.register(modEventBus);
+        FireproofComponents.register(modEventBus);
 
         // Game-bus glue: permission nodes, the /wooddye command, and the right-click handler.
         MinecraftForge.EVENT_BUS.register(WoodDyeServerEvents.class);
+        MinecraftForge.EVENT_BUS.register(FireproofEvents.class);
+
+        // Create moves blocks about in contraptions; fireproofing has to go with them.
+        if (ModList.get().isLoaded("create")) {
+            CreateFireproof.register();
+        }
 
         // Which woods dye, and in what order, is config; a change there makes the chains stale.
         modEventBus.addListener((ModConfigEvent event) -> WoodTransforms.invalidate());

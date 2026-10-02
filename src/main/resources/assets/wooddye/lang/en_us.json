@@ -19,6 +19,8 @@
   "wooddye.configuration.showMessage": "Show Message",
   "wooddye.configuration.message": "Message Text",
   "wooddye.configuration.debugMode": "Debug Logging",
+  "wooddye.already_fireproof": "Already fireproof",
+  "item.wooddye.fireproof_name": "%s (Fireproof)",
   "block.wooddye.fireproof_cherry_planks": "Cherry Planks (Fireproof)",
   "block.wooddye.fireproof_cherry_slab": "Cherry Slab (Fireproof)",
   "block.wooddye.fireproof_cherry_stairs": "Cherry Stairs (Fireproof)",
