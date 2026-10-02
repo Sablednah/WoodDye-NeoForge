@@ -21,6 +21,7 @@ import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -277,10 +278,11 @@ public final class WoodDyeInteractions {
 
     /** Maps a held item to a shade direction, or {@code null} if it isn't a WoodDye dye. */
     private static WoodTransforms.Shift dyeShift(Item item) {
-        if (item == Items.BLACK_DYE || item == Items.BROWN_DYE) {
+        if (item == Items.DYE.pick(DyeColor.BLACK) || item == Items.DYE.pick(DyeColor.BROWN)) {
             return WoodTransforms.Shift.DARKEN;
         }
-        if (item == Items.WHITE_DYE || item == Items.LIGHT_GRAY_DYE || item == Items.BONE_MEAL) {
+        if (item == Items.DYE.pick(DyeColor.WHITE) || item == Items.DYE.pick(DyeColor.LIGHT_GRAY)
+                || item == Items.BONE_MEAL) {
             return WoodTransforms.Shift.LIGHTEN;
         }
         return null;
