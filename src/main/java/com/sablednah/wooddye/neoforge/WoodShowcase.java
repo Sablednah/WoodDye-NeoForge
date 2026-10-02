@@ -88,11 +88,11 @@ final class WoodShowcase {
 
     /**
      * A {@code /tp} that frames the whole build: centred, south of it and facing north, just far
-     * enough back for the front row to fill most of a default field of view, and high enough to
-     * look down the steps.
+     * enough back for the front row to fill most of a default field of view (but never so close
+     * that a narrow build runs off the top), and high enough to look down the steps.
      */
     private static String viewpoint(BlockPos origin, int woods) {
-        double back = woods * 0.36 + 3;
+        double back = Math.max(7, woods * 0.35);
         double x = origin.getX() + woods / 2.0;
         double y = origin.getY() + back * 0.35 + 4;
         double z = origin.getZ() + 1 + back;
