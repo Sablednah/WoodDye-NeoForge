@@ -32,6 +32,23 @@ One branch per Minecraft line, each checked out permanently under
   commands cannot be scripted; the mod logs its wood order on server start for that reason.
   Each worktree's `run/server.properties` has its own port so runs can overlap.
 
+- `WoodDye-worktrees/rcontest.sh <worktree> <jdk> "<command>" ...` does the same but runs server
+  commands over RCON before stopping, which is how `/wooddye woods` and `/wooddye showcase` get
+  exercised headless (`execute if block ...` answers "Test passed"/"Test failed").
+
+### Photographing the showcase on Vivo
+
+Vivo is the shared Ubuntu test laptop (`ssh -i ~/.ssh/vivo_ed25519 sable@192.168.7.246`; its
+manual, `~/dev/README.md` there, is the authority). A client runs on a private Xvfb display and can
+be driven and screenshotted from a script, which Windows cannot do. **WoodDye's claim there is
+display `:14`, game port 25585, RCON 25595** (password `wddev`), recorded in that README's table.
+
+`WoodDye-worktrees/vivo-showcase.sh` runs it in stages: `ship <branch> [mod jars]`, `server`,
+`client` (the `runClientBuddy` config, which auto-joins `dev_server_port`), `rcon "<cmd>"`,
+`shoot <out.png>`, `stop`. It ships a `git archive` of the branch to `~/dev/WoodDye-<branch>`, so
+**commit before shipping**. Always finish with `stop`: a client left running on Vivo burns five
+cores unseen.
+
 What each line needed beyond a retarget (the trunk's tag and tone engine compiled unchanged
 on all the NeoForge lines):
 
