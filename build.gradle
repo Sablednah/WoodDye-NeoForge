@@ -122,6 +122,8 @@ dependencies {
     // Jade is optional too: compat/JadeFireproof is found by Jade's own annotation scan and is
     // otherwise never loaded.
     compileOnly("${jade_compile}") { transitive = false }
+    // JEI the same way: compat/JeiFireproof is found by JEI's annotation scan.
+    compileOnly("${jei_compile}") { transitive = false }
 }
 
 // Expand mod metadata properties into the generated neoforge.mods.toml.
