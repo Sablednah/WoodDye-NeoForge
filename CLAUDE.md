@@ -75,51 +75,48 @@ on all the NeoForge lines):
   need a production client too. The NeoForge lines have no such limit — BOP loads straight
   into `run/mods`.
 
-## Stage 2 prototype: fireproofing as data — branch `fireproof-data` (2026-10-03)
+## Fireproofing as data — on every line since 2026-10-03
 
-Sable's goal: fireproof *any* wood, a mod's included, "without cloning all the wood items for
-every modded set". The prototype lives on branch `fireproof-data` (worktree
-`WoodDye-worktrees/fireproof-data`), cut from `mc1.21.1` because Create 6 exists for NeoForge
-1.21.1 only. Its commit message is the design summary; the code is `fireproof/*`, `mixin/*`,
-`compat/CreateFireproof`, `crafting/FireproofStampRecipe`.
+Fireproofing is a mark on a position (`fireproof/FireproofMarks`, vanilla `SavedData` per
+dimension) plus a `wooddye:fireproof` item component (NBT on 1.20.1). Fire and lava skip marked
+positions through four mixin injections; placing, breaking, drops and pistons keep marks in step
+(`fireproof/FireproofEvents`); Create carries them through contraptions (`compat/CreateFireproof`,
+a `MovementBehaviour` on every wood block); shaped and shapeless recipes carry the component
+(mixins on `assemble`). The legacy 2.0 `fireproof_*` blocks stay registered so worlds load, convert
+on chunk load (`FireproofMigration`), and are hidden from creative and recipe viewers.
 
-**How it works:** a `SavedData` set of fireproofed positions per dimension; four mixin
-injections make fire and lava skip those positions; events keep marks in step with placing,
-breaking, drops and pistons; Create's `MovementBehaviour` API carries a mark through a
-contraption; a `wooddye:fireproof` item component (plus vanilla `fire_resistant` and an
-`item_name` of "%s (Fireproof)") carries it through inventories and, via a mixin on shaped and
-shapeless `assemble`, through crafting.
+Developed on branch `fireproof-data` (cut from `mc1.21.1`, where Create 6 runs in the dev
+server), then ported to `main` and every line. Per-line differences worth knowing:
 
-**Verified over RCON with Create 6.0.10** (`rcontest.sh`): fire, lava, vanilla piston, drops, a
-bearing lifting and returning, and a radial-chassis quarter turn moving the mark to the new
-position. Crafting carry-through and stamped placement were checked with a temporary self-check.
+- **1.21.11 / 26.x:** `SavedDataType` + codec (id is an `Identifier` on 26.x), `damage_resistant`
+  with the fire tag (a holder set on 26.x, resolved from the running server), `CustomRecipe` with
+  no category on 26.x and a `RecipeSerializer` record built from a unit codec.
+- **1.20.1 Forge:** NBT stamp; no per-stack fire resistance; drops via a global loot modifier
+  (`FireproofLootModifier`, JSON written by the generator on that line only); mixins need the
+  refmap recipe below, and `remap = false` for Forge-added targets; Create via
+  `modCompileOnly` with the `slim` classifier.
+- Create is compiled against (`create_compile` in gradle.properties) on every line, using the
+  1.21.1 build where no build for that line exists; the hook only runs when Create is loaded.
 
-**Not done / to decide before it ships:**
-- Forward-port to `main` and the 26.x lines (should be close to mechanical). **1.20.1 Forge
-  mixins are proven feasible (2026-10-03, experiment reverted):** in `build.gradle` add
-  `maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }`,
-  `annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'`, inside `legacyForge {}` a
-  `mixin { add sourceSets.main, 'wooddye.refmap.json'; config 'wooddye.mixins.json' }`, and
-  `tasks.named('jar', Jar) { manifest.attributes 'MixinConfigs': 'wooddye.mixins.json' }` (the
-  plugin wires only the dev runs). Mixin config `compatibilityLevel` `JAVA_17`, no MixinExtras
-  (use `@Redirect` / `@Inject(at = RETURN)`). Targets: untouched vanilla methods remap through
-  the refmap (`ShapedRecipe.assemble` → `m_5874_`); Forge-added or Forge-replaced methods keep
-  their names and need `remap = false` — `LavaFluid.isFlammable(LevelReader,BlockPos,Direction)`,
-  `FireBlock.canCatchFire`, and `FireBlock.tryCatchFire(...,Direction)`, which is what 1.20.1
-  Forge calls `checkBurnOut`. The processor warns "Unable to determine descriptor" when a target's
-  signature differs from the vanilla mapping, and then writes an empty refmap: treat that
-  warning as an error. Verified on the dev server and on a production Forge server in
-  `<scratchpad>/prod`. Also on 1.20.1: no `BlockDropsEvent` (use a global loot modifier), no data
-  components (NBT), per-item fire resistance only.
-- Migration **is done** on the branch: legacy blocks convert on chunk load, legacy items in a
-  player's inventory convert once a second; the creative tab lists stamped wood; the legacy items
-  are tagged `#c:hidden_from_recipe_viewers`. Holding magma cream or a wet sponge shows a small
-  flame on fireproof blocks within 12 blocks (per player).
-- Create's **mechanical piston** could not be exercised headless (it never assembled a
-  contraption, even for plain stone); the bearing did. Test it with a client.
-- Other block movers (Create deployers breaking blocks, schematicannon, other mods) are
-  covered only as far as they go through `BlockDropsEvent` / `EntityPlaceEvent`.
-- `/wooddye fireproof <pos> [set|clear]` is the admin/test tool.
+**Verified over RCON on every line** (`rcontest.sh`): fire, lava, vanilla piston, drops, legacy
+conversion; with Create on 1.21.1 (bearing + radial chassis quarter turn) and on a production
+Forge 1.20.1 server with Create 6.0.8 and Biomes O' Plenty. Crafting carry-through and stamped
+placement were checked with a temporary self-check on 1.21.1 only. **Not tested anywhere:** a
+real client (creative tab, item names, particles as seen), Create's mechanical piston (it never
+assembled a contraption headless), block movers other than pistons and Create.
+
+**1.20.1 mixin build recipe:** in `build.gradle` add
+`maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }`,
+`annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'`, inside `legacyForge {}` a
+`mixin { add sourceSets.main, 'wooddye.refmap.json'; config 'wooddye.mixins.json' }`, and
+`tasks.named('jar', Jar) { manifest.attributes 'MixinConfigs': 'wooddye.mixins.json' }` (the
+plugin wires only the dev runs). Untouched vanilla methods remap through the refmap; Forge-added
+or Forge-replaced methods keep their names and need `remap = false` — `LavaFluid.isFlammable(…,
+Direction)`, `FireBlock.canCatchFire`, and `FireBlock.tryCatchFire(…, Direction)`, which is what
+1.20.1 Forge calls `checkBurnOut`. The processor warns "Unable to determine descriptor" when a
+target's signature differs from the vanilla mapping and then writes an **empty refmap**: treat
+that warning as an error. A Create jar on this line must come in through `modCompileOnly`
+(`compileOnly` resolves to nothing), and the artifact has only `slim`/`all` classifiers.
 
 ## Fixed 2026-10-02: the config message ate ampersands
 

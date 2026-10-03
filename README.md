@@ -22,7 +22,7 @@ One build per Minecraft line, each on its own branch; the jar name says which it
 | 26.1 | NeoForge 26.1 | 25 | `mc26.1` | 10 |
 | 1.21.11 | NeoForge 21.11 | 21 | `main` | 10 |
 | 1.21.1 | NeoForge 21.1 | 21 | `mc1.21.1` | 9 — no pale oak, and no shelves to dye |
-| 1.20.1 | **Forge** 47 | 17 | `mc1.20.1` | 9 — as 1.21.1; no in-game config screen (Forge has none), so edit the TOML |
+| 1.20.1 | **Forge** 47 | 17 | `mc1.20.1` | 9 — as 1.21.1; no in-game config screen (Forge has none), so edit the TOML; a dropped fireproof item is not itself fire-resistant |
 
 "Woods" counts the vanilla woods that can be fireproofed. Any wood in the game can be dyed, including
 crimson and warped and woods from other mods, if you switch them on — see
@@ -48,18 +48,26 @@ added by a later Minecraft or by another mod finds its own place in it. See
 
 - **Darken** one step with **black** or **brown** dye.
 - **Lighten** one step with **white** or **light gray** dye, or **bone meal**.
-- **Fireproof** wood by right-clicking it with **Magma Cream** — it becomes a matching `fireproof_*`
-  block that will not burn or catch fire. Fireproof wood is still fully dyeable.
+- **Fireproof** wood by right-clicking it with **Magma Cream** — fire and lava leave it alone from
+  then on. It stays the same block: fireproofing is a property of the *position*, saved with the
+  world, so **any** wood takes it — vanilla, nether, or any mod's. Fireproof wood is still fully
+  dyeable.
 - **Un-fireproof** it again by right-clicking with a **Wet Sponge**, which soaks the magma cream back
-  out and returns the plain vanilla wood (always available, even if fireproofing is disabled).
+  out (always available, even if fireproofing is disabled).
+- **See** what is fireproof by holding Magma Cream or a Wet Sponge: a small flame shows on every
+  fireproof block nearby, for you alone.
 
 Both also work **on the crafting bench**, for wood still in your bag — **eight around one**, laid out
 like vanilla's stained glass:
 
 | Recipe | Gives |
 |--------|-------|
-| 8 × any wooden block around **Magma Cream** | 8 × its fireproof form |
-| 8 × any fireproof block around **Wet Sponge** | 8 × the plain wood back — **and the sponge**, which is not consumed |
+| 8 × any wooden block around **Magma Cream** | 8 × the same item, **fireproof** |
+| 8 × any fireproof wood item around **Wet Sponge** | 8 × the plain item back — **and the sponge**, which is not consumed |
+
+A fireproof item is the ordinary item with a mark on it. It is named "… (Fireproof)", does not stack
+with plain ones, survives fire and lava as a dropped item (not on 1.20.1), and when you place it the
+block is fireproof. Breaking a fireproof block drops a fireproof item.
 
 So the bench is how you treat a stack, and the right-click is how you treat one. The sponge comes
 back wet by default and works indefinitely; set `spongeDries` to hand back a dry **Sponge** instead,
@@ -80,8 +88,10 @@ Every successful treatment plays a particle + sound and shows a configurable act
 | Fences, fence gates | ✅ | ✅ |
 | Doors, trapdoors | ✅ | ✅ |
 | Pressure plates, buttons | ✅ | ✅ |
-| Signs (standing, wall, hanging) | ✅ | — *(already fireproof in vanilla)* |
-| Shelves | ✅ | — *(already fireproof in vanilla)* |
+| Signs (standing, wall, hanging) | ✅ | ✅ *(pointless; already non-flammable)* |
+| Shelves | ✅ | ✅ *(likewise)* |
+
+That covers every wood WoodDye can see — a modded wood that can be dyed can be fireproofed.
 
 Blocks that **do something when you right-click them** — gates, doors, trapdoors, buttons, signs and
 shelves — are only dyed when you **sneak** + right-click, so an ordinary click still just opens,
@@ -166,22 +176,23 @@ form of the new wood. Only the magma cream / wet sponge decide whether wood is f
 
 ### Fireproof wood builds fireproof everything
 
-Fireproof blocks have the **same crafting recipes as their vanilla originals** — fireproof logs make
-fireproof planks, which make fireproof slabs, stairs, fences, doors, and the rest, at vanilla ratios.
-Every *wooden* ingredient must itself be fireproof, so fireproofing can never be crafted into
-existence; it only ever enters via magma cream. (Non-wood parts, like the sticks in a fence, are
-ordinary — there is no fireproof stick.)
+Craft with fireproof wood and the result is fireproof — through **vanilla's own recipes, and any
+mod's**: fireproof logs make fireproof planks, which make fireproof slabs, stairs, fences, doors and
+the rest. Every *wooden* ingredient must be fireproof, or the result is plain: fireproofing is only
+ever carried, never conjured. (Non-wood parts, like the sticks in a fence, are ordinary.) A vanilla
+recipe that takes planks but makes something that is not wood (a crafting table) just makes it.
 
-An **axe strips fireproof logs and wood** just as it strips the vanilla ones, keeping both the
-fireproofing and the block's orientation. (Data-only on the NeoForge lines: the
-`neoforge:strippables` data map up to 26.2, and vanilla's own block transformers through
-`neoforge:transformables` from 26.3. Forge 1.20.1 has no data maps, so that line does it in code.)
+Fireproofing **follows the block**: an axe strips a fireproof log to a fireproof stripped log, a
+piston pushes it with the block, and with **Create** installed it rides along in contraptions
+(bearings, pistons, gantries — anything that picks the block up and sets it down again).
 
-Fireproof blocks also join the vanilla wood tags (`#minecraft:planks`, `#minecraft:wooden_doors`,
-`#minecraft:mineable/axe`, …), so they mine and build like the wood they copy — but never the
-`*_that_burn` tags. One consequence worth knowing: because they are in `#minecraft:planks`, a vanilla
-recipe that takes any planks (a crafting table, say) accepts fireproof ones and gives an ordinary
-result. Use a wet sponge if you want the plain wood back deliberately.
+### Upgrading from 2.0
+
+2.0 made fireproof wood as separate `fireproof_*` blocks. They still load. The first time a chunk
+holding them is loaded they become the vanilla block, fireproofed; old fireproof items become
+fireproof vanilla items the first time they pass through a player's inventory, and still restore
+to plain wood on the bench with a wet sponge. The old blocks are hidden from the creative menu and
+from recipe viewers (JEI, EMI, REI).
 
 ## Configuration (`config/wooddye-common.toml`)
 
@@ -196,6 +207,9 @@ result. Use a wet sponge if you want the plain wood back deliberately.
 | `netherWoods` | `false` | Include crimson and warped (anything in `#minecraft:non_flammable_wood`). |
 | `excludedWoods` | `[]` | Woods left out: a mod id (`"biomesoplenty"`) or one wood (`"minecraft:bamboo"`). |
 | `toneOverrides` | `[]` | Replace a measured colour: `"<block id>=#rrggbb"`. A planks block moves the wood in the plank order, a log block in the bark order. |
+
+"Woods" in the version table above counts vanilla woods; since fireproofing is a mark rather than a
+block, the count no longer limits what can be fireproofed.
 | `showEffects` | `true` | Play a particle + sound when wood is treated. |
 | `showMessage` | `true` | Show an action-bar message on success. |
 | `message` | `&aWood treated!` | The message text — supports `&` colour codes and `%P` (player name). |
@@ -228,6 +242,8 @@ one fixed order can only look right on one of them. `logOrder` chooses how logs 
 - `/wooddye showcase` — builds every dyeable wood side by side in dye order where you stand (26
   woods need a 26 × 8 × 7 space; it replaces what is there), and replies with a `/tp` to the spot
   that frames it (op).
+- `/wooddye fireproof` — how many positions are fireproof in this dimension; `/wooddye fireproof
+  <pos>` whether one is; `/wooddye fireproof <pos> set|clear` to change it (op).
 - Permission node `wooddye.candye` — may a player dye wood in-world (default: allow). Install a
   permissions manager (e.g. LuckPerms for NeoForge) to restrict it per group.
 
@@ -263,8 +279,13 @@ that get `fireproof_*` blocks. Which woods can be *dyed* is discovered from tags
 | `core/WoodType.java` | The forms and their properties, and the woods that get fireproof blocks. **Start here.** |
 | `core/Tone.java` | Averages a texture to one colour and expresses it as lightness / chroma / hue. |
 | `core/DyeOrder.java` | Sorts woods by tone: light→dark, or around the colour wheel. |
-| `registry/WoodDyeBlocks.java` | Registers a `fireproof_*` block per fireproof form × wood (128). |
-| `registry/WoodDyeItems.java` | Their block items (doors get a `DoubleHighBlockItem`). |
+| `fireproof/Fireproofing.java`, `FireproofMarks.java` | Fireproofing as a mark on a position: saved per dimension, consulted by fire and lava. |
+| `fireproof/FireproofComponents.java` | The mark on an item (a data component; NBT on 1.20.1). |
+| `fireproof/FireproofEvents.java`, `FireproofMigration.java` | Marks follow placing, breaking, pistons; 2.0 blocks and items convert on sight. |
+| `mixin/*` | Fire and lava skip marked positions; shaped and shapeless recipes carry the mark. |
+| `compat/CreateFireproof.java` | A Create movement behaviour on every wood block, so marks ride contraptions. |
+| `registry/WoodDyeBlocks.java` | Registers the legacy 2.0 `fireproof_*` blocks, kept so old worlds load. |
+| `registry/WoodDyeItems.java` | Their block items. |
 | `neoforge/WoodFamilies.java` | Finds the woods in the `wooddye:dyeable/*` tags and resolves each one's tone. |
 | `neoforge/TextureTones.java` | Reads a modded wood's texture out of its mod's jar and measures it. |
 | `neoforge/WoodTransforms.java` | The lookup tables: dye chains, vanilla↔fireproof, sneak/door/sign/shelf sets. Rebuilt when tags or config reload. |
