@@ -1,5 +1,20 @@
 # WoodDye — notes for the next session
 
+## To do — next batch
+
+- **Sync the wood list and order from server to client** (asked for by Sable, 2026-10-03).
+  JEI's "WoodDye: in world" dye cards (`compat/JeiInWorld`) are built from the *client's*
+  `WoodTransforms`, which follows the client's own copy of the common config (`moddedWoods`,
+  `netherWoods`, `excludedWoods`, `dyeOrder`, `toneOverrides`). On a server with
+  `moddedWoods = true`, a client whose config has it off sees no dye cards for modded woods, though
+  dyeing them works; a different `dyeOrder` shows the wrong chain. Seen on the Vivo 1.20.1 rig with
+  Biomes O' Plenty: fireproofing cards for jacaranda (those use every wood, not the config), no dye
+  cards. Shape of the fix: on login and on `/wooddye reload`, the server sends the wood and bark
+  chains (block ids in order) in a custom payload; the client's JEI plugin uses them instead of
+  its own tables, and re-adds its in-world recipes when they change. Needs a payload per line
+  (NeoForge `CustomPacketPayload` on 1.21.x/26.x, Forge `SimpleChannel` on 1.20.1), and must
+  tolerate a server without WoodDye (fall back to the client's tables).
+
 ## Version branches (set up 2026-10-02)
 
 One branch per Minecraft line, each checked out permanently under
