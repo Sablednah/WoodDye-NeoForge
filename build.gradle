@@ -26,7 +26,11 @@ sourceSets.main.resources {
 repositories {
     // Create, for the optional contraption hook (compile-time only; see dependencies).
     maven { url = 'https://maven.createmod.net' }
-    maven { url = 'https://maven.tterrag.com' }
+    // Jade, for the optional tooltip plugin (compile-time only).
+    maven {
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
 }
 
 base {
@@ -115,6 +119,9 @@ dependencies {
     // it. It is needed here only so that class compiles. To test with it, drop Create, Flywheel
     // and Ponder into run/mods.
     compileOnly("${create_compile}") { transitive = false }
+    // Jade is optional too: compat/JadeFireproof is found by Jade's own annotation scan and is
+    // otherwise never loaded.
+    compileOnly("${jade_compile}") { transitive = false }
 }
 
 // Expand mod metadata properties into the generated neoforge.mods.toml.
