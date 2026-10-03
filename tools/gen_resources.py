@@ -209,6 +209,11 @@ CONFIG_LANG = {
     "wooddye.configuration.debugMode": "Debug Logging",
     "wooddye.already_fireproof": "Already fireproof",
     "item.wooddye.fireproof_name": "%s (Fireproof)",
+    "wooddye.jade.fireproof": "Fireproof",
+    "wooddye.jei.in_world": "WoodDye: in world",
+    "wooddye.jei.right_click": "Right-click",
+    "wooddye.jei.sneak_right_click": "Sneak + right-click",
+    "wooddye.jei.right_click_side": "Right-click a side (bark)",
 }
 
 lang = {"itemGroup.wooddye": "WoodDye ReForged", **CONFIG_LANG}

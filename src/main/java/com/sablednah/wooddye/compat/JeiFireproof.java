@@ -15,6 +15,8 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.registration.IExtraIngredientRegistration;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
+import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
@@ -116,9 +118,25 @@ public final class JeiFireproof implements IModPlugin {
     }
 
     @Override
+    public void registerCategories(IRecipeCategoryRegistration registration) {
+        registration.addRecipeCategories(new JeiInWorld(registration.getJeiHelpers().getGuiHelper()));
+    }
+
+    @Override
+    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        List<Item> treatments = new ArrayList<>(JeiInWorld.DARKEN);
+        treatments.addAll(JeiInWorld.LIGHTEN);
+        treatments.add(Items.MAGMA_CREAM);
+        treatments.add(Items.WET_SPONGE);
+        registration.addRecipeCatalysts(JeiInWorld.TYPE, treatments.toArray(Item[]::new));
+    }
+
+    @Override
     public void registerRecipes(IRecipeRegistration registration) {
         if (tagsReady()) {
-            registration.addRecipes(RecipeTypes.CRAFTING, recipes(woodItems()));
+            List<Item> items = woodItems();
+            registration.addRecipes(RecipeTypes.CRAFTING, recipes(items));
+            registration.addRecipes(JeiInWorld.TYPE, JeiInWorld.all(items));
             added = true;
         }
     }
@@ -152,6 +170,7 @@ public final class JeiFireproof implements IModPlugin {
         List<Item> items = woodItems();
         runtime.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM_STACK, stamped(items));
         runtime.getRecipeManager().addRecipes(RecipeTypes.CRAFTING, recipes(items));
+        runtime.getRecipeManager().addRecipes(JeiInWorld.TYPE, JeiInWorld.all(items));
         added = true;
     }
 
