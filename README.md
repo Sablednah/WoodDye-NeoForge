@@ -58,6 +58,8 @@ added by a later Minecraft or by another mod finds its own place in it. See
   fireproof block nearby, for you alone. With **Jade** installed, looking at a fireproof block also
   says "Fireproof" (not on 1.20.1, where Jade only carries server data for blocks with a block
   entity).
+- With **JEI** installed, every fireproof wood item is listed as its own entry (search
+  "fireproof"), and the two bench recipes show under it.
 
 Both also work **on the crafting bench**, for wood still in your bag — **eight around one**, laid out
 like vanilla's stained glass:

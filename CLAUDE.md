@@ -103,6 +103,19 @@ server), then ported to `main` and every line. Per-line differences worth knowin
   component provider, but only on a physical client, so a headless server reports the plugin as
   loaded while the game throws it out. Check the client log for `JadeFireproof loaded`. Not on 1.20.1: Jade 11 only syncs server data for blocks with a block
   entity, so a plain planks block can never carry the mark to the client there.
+- **JEI** (`compat/JeiFireproof`, `jei_compile`): fireproof items as their own subtypes, the
+  stamped stacks listed, and the two custom bench recipes shown as ordinary crafting recipes, one
+  per wood item each way. Confirmed in a real client on 1.21.11 (Vivo dev) and 1.20.1 (Vivo
+  production rig, with BOP). Three traps:
+  - ⚠ `jei_compile` is a **Modrinth version id**, not a version number: JEI uses one number across
+    loaders and the number resolves to the Fabric jar (intermediary names, `class_2960` errors).
+  - ⚠ JEI can start **before the client has its tags** (1.20.1 did: WoodDye saw 0 tagged woods),
+    so subtypes go to every block item with a wood sound type, and the stacks and recipes are
+    added at runtime on `TagsUpdatedEvent` if they could not be registered.
+  - 1.21.11: JEI after 27.21.0.54 needs NeoForge 21.11.44; the build and instances are on .42.
+    JEI 15 (1.20.1) must be on the server too, or the client is refused (`mezz_config`).
+- Legacy-block migration logs one notice and a session total; per-chunk lines only under
+  `debugMode`.
 - After an in-world treatment the whole inventory is resent (`sendAllDataToRemote`): the client
   predicts placing a wet sponge (a block item) and the single slot update lost to that on 1.20.1.
 
