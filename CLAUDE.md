@@ -106,9 +106,10 @@ server), then ported to `main` and every line. Per-line differences worth knowin
 **Verified over RCON on every line** (`rcontest.sh`): fire, lava, vanilla piston, drops, legacy
 conversion; with Create on 1.21.1 (bearing + radial chassis quarter turn) and on a production
 Forge 1.20.1 server with Create 6.0.8 and Biomes O' Plenty. Crafting carry-through and stamped
-placement were checked with a temporary self-check on 1.21.1 only. **Not tested anywhere:** a
-real client (creative tab, item names, particles as seen), Create's mechanical piston (it never
-assembled a contraption headless), block movers other than pistons and Create.
+placement were checked with a temporary self-check on 1.21.1 only. Sable confirmed in game on
+1.20.1 (2026-10-03): vanilla pistons and Create's mechanical piston both carry the mark, and the
+wet-sponge restore works once the inventory resync was in. **Not tested anywhere:** block movers
+other than pistons and Create; the creative tab and item names as seen on a client.
 
 **1.20.1 mixin build recipe:** in `build.gradle` add
 `maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }`,
