@@ -95,12 +95,26 @@ bearing lifting and returning, and a radial-chassis quarter turn moving the mark
 position. Crafting carry-through and stamped placement were checked with a temporary self-check.
 
 **Not done / to decide before it ships:**
-- Migration of 2.x `fireproof_*` blocks and items. They stay registered and a sponge still
-  restores them; nothing converts them to marks yet.
-- The in-world "is this fireproof?" question: nothing visual marks a fireproofed block (magma
-  cream on one says "Already fireproof"). A Jade plugin or a particle on look would help.
-- Forward-port to `main` and the 26.x lines (should be close to mechanical), and to 1.20.1
-  Forge, which needs mixin refmaps in the legacy ModDevGradle build — unexplored.
+- Forward-port to `main` and the 26.x lines (should be close to mechanical). **1.20.1 Forge
+  mixins are proven feasible (2026-10-03, experiment reverted):** in `build.gradle` add
+  `maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }`,
+  `annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'`, inside `legacyForge {}` a
+  `mixin { add sourceSets.main, 'wooddye.refmap.json'; config 'wooddye.mixins.json' }`, and
+  `tasks.named('jar', Jar) { manifest.attributes 'MixinConfigs': 'wooddye.mixins.json' }` (the
+  plugin wires only the dev runs). Mixin config `compatibilityLevel` `JAVA_17`, no MixinExtras
+  (use `@Redirect` / `@Inject(at = RETURN)`). Targets: untouched vanilla methods remap through
+  the refmap (`ShapedRecipe.assemble` → `m_5874_`); Forge-added or Forge-replaced methods keep
+  their names and need `remap = false` — `LavaFluid.isFlammable(LevelReader,BlockPos,Direction)`,
+  `FireBlock.canCatchFire`, and `FireBlock.tryCatchFire(...,Direction)`, which is what 1.20.1
+  Forge calls `checkBurnOut`. The processor warns "Unable to determine descriptor" when a target's
+  signature differs from the vanilla mapping, and then writes an empty refmap: treat that
+  warning as an error. Verified on the dev server and on a production Forge server in
+  `<scratchpad>/prod`. Also on 1.20.1: no `BlockDropsEvent` (use a global loot modifier), no data
+  components (NBT), per-item fire resistance only.
+- Migration **is done** on the branch: legacy blocks convert on chunk load, legacy items in a
+  player's inventory convert once a second; the creative tab lists stamped wood; the legacy items
+  are tagged `#c:hidden_from_recipe_viewers`. Holding magma cream or a wet sponge shows a small
+  flame on fireproof blocks within 12 blocks (per player).
 - Create's **mechanical piston** could not be exercised headless (it never assembled a
   contraption, even for plain stone); the bearing did. Test it with a client.
 - Other block movers (Create deployers breaking blocks, schematicannon, other mods) are
