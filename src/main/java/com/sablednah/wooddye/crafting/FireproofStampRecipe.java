@@ -88,12 +88,7 @@ public class FireproofStampRecipe extends CustomRecipe {
     }
 
     @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return width * height >= WOOD + 1;
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<? extends CustomRecipe> getSerializer() {
         return stamping ? WoodDyeRecipes.FIREPROOF_STAMP.get() : WoodDyeRecipes.FIREPROOF_UNSTAMP.get();
     }
 }
