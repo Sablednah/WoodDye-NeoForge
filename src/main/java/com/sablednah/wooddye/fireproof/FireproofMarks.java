@@ -1,6 +1,9 @@
 package com.sablednah.wooddye.fireproof;
 
+import java.util.function.Consumer;
+
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 
 import net.minecraft.core.BlockPos;
@@ -92,5 +95,18 @@ public final class FireproofMarks extends SavedData {
 
     int size() {
         return positions.size();
+    }
+
+    /** Every marked position within {@code radius} blocks of {@code centre}, on all three axes. */
+    void forEachNear(BlockPos centre, int radius, Consumer<BlockPos> action) {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (LongIterator it = positions.iterator(); it.hasNext();) {
+            pos.set(it.nextLong());
+            if (Math.abs(pos.getX() - centre.getX()) <= radius
+                    && Math.abs(pos.getY() - centre.getY()) <= radius
+                    && Math.abs(pos.getZ() - centre.getZ()) <= radius) {
+                action.accept(pos.immutable());
+            }
+        }
     }
 }
