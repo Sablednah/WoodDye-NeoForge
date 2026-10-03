@@ -11,7 +11,10 @@ import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 
+import com.sablednah.wooddye.WoodDye;
+
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
@@ -29,12 +32,12 @@ import net.minecraft.world.level.saveddata.SavedDataType;
  */
 public final class FireproofMarks extends SavedData {
 
-    private static final String NAME = "wooddye_fireproof";
     private static final Codec<FireproofMarks> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.LONG.listOf().fieldOf("positions")
                     .forGetter(marks -> LongStream.of(marks.positions.toLongArray()).boxed().toList()))
             .apply(instance, FireproofMarks::new));
-    private static final SavedDataType<FireproofMarks> TYPE = new SavedDataType<>(NAME, FireproofMarks::new, CODEC);
+    private static final SavedDataType<FireproofMarks> TYPE = new SavedDataType<>(
+            Identifier.fromNamespaceAndPath(WoodDye.MODID, "fireproof"), FireproofMarks::new, CODEC);
 
     /** How many ticks a just-removed mark is still answered for, so a broken block's drops see it. */
     private static final long GRACE_TICKS = 5;

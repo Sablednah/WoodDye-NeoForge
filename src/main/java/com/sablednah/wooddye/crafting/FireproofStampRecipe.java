@@ -4,11 +4,12 @@ import com.sablednah.wooddye.WoodDyeConfig;
 import com.sablednah.wooddye.fireproof.FireproofComponents;
 import com.sablednah.wooddye.registry.WoodDyeRecipes;
 
-import net.minecraft.core.HolderLookup;
+import com.mojang.serialization.MapCodec;
+
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -29,9 +30,14 @@ public class FireproofStampRecipe extends CustomRecipe {
 
     private final boolean stamping;
 
-    public FireproofStampRecipe(CraftingBookCategory category, boolean stamping) {
-        super(category);
+    public FireproofStampRecipe(boolean stamping) {
         this.stamping = stamping;
+    }
+
+    /** A serializer for one of the two: the JSON carries nothing but the type. */
+    public static RecipeSerializer<FireproofStampRecipe> serializer(boolean stamping) {
+        return new RecipeSerializer<>(MapCodec.unit(() -> new FireproofStampRecipe(stamping)),
+                StreamCodec.unit(new FireproofStampRecipe(stamping)));
     }
 
     /** The wood item eight of which fill the grid around the treatment, or empty if the grid is not that. */
@@ -69,7 +75,7 @@ public class FireproofStampRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
+    public ItemStack assemble(CraftingInput input) {
         ItemStack result = woodOf(input).copyWithCount(WOOD);
         return stamping ? FireproofComponents.stamp(result) : FireproofComponents.strip(result);
     }
