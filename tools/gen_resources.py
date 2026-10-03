@@ -209,6 +209,7 @@ CONFIG_LANG = {
     "wooddye.configuration.debugMode": "Debug Logging",
     "wooddye.already_fireproof": "Already fireproof",
     "item.wooddye.fireproof_name": "%s (Fireproof)",
+    "wooddye.jade.fireproof": "Fireproof",
 }
 
 lang = {"itemGroup.wooddye": "WoodDye ReForged", **CONFIG_LANG}
