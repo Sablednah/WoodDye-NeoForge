@@ -29,7 +29,8 @@ sourceSets.main.resources {
 repositories {
     // Create, for the optional contraption hook (compile-time only; see dependencies).
     maven { url = 'https://maven.createmod.net' }
-    maven { url = 'https://maven.tterrag.com' }
+    // The Mixin annotation processor, which writes the refmap (see legacyForge.mixin below).
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
 }
 
 base {
@@ -40,6 +41,12 @@ base {
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 legacyForge {
+    // Mixins on 1.20.1 need a refmap, because the shipped jar runs against obfuscated names: the
+    // plugin runs the Mixin annotation processor to write one, and wires the dev runs.
+    mixin {
+        add sourceSets.main, 'wooddye.refmap.json'
+        config 'wooddye.mixins.json'
+    }
     version = project.forge_version
 
     // Parchment gives human-readable parameter names/javadocs. Optional.
@@ -116,7 +123,12 @@ dependencies {
     // Create is optional at runtime: compat/CreateFireproof is only loaded when the mod list has
     // it. It is needed here only so that class compiles. To test with it, drop Create, Flywheel
     // and Ponder into run/mods.
-    compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
+    // On the legacy plugin a mod jar must come in through modCompileOnly, which remaps it from
+    // production names to the names this build uses.
+    modCompileOnly("${create_compile}") { transitive = false }
+    // Runs at compile time to write the refmap the legacy mixin DSL expects. Without it the
+    // refmap is silently empty and every vanilla-targeted mixin fails in production.
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 // Expand mod metadata properties into the generated mods.toml.
@@ -163,4 +175,10 @@ idea {
         downloadSources = true
         downloadJavadoc = true
     }
+}
+
+// Production Forge 1.20.1 finds a mod's mixin configs through this manifest attribute; the legacy
+// plugin's mixin DSL only wires the dev runs (--mixin.config), so the jar needs it adding.
+tasks.named('jar', Jar) {
+    manifest.attributes 'MixinConfigs': 'wooddye.mixins.json'
 }

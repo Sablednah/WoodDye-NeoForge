@@ -14,9 +14,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.level.ChunkEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.level.ChunkEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
  * Brings a 2.x world forward. The old {@code wooddye:fireproof_*} blocks are still registered, so
@@ -67,8 +67,8 @@ public final class FireproofMigration {
 
     /** Convert legacy items in a player's inventory, once a second. */
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % 20 != 0) {
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END || !(event.player instanceof ServerPlayer player) || player.tickCount % 20 != 0) {
             return;
         }
         convert(player.getInventory().items);

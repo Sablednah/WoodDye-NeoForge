@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import com.sablednah.wooddye.compat.CreateFireproof;
-import com.sablednah.wooddye.fireproof.FireproofComponents;
+import com.sablednah.wooddye.fireproof.FireproofLootModifier;
 import com.sablednah.wooddye.fireproof.FireproofEvents;
 import com.sablednah.wooddye.fireproof.FireproofMigration;
 import com.sablednah.wooddye.neoforge.WoodDyeServerEvents;
@@ -62,7 +62,7 @@ public class WoodDye {
         WoodDyeItems.register(modEventBus);
         WoodDyeCreativeTab.register(modEventBus);
         WoodDyeRecipes.register(modEventBus);
-        FireproofComponents.register(modEventBus);
+        FireproofLootModifier.register(modEventBus);
 
         // Game-bus glue: permission nodes, the /wooddye command, and the right-click handler.
         MinecraftForge.EVENT_BUS.register(WoodDyeServerEvents.class);

@@ -4,12 +4,13 @@ import com.sablednah.wooddye.WoodDyeConfig;
 import com.sablednah.wooddye.fireproof.FireproofComponents;
 import com.sablednah.wooddye.registry.WoodDyeRecipes;
 
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -29,17 +30,17 @@ public class FireproofStampRecipe extends CustomRecipe {
 
     private final boolean stamping;
 
-    public FireproofStampRecipe(CraftingBookCategory category, boolean stamping) {
-        super(category);
+    public FireproofStampRecipe(ResourceLocation id, CraftingBookCategory category, boolean stamping) {
+        super(id, category);
         this.stamping = stamping;
     }
 
     /** The wood item eight of which fill the grid around the treatment, or empty if the grid is not that. */
-    private ItemStack woodOf(CraftingInput input) {
+    private ItemStack woodOf(CraftingContainer input) {
         ItemStack wood = ItemStack.EMPTY;
         int woodCount = 0;
         int treatment = 0;
-        for (int slot = 0; slot < input.size(); slot++) {
+        for (int slot = 0; slot < input.getContainerSize(); slot++) {
             ItemStack stack = input.getItem(slot);
             if (stack.isEmpty()) {
                 continue;
@@ -49,7 +50,7 @@ public class FireproofStampRecipe extends CustomRecipe {
             } else if (FireproofComponents.isWood(stack) && FireproofComponents.isStamped(stack) != stamping) {
                 if (wood.isEmpty()) {
                     wood = stack;
-                } else if (!ItemStack.isSameItemSameComponents(wood, stack)) {
+                } else if (!ItemStack.isSameItemSameTags(wood, stack)) {
                     return ItemStack.EMPTY; // two different woods
                 }
                 woodCount++;
@@ -61,7 +62,7 @@ public class FireproofStampRecipe extends CustomRecipe {
     }
 
     @Override
-    public boolean matches(CraftingInput input, Level level) {
+    public boolean matches(CraftingContainer input, Level level) {
         if (stamping && !WoodDyeConfig.FIREPROOF.get()) {
             return false; // same gate as the in-world click: no route to fireproof wood while off
         }
@@ -69,16 +70,16 @@ public class FireproofStampRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
+    public ItemStack assemble(CraftingContainer input, RegistryAccess registries) {
         ItemStack result = woodOf(input).copyWithCount(WOOD);
         return stamping ? FireproofComponents.stamp(result) : FireproofComponents.strip(result);
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
+    public NonNullList<ItemStack> getRemainingItems(CraftingContainer input) {
         NonNullList<ItemStack> remaining = super.getRemainingItems(input);
         if (!stamping) {
-            for (int slot = 0; slot < input.size(); slot++) {
+            for (int slot = 0; slot < input.getContainerSize(); slot++) {
                 if (input.getItem(slot).is(Items.WET_SPONGE)) {
                     remaining.set(slot, new ItemStack(WoodDyeConfig.SPONGE_DRIES.get() ? Items.SPONGE : Items.WET_SPONGE));
                 }

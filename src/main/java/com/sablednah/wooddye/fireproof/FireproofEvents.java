@@ -11,7 +11,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -20,13 +19,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.level.BlockDropsEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.level.PistonEvent;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.PistonEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
  * Keeps the fireproof marks in step with the blocks they belong to.
@@ -37,7 +34,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  *         for free. (A dispenser cannot place wood, so only players place.)</li>
  *     <li><b>Any change</b> that leaves something other than wood at a marked position unmarks
  *         it, remembering the removal for a few ticks.</li>
- *     <li><b>Drops</b> from a position that was fireproof are stamped.</li>
+ *     <li><b>Drops</b> from a position that was fireproof are stamped (by
+ *         {@link FireproofLootModifier}; Forge 1.20.1 has no block-drops event).</li>
  *     <li><b>Pistons</b> carry marks with the blocks they push or pull.</li>
  * </ul>
  */
@@ -95,20 +93,6 @@ public final class FireproofEvents {
         Fireproofing.unmark(level, event.getPos());
     }
 
-    @SubscribeEvent
-    public static void onDrops(BlockDropsEvent event) {
-        ServerLevel level = event.getLevel();
-        if (!Fireproofing.wasFireproof(level, event.getPos())) {
-            return;
-        }
-        for (ItemEntity drop : event.getDrops()) {
-            if (FireproofComponents.isWood(drop.getItem())) {
-                drop.setItem(FireproofComponents.stamp(drop.getItem().copy()));
-            }
-        }
-        Fireproofing.unmark(level, event.getPos()); // the block is gone, whatever flags removed it with
-    }
-
     /** Work out, before anything moves, which marked blocks this piston will carry and to where. */
     @SubscribeEvent
     public static void onPistonPre(PistonEvent.Pre event) {
@@ -156,8 +140,8 @@ public final class FireproofEvents {
      * moment a player wants to know which is which.
      */
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % 10 != 0) {
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END || !(event.player instanceof ServerPlayer player) || player.tickCount % 10 != 0) {
             return;
         }
         if (!player.getMainHandItem().is(Items.MAGMA_CREAM) && !player.getMainHandItem().is(Items.WET_SPONGE)
@@ -171,8 +155,8 @@ public final class FireproofEvents {
     }
 
     @SubscribeEvent
-    public static void onLevelTick(LevelTickEvent.Post event) {
-        if (event.getLevel() instanceof ServerLevel level) {
+    public static void onLevelTick(TickEvent.LevelTickEvent event) {
+        if (event.phase == TickEvent.Phase.END && event.level instanceof ServerLevel level) {
             Fireproofing.tick(level);
             PISTON_MOVES.clear(); // a Pre without a Post means the move was cancelled
             PLACING.clear();      // a right-click that placed nothing

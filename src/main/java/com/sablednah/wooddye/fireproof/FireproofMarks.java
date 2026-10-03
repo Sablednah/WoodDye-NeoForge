@@ -7,7 +7,6 @@ import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -26,7 +25,6 @@ import net.minecraft.world.level.saveddata.SavedData;
 public final class FireproofMarks extends SavedData {
 
     private static final String NAME = "wooddye_fireproof";
-    private static final Factory<FireproofMarks> FACTORY = new Factory<>(FireproofMarks::new, FireproofMarks::load);
 
     /** How many ticks a just-removed mark is still answered for, so a broken block's drops see it. */
     private static final long GRACE_TICKS = 5;
@@ -41,10 +39,10 @@ public final class FireproofMarks extends SavedData {
     private final Long2LongOpenHashMap removed = new Long2LongOpenHashMap();
 
     static FireproofMarks of(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(FACTORY, NAME);
+        return level.getDataStorage().computeIfAbsent(FireproofMarks::load, FireproofMarks::new, NAME);
     }
 
-    private static FireproofMarks load(CompoundTag tag, HolderLookup.Provider registries) {
+    private static FireproofMarks load(CompoundTag tag) {
         FireproofMarks marks = new FireproofMarks();
         for (long position : tag.getLongArray("positions")) {
             marks.positions.add(position);
@@ -53,7 +51,7 @@ public final class FireproofMarks extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+    public CompoundTag save(CompoundTag tag) {
         tag.putLongArray("positions", positions.toLongArray());
         return tag;
     }

@@ -12,12 +12,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.material.LavaFluid;
 
-/** Lava does not set fireproofed wood alight. */
+/** Lava does not set fireproofed wood alight. The face-taking overload is Forge's, so no remap. */
 @Mixin(LavaFluid.class)
 abstract class LavaFluidMixin {
 
     @Inject(method = "isFlammable(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z",
-            at = @At("HEAD"), cancellable = true)
+            at = @At("HEAD"), cancellable = true, remap = false)
     private void wooddye$lavaIgnoresFireproof(LevelReader level, BlockPos pos, Direction face,
             CallbackInfoReturnable<Boolean> cir) {
         if (Fireproofing.isFireproof(level, pos)) {

@@ -1,7 +1,7 @@
 package com.sablednah.wooddye.fireproof;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.inventory.CraftingContainer;
 
 /**
  * Carries fireproofing through the crafting grid. Fireproof planks make fireproof stairs, slabs,
@@ -16,12 +16,12 @@ public final class FireproofCrafting {
      * Stamp {@code result} if it is wood and every wood input was stamped. A grid mixing fireproof
      * and plain wood gives plain wood: fireproofing is never conjured, only carried.
      */
-    public static ItemStack carry(ItemStack result, CraftingInput input) {
+    public static ItemStack carry(ItemStack result, CraftingContainer input) {
         if (result.isEmpty() || !FireproofComponents.isWood(result)) {
             return result;
         }
         int wood = 0;
-        for (int slot = 0; slot < input.size(); slot++) {
+        for (int slot = 0; slot < input.getContainerSize(); slot++) {
             ItemStack ingredient = input.getItem(slot);
             if (FireproofComponents.isWood(ingredient)) {
                 if (!FireproofComponents.isStamped(ingredient)) {
