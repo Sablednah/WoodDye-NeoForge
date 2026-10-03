@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sablednah.wooddye.WoodDye;
+import com.sablednah.wooddye.WoodDyeConfig;
 import com.sablednah.wooddye.neoforge.WoodTransforms;
 
 import net.minecraft.core.BlockPos;
@@ -112,6 +113,9 @@ public final class Fireproofing {
                 retry.add(pending);
             } else if (canMark(level.getBlockState(pending.pos()).getBlock())) {
                 mark(level, pending.pos());
+                if (WoodDyeConfig.DEBUG.get()) {
+                    WoodDye.LOGGER.info("WoodDye/Create: marked {} on arrival", pending.pos());
+                }
             } else if (pending.triesLeft() > 1) {
                 retry.add(new Pending(level, pending.pos(), pending.triesLeft() - 1));
             } else {

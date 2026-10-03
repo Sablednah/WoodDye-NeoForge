@@ -1,13 +1,18 @@
 package com.sablednah.wooddye.compat;
 
 import com.sablednah.wooddye.WoodDye;
+import com.sablednah.wooddye.WoodDyeConfig;
 import com.sablednah.wooddye.fireproof.Fireproofing;
 import com.sablednah.wooddye.neoforge.WoodTransforms;
 import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
+import com.simibubi.create.content.contraptions.piston.PistonContraption;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 
+import java.lang.reflect.Field;
+
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 
@@ -38,11 +43,15 @@ public final class CreateFireproof implements MovementBehaviour {
         if (!(context.world instanceof ServerLevel level)) {
             return;
         }
-        // At assembly the block has just been lifted from where the entity's transform puts it.
-        // (Not anchor + localPos: that is only right for a piston extending; a retracting one
-        // assembles at the extended end, and a bearing's anchor is the bearing.)
-        BlockPos from = landing(context);
-        if (Fireproofing.wasFireproof(level, from)) {
+        BlockPos from = liftedFrom(context);
+        boolean fireproof = Fireproofing.wasFireproof(level, from);
+        if (WoodDyeConfig.DEBUG.get()) {
+            WoodDye.LOGGER.info("WoodDye/Create: {} lifted from {} (anchor {} local {} entity {}): {}",
+                    context.state.getBlock(), from, context.contraption.anchor, context.localPos,
+                    context.contraption.entity == null ? "none" : context.contraption.entity.position(),
+                    fireproof ? "fireproof" : "plain");
+        }
+        if (fireproof) {
             context.data.putBoolean(KEY, true);
             Fireproofing.unmark(level, from);
         }
@@ -50,17 +59,60 @@ public final class CreateFireproof implements MovementBehaviour {
 
     @Override
     public void stopMoving(MovementContext context) {
-        if (context.world instanceof ServerLevel level && context.data.getBoolean(KEY)) {
+        if (!(context.world instanceof ServerLevel level)) {
+            return;
+        }
+        boolean fireproof = context.data.getBoolean(KEY);
+        if (WoodDyeConfig.DEBUG.get()) {
+            WoodDye.LOGGER.info("WoodDye/Create: {} landing at {} (anchor {} local {} entity {}): {}",
+                    context.state.getBlock(), landing(context), context.contraption.anchor, context.localPos,
+                    context.contraption.entity == null ? "none" : context.contraption.entity.position(),
+                    fireproof ? "fireproof" : "plain");
+        }
+        if (fireproof) {
             // Create puts the blocks back after telling the actors they stopped, so mark at end of tick.
             Fireproofing.markWhenPlaced(level, landing(context));
         }
     }
 
     /**
-     * Where the block is in the world right now: at assembly, where it was lifted from; at
-     * disassembly, where it is about to be put down. Create only tracks {@code context.position}
-     * for actors that do work while moving, so it is worked out from the contraption entity's own
-     * transform, which at both moments is at a resting angle and offset.
+     * Where the block was lifted from. The actors are told they are moving before the contraption
+     * entity exists, so this is anchor + localPos — except for a mechanical piston that is
+     * retracting, which assembles at the extended end: its contraption remembers how far out that
+     * is, in two protected fields, read here by reflection with anchor + localPos as the fallback.
+     */
+    private static BlockPos liftedFrom(MovementContext context) {
+        BlockPos from = context.contraption.anchor.offset(context.localPos);
+        if (context.contraption instanceof PistonContraption piston && PISTON_ORIENTATION != null && PISTON_PROGRESS != null) {
+            try {
+                Direction orientation = (Direction) PISTON_ORIENTATION.get(piston);
+                int progress = PISTON_PROGRESS.getInt(piston);
+                return from.relative(orientation, progress);
+            } catch (ReflectiveOperationException | RuntimeException e) {
+                WoodDye.LOGGER.warn("WoodDye: could not read Create's piston extension; a retracting piston may lose fireproofing", e);
+            }
+        }
+        return from;
+    }
+
+    private static final Field PISTON_ORIENTATION = field("orientation");
+    private static final Field PISTON_PROGRESS = field("initialExtensionProgress");
+
+    private static Field field(String name) {
+        try {
+            Field field = PistonContraption.class.getDeclaredField(name);
+            field.setAccessible(true);
+            return field;
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            WoodDye.LOGGER.warn("WoodDye: Create's PistonContraption has no {} field; a retracting piston may lose fireproofing", name);
+            return null;
+        }
+    }
+
+    /**
+     * Where the block is about to be put down. Create only tracks {@code context.position} for
+     * actors that do work while moving, so it is worked out from the contraption entity's own
+     * transform, which at this point has settled on the resting angle and offset.
      */
     private static BlockPos landing(MovementContext context) {
         AbstractContraptionEntity entity = context.contraption.entity;
