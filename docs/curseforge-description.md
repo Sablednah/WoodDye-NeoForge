@@ -6,18 +6,15 @@ Ever built half a house in oak and wished it were spruce? Ever watched a lightni
 whole thing with it?
 
 **WoodDye ReForged** lets you stain any wood any shade — right there in the wall, no rebuilding — and make it
-immune to fire forever.
+immune to fire forever. **Any wood**: vanilla's, and every mod's.
+
+![Every wood in the game, side by side](https://raw.githubusercontent.com/Sablednah/WoodDye-NeoForge/main/docs/screenshots/showcase-1.20.1-cityworld.png)
 
 ---
 
 ## 🎨 Dye wood where it stands
 
 Hold a dye. Right-click a plank. Done.
-
-Every wood in the game sits on a single light→dark chain, and each dye nudges a block one step along
-it:
-
-> **Pale Oak → Cherry → Birch → Bamboo → Oak → Jungle → Acacia → Spruce → Mangrove → Dark Oak**
 
 * **Black** or **brown** dye — one step **darker**
 * **White** or **light gray** dye, or **bone meal** — one step **lighter**
@@ -26,69 +23,87 @@ No breaking blocks. No re-placing. No hauling stacks back to a crafting table. W
 recolour it as you go.
 
 **Everything wooden works** — planks, slabs, stairs, logs, stripped logs, wood, stripped wood, fences,
-fence gates, doors, trapdoors, pressure plates, buttons, signs *and* shelves. All ten woods, every
-form.
+fence gates, doors, trapdoors, pressure plates, buttons, signs *and* shelves.
 
 Blocks you'd normally *use* — doors, gates, buttons, signs, shelves — dye on **sneak + right-click**,
 so an ordinary click still just opens the door. Your builds keep working while you redecorate.
 
-Prefer the crafting bench? Everything but logs has a shapeless recipe too — **any wooden block + a
-dye** of the colour you want. (Logs stay a right-click job: only the face you click can say whether
-you meant the bark or the rings.)
+## 🌳 Every wood — even ones it has never seen
 
-## 🔥 Fireproof your builds
+WoodDye doesn't keep a list of woods. It finds them through the standard block tags, so **Biomes O'
+Plenty, Alex's Caves, Cataclysm** and any other mod that tags its wood properly are picked up with
+no setup — switch on `moddedWoods` and they join the chain.
+
+And the order isn't written down by anyone either: **WoodDye measures it.** Each wood's texture is
+averaged to a single colour, and the woods are sorted on it — vanilla's at build time, a mod's straight
+from its own jar when the server starts. A wood nobody has heard of lands exactly where its colour
+says it should.
+
+* **Light to dark** (default) — the classic shading chain
+* **Rainbow** — around the colour wheel, for packs full of blue, red and teal woods
+
+Run `/wooddye showcase` to build every wood in the game in a flight of steps and see the order for
+yourself.
+
+## 🔥 Fireproof anything
 
 Right-click a wooden block with **Magma Cream** and it becomes fireproof — permanently. It will not
-burn, will not catch, and will not spread. Build in a nether hub. Build next to your lava feature.
-Build under a campfire chandelier and sleep easy. *(Signs and shelves are the exception — vanilla
-already made those fireproof, so they only need the dye.)*
+burn, will not catch, and lava won't light it. Build in a nether hub. Build next to your lava feature.
 
-Fireproof wood is **still fully dyeable** — and dyeing it keeps it fireproof — still craftable, still
-strippable, and mines and builds exactly like the wood it copies. Fireproof logs make fireproof planks
-make fireproof stairs — the whole vanilla recipe tree, at vanilla ratios.
+New in 3.0: fireproofing is a property of the **block where it stands**, not a separate block — so
+it works on **every wood, a mod's included**, and it *stays* with the block:
 
-Got a stack to treat rather than a wall? Ring **eight wooden blocks around one magma cream** on the
-bench — same layout as stained glass — and all eight come out fireproof, without placing a thing.
+* 🔨 Break it and it drops as **"Oak Planks (Fireproof)"**; place that and it's fireproof again
+* 🪚 Craft fireproof wood and the result is fireproof — any ordinary crafting-table recipe, vanilla's or a mod's
+* 🧱 Pistons push and pull it, sticky ones included
+* ⚙️ **Create** contraptions carry it — mechanical pistons, bearings, chassis
+* 🪓 An axe strips it and it stays fireproof
 
-Changed your mind? A **Wet Sponge** soaks the magma cream back out and gives you plain wood again —
-one at a time in world, or eight at a time on the bench. And the sponge **isn't used up**: it comes
-back out of the grid ready for the next batch, the way a water bucket leaves you the bucket. (Prefer
-it stricter? One config flip hands back a *dry* sponge you must re-soak.)
+Hold **Magma Cream or a Wet Sponge** and every fireproof block nearby shows a small flame, just for
+you. With **Jade**, looking at one says *Fireproof*.
+
+Got a stack to treat rather than a wall? Ring **eight of any wood around one magma cream** on the
+bench and all eight come out fireproof.
+
+Changed your mind? A **Wet Sponge** soaks the magma cream back out — one block in world, or eight on the
+bench. The sponge **isn't used up**: it comes back ready for the next batch. (Prefer it stricter?
+One config flip hands back a *dry* sponge you must re-soak.)
 
 ## 🪵 It knows how logs work
 
-A log's **bark** and its **end-grain rings** run through *different* colour orders — so any single
-order can only ever look right on one of them.
-
+A log's **bark** and its **end-grain rings** are different colours — so they sort differently.
 The default **Intelligent** mode reads the face you clicked: hit the **side** and it follows the
-**bark** order; hit the **end** and it follows the **rings**. Your log always shades the way it looks.
+**bark** order; hit the **end** and it follows the **rings**.
 
-Or pin it to bark order or plank order in the config, if you'd rather.
+## 📖 JEI knows it all
+
+With **JEI** installed, every fireproof wood has its own entry, and a **"WoodDye: in world"** tab
+shows every right-click: which block, what to hold, what it becomes, and whether to sneak.
 
 ## ✨ Details that matter
 
 * 🚪 Doors recolour **as a whole** — both halves, in one click
 * 📝 Signs **keep their text**
 * 📚 Shelves only dye while **empty**, so nothing you're storing can be lost
-* 🪓 An axe strips fireproof logs and wood, keeping the fireproofing *and* the orientation
 * 💨 Every treatment gives a particle, a sound, and a configurable action-bar message
-* 🎁 All 128 fireproof blocks in their own creative tab
+* ⬆️ **Upgrading from 2.x?** Old fireproof blocks convert to fireproofed wood the first time their
+  chunk loads, and old fireproof items convert in your inventory — nothing to do
 
 ## ⚙️ Made for servers
 
-* Live config — edit and save, no restart. Or use `/wooddye reload`. Every option has a plain-English
-  name and tooltip in the in-game Mods → Config screen
+* Live config — edit and save, no restart. Or use `/wooddye reload`
+* Choose which woods take part: modded woods, nether woods, or leave out a mod or a single wood
+* Disagree with a measured colour? Override it in config
 * Permission node `wooddye.candye` gates who may dye, for LuckPerms and friends
-* Turn fireproofing off and it's off **everywhere** — in world *and* on the bench. Restoring wood
-  always still works, so nobody is ever stuck with it
-* Make treatments consume their dye or magma cream, if you want it rarer — a wet sponge just dries
-  out and can be re-soaked, never destroyed
-* Fireproof wood is never craftable from scratch — magma cream is the only way in
+* Turn fireproofing off and it's off **everywhere** — restoring always still works
+* Make treatments consume their dye or magma cream, if you want it rarer
 
 ---
 
-**Minecraft 1.21.11 · NeoForge 21.11.42+ · no dependencies · MIT licensed**
+**Minecraft 1.20.1 (Forge) · 1.21.1 · 1.21.11 · 26.1 · 26.2 · 26.3 (NeoForge) · no dependencies · MIT licensed**
 
-A modern rewrite of the classic **WoodDye** Bukkit plugin, rebuilt from the ground up for NeoForge.
+Optional: Create, Jade, JEI.
+
+A modern rewrite of the classic **WoodDye** Bukkit plugin, rebuilt from the ground up.
 
 *Source, issues and full documentation on [GitHub](https://github.com/Sablednah/WoodDye-NeoForge).*

@@ -229,4 +229,4 @@ with no section sign in it catches the whole category at once.
 
 Reference fixes: SableCraft-Standards `38cb7a0`, LegendQuest-ReForged `dda06b6`.
 
-Reported from the LegendQuest session, 2026-08-21; fixed in the 2.1.0 work, 2026-10-02.
+Reported from the LegendQuest session, 2026-08-21; fixed in the 3.0.0 work, 2026-10-02.
