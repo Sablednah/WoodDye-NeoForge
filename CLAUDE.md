@@ -1,5 +1,14 @@
 # WoodDye — notes for the next session
 
+## Releasing
+
+GitHub release `vX.Y.Z` on main, titled `WoodDye ReForged X.Y.Z`, with every line's jar attached
+(`wooddye-X.Y.Z+mc<ver>.jar`) and `docs/release-X.Y.Z.md` as the notes. Publishing it runs
+`.github/workflows/curseforge.yml`, which uploads each jar to CurseForge project 1613045 with its
+Minecraft version, loader (Forge for 1.20.x, else NeoForge) and Java read from the jar name. It
+skips until the repo secret `CURSEFORGE_TOKEN` exists; re-run by hand with workflow_dispatch.
+CurseForge dedupes by content, so a re-upload of the same jar is rejected in moderation.
+
 ## To do — next batch
 
 - **Sync the wood list and order from server to client** (asked for by Sable, 2026-10-03).
