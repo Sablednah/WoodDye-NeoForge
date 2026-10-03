@@ -180,7 +180,7 @@ def remap_loot(node, vanilla, fireproof):
 for stale in [f"assets/{MODID}/blockstates", f"assets/{MODID}/models", f"assets/{MODID}/items",
               f"assets/{MODID}/lang", f"data/{MODID}/loot_table", f"data/{MODID}/loot_tables",
               f"data/{MODID}/tags", f"data/{MODID}/recipe", f"data/{MODID}/recipes",
-              "data/minecraft", "data/neoforge", MODID]:
+              f"data/{MODID}/loot_modifiers", "data/minecraft", "data/neoforge", "data/forge", MODID]:
     shutil.rmtree(os.path.join(RES, stale), ignore_errors=True)
 
 # Names for the in-game config screen (Mods -> WoodDye -> Config). NeoForge derives each key as
@@ -516,6 +516,12 @@ with zipfile.ZipFile(MJAR) as z:
                              f"{formats['resource']} differ; pack.mcmeta needs Forge's per-type keys")
         write("pack.mcmeta", {"pack": {"description": "WoodDye ReForged resources",
                                        "pack_format": formats["data"]}})
+
+        # FORGE: no block-drops event, so the drops of a fireproof position are stamped by a global
+        # loot modifier (fireproof/FireproofLootModifier.java), which Forge finds through this pair
+        # of files. NeoForge lines do it from BlockDropsEvent and write nothing here.
+        write(f"data/{MODID}/loot_modifiers/fireproof_drops.json", {"type": f"{MODID}:fireproof_drops", "conditions": []})
+        write("data/forge/loot_modifiers/global_loot_modifiers.json", {"replace": False, "entries": [f"{MODID}:fireproof_drops"]})
 
 # ===================== fireproofing recipes (wood + magma cream -> fireproof wood) =====================
 # The bench equivalent of right-clicking a placed block, for wood still in your bag. Eight blocks
