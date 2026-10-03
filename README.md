@@ -22,7 +22,7 @@ One build per Minecraft line, each on its own branch; the jar name says which it
 | 26.1 | NeoForge 26.1 | 25 | `mc26.1` | 10 |
 | 1.21.11 | NeoForge 21.11 | 21 | `main` | 10 |
 | 1.21.1 | NeoForge 21.1 | 21 | `mc1.21.1` | 9 — no pale oak, and no shelves to dye |
-| 1.20.1 | **Forge** 47 | 17 | `mc1.20.1` | 9 — as 1.21.1; no in-game config screen (Forge has none), so edit the TOML; a dropped fireproof item is not itself fire-resistant |
+| 1.20.1 | **Forge** 47 | 17 | `mc1.20.1` | 9 — as 1.21.1; no in-game config screen (Forge has none), so edit the TOML; a dropped fireproof item is not itself fire-resistant; no Jade line |
 
 "Woods" counts the vanilla woods that can be fireproofed. Any wood in the game can be dyed, including
 crimson and warped and woods from other mods, if you switch them on — see
@@ -55,7 +55,9 @@ added by a later Minecraft or by another mod finds its own place in it. See
 - **Un-fireproof** it again by right-clicking with a **Wet Sponge**, which soaks the magma cream back
   out (always available, even if fireproofing is disabled).
 - **See** what is fireproof by holding Magma Cream or a Wet Sponge: a small flame shows on every
-  fireproof block nearby, for you alone.
+  fireproof block nearby, for you alone. With **Jade** installed, looking at a fireproof block also
+  says "Fireproof" (not on 1.20.1, where Jade only carries server data for blocks with a block
+  entity).
 
 Both also work **on the crafting bench**, for wood still in your bag — **eight around one**, laid out
 like vanilla's stained glass:

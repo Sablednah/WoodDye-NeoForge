@@ -97,6 +97,11 @@ server), then ported to `main` and every line. Per-line differences worth knowin
   `modCompileOnly` with the `slim` classifier.
 - Create is compiled against (`create_compile` in gradle.properties) on every line, using the
   1.21.1 build where no build for that line exists; the hook only runs when Create is loaded.
+- **Jade** (`compat/JadeFireproof`, `jade_compile` from Modrinth's Maven) adds a "Fireproof" line
+  on the NeoForge lines. Not on 1.20.1: Jade 11 only syncs server data for blocks with a block
+  entity, so a plain planks block can never carry the mark to the client there.
+- After an in-world treatment the whole inventory is resent (`sendAllDataToRemote`): the client
+  predicts placing a wet sponge (a block item) and the single slot update lost to that on 1.20.1.
 
 **Verified over RCON on every line** (`rcontest.sh`): fire, lava, vanilla piston, drops, legacy
 conversion; with Create on 1.21.1 (bearing + radial chassis quarter turn) and on a production
