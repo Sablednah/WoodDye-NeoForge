@@ -1,6 +1,7 @@
 package com.sablednah.wooddye.compat;
 
 import com.sablednah.wooddye.WoodDye;
+import com.sablednah.wooddye.WoodDyeConfig;
 import com.sablednah.wooddye.fireproof.Fireproofing;
 import com.sablednah.wooddye.neoforge.WoodTransforms;
 import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
@@ -42,7 +43,14 @@ public final class CreateFireproof implements MovementBehaviour {
         // (Not anchor + localPos: that is only right for a piston extending; a retracting one
         // assembles at the extended end, and a bearing's anchor is the bearing.)
         BlockPos from = landing(context);
-        if (Fireproofing.wasFireproof(level, from)) {
+        boolean fireproof = Fireproofing.wasFireproof(level, from);
+        if (WoodDyeConfig.DEBUG.get()) {
+            WoodDye.LOGGER.info("WoodDye/Create: {} lifted from {} (anchor {} local {} entity {}): {}",
+                    context.state.getBlock(), from, context.contraption.anchor, context.localPos,
+                    context.contraption.entity == null ? "none" : context.contraption.entity.position(),
+                    fireproof ? "fireproof" : "plain");
+        }
+        if (fireproof) {
             context.data.putBoolean(KEY, true);
             Fireproofing.unmark(level, from);
         }
@@ -50,7 +58,17 @@ public final class CreateFireproof implements MovementBehaviour {
 
     @Override
     public void stopMoving(MovementContext context) {
-        if (context.world instanceof ServerLevel level && context.data.getBooleanOr(KEY, false)) {
+        if (!(context.world instanceof ServerLevel level)) {
+            return;
+        }
+        boolean fireproof = context.data.getBooleanOr(KEY, false);
+        if (WoodDyeConfig.DEBUG.get()) {
+            WoodDye.LOGGER.info("WoodDye/Create: {} landing at {} (anchor {} local {} entity {}): {}",
+                    context.state.getBlock(), landing(context), context.contraption.anchor, context.localPos,
+                    context.contraption.entity == null ? "none" : context.contraption.entity.position(),
+                    fireproof ? "fireproof" : "plain");
+        }
+        if (fireproof) {
             // Create puts the blocks back after telling the actors they stopped, so mark at end of tick.
             Fireproofing.markWhenPlaced(level, landing(context));
         }
