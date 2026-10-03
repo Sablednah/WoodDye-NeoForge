@@ -8,9 +8,11 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.DamageResistant;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -48,9 +50,9 @@ public final class FireproofComponents {
     public static ItemStack stamp(ItemStack stack) {
         if (!stack.isEmpty() && !isStamped(stack)) {
             stack.set(FIREPROOF.get(), Unit.INSTANCE);
-            stack.set(DataComponents.FIRE_RESISTANT, Unit.INSTANCE);
+            stack.set(DataComponents.DAMAGE_RESISTANT, new DamageResistant(DamageTypeTags.IS_FIRE));
             stack.set(DataComponents.ITEM_NAME, Component.translatable("item.wooddye.fireproof_name",
-                    Component.translatable(stack.getItem().getDescriptionId(stack))));
+                    Component.translatable(stack.getItem().getDescriptionId())));
         }
         return stack;
     }
@@ -59,7 +61,7 @@ public final class FireproofComponents {
     public static ItemStack strip(ItemStack stack) {
         if (isStamped(stack)) {
             stack.remove(FIREPROOF.get());
-            stack.remove(DataComponents.FIRE_RESISTANT);
+            stack.remove(DataComponents.DAMAGE_RESISTANT);
             stack.remove(DataComponents.ITEM_NAME);
         }
         return stack;

@@ -48,7 +48,7 @@ public final class CreateFireproof implements MovementBehaviour {
 
     @Override
     public void stopMoving(MovementContext context) {
-        if (context.world instanceof ServerLevel level && context.data.getBoolean(KEY)) {
+        if (context.world instanceof ServerLevel level && context.data.getBooleanOr(KEY, false)) {
             // Create puts the blocks back after telling the actors they stopped, so mark at end of tick.
             Fireproofing.markWhenPlaced(level, landing(context));
         }

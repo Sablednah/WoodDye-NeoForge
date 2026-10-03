@@ -113,7 +113,7 @@ dependencies {
     // Create is optional at runtime: compat/CreateFireproof is only loaded when the mod list has
     // it. It is needed here only so that class compiles. To test with it, drop Create, Flywheel
     // and Ponder into run/mods.
-    compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
+    compileOnly("${create_compile}") { transitive = false }
 }
 
 // Expand mod metadata properties into the generated neoforge.mods.toml.

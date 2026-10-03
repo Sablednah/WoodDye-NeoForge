@@ -164,9 +164,9 @@ public final class FireproofEvents {
                 && !player.getOffhandItem().is(Items.MAGMA_CREAM) && !player.getOffhandItem().is(Items.WET_SPONGE)) {
             return;
         }
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         Fireproofing.forEachNear(level, player.blockPosition(), 12, pos -> level.sendParticles(player,
-                ParticleTypes.SMALL_FLAME, true, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5,
+                ParticleTypes.SMALL_FLAME, true, false, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5,
                 1, 0.2, 0.0, 0.2, 0.0));
     }
 

@@ -5,9 +5,9 @@ import com.sablednah.wooddye.neoforge.WoodDyeInteractions;
 import com.sablednah.wooddye.neoforge.WoodTransforms;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -52,7 +52,7 @@ public final class FireproofMigration {
                             continue;
                         }
                         BlockPos pos = chunk.getPos().getBlockAt(x, baseY + y, z);
-                        chunk.setBlockState(pos, WoodDyeInteractions.copyMatchingProperties(state, vanilla), false);
+                        chunk.setBlockState(pos, WoodDyeInteractions.copyMatchingProperties(state, vanilla), 0);
                         Fireproofing.markRaw(level, pos);
                         converted++;
                     }
@@ -60,7 +60,7 @@ public final class FireproofMigration {
             }
         }
         if (converted > 0) {
-            chunk.setUnsaved(true);
+            chunk.markUnsaved();
             WoodDye.LOGGER.info("WoodDye: converted {} legacy fireproof blocks in chunk {} to marked wood", converted, chunk.getPos());
         }
     }
@@ -71,17 +71,13 @@ public final class FireproofMigration {
         if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % 20 != 0) {
             return;
         }
-        convert(player.getInventory().items);
-        convert(player.getInventory().offhand);
-    }
-
-    private static void convert(NonNullList<ItemStack> slots) {
-        for (int slot = 0; slot < slots.size(); slot++) {
-            ItemStack stack = slots.get(slot);
+        Inventory inventory = player.getInventory();
+        for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+            ItemStack stack = inventory.getItem(slot);
             if (stack.getItem() instanceof BlockItem item) {
                 Block vanilla = WoodTransforms.fromFireproof(item.getBlock());
                 if (vanilla != null) {
-                    slots.set(slot, FireproofComponents.stamp(new ItemStack(vanilla, stack.getCount())));
+                    inventory.setItem(slot, FireproofComponents.stamp(new ItemStack(vanilla, stack.getCount())));
                 }
             }
         }
