@@ -120,7 +120,7 @@ public final class WoodDyeInteractions {
             boolean changed = mark ? Fireproofing.mark(serverLevel, pos) : Fireproofing.unmark(serverLevel, pos);
             if (!changed) {
                 if (mark) {
-                    player.displayClientMessage(Component.translatable("wooddye.already_fireproof"), true);
+                    player.sendOverlayMessage(Component.translatable("wooddye.already_fireproof"));
                     event.setCanceled(true);
                 }
                 return; // nothing to undo on a block that was never fireproof

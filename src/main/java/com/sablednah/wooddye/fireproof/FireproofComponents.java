@@ -3,19 +3,25 @@ package com.sablednah.wooddye.fireproof;
 import com.sablednah.wooddye.WoodDye;
 import com.sablednah.wooddye.neoforge.WoodTransforms;
 
+import java.util.Optional;
+
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Unit;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DamageResistant;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 /**
  * Fireproofing on an <em>item</em>: a {@code wooddye:fireproof} component on an ordinary wood item.
@@ -50,11 +56,24 @@ public final class FireproofComponents {
     public static ItemStack stamp(ItemStack stack) {
         if (!stack.isEmpty() && !isStamped(stack)) {
             stack.set(FIREPROOF.get(), Unit.INSTANCE);
-            stack.set(DataComponents.DAMAGE_RESISTANT, new DamageResistant(DamageTypeTags.IS_FIRE));
+            fireTypes().ifPresent(types -> stack.set(DataComponents.DAMAGE_RESISTANT, new DamageResistant(types)));
             stack.set(DataComponents.ITEM_NAME, Component.translatable("item.wooddye.fireproof_name",
                     Component.translatable(stack.getItem().getDescriptionId())));
         }
         return stack;
+    }
+
+    /**
+     * The fire damage types as a holder set, which is what the component wants on this version.
+     * Resolved from the running server's registries; absent (and the stack simply not
+     * fire-resistant) if asked before a server exists.
+     */
+    private static Optional<HolderSet<DamageType>> fireTypes() {
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server == null) {
+            return Optional.empty();
+        }
+        return server.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).get(DamageTypeTags.IS_FIRE).map(set -> set);
     }
 
     /** Undo {@link #stamp}. */
