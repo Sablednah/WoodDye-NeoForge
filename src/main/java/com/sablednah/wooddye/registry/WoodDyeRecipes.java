@@ -8,7 +8,6 @@ import com.sablednah.wooddye.crafting.SpongeRestoreRecipe;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.CustomRecipe;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -36,12 +35,12 @@ public final class WoodDyeRecipes {
     /** {@code wooddye:fireproof_stamp} — 8 of any wood item + magma cream -> 8 fireproof ones. */
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<FireproofStampRecipe>>
             FIREPROOF_STAMP = SERIALIZERS.register("fireproof_stamp",
-                    () -> new CustomRecipe.Serializer<>(category -> new FireproofStampRecipe(category, true)));
+                    () -> FireproofStampRecipe.serializer(true));
 
     /** {@code wooddye:fireproof_unstamp} — 8 fireproof wood items + wet sponge -> 8 plain, sponge kept. */
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<FireproofStampRecipe>>
             FIREPROOF_UNSTAMP = SERIALIZERS.register("fireproof_unstamp",
-                    () -> new CustomRecipe.Serializer<>(category -> new FireproofStampRecipe(category, false)));
+                    () -> FireproofStampRecipe.serializer(false));
 
     private WoodDyeRecipes() {}
 
