@@ -38,8 +38,10 @@ public final class CreateFireproof implements MovementBehaviour {
         if (!(context.world instanceof ServerLevel level)) {
             return;
         }
-        // At assembly the block has just been lifted from anchor + localPos.
-        BlockPos from = context.contraption.anchor.offset(context.localPos);
+        // At assembly the block has just been lifted from where the entity's transform puts it.
+        // (Not anchor + localPos: that is only right for a piston extending; a retracting one
+        // assembles at the extended end, and a bearing's anchor is the bearing.)
+        BlockPos from = landing(context);
         if (Fireproofing.wasFireproof(level, from)) {
             context.data.putBoolean(KEY, true);
             Fireproofing.unmark(level, from);
@@ -55,9 +57,10 @@ public final class CreateFireproof implements MovementBehaviour {
     }
 
     /**
-     * Where the block is about to be put down. Create only tracks {@code context.position} for
-     * actors that do work while moving, so it is worked out from the contraption entity's own
-     * transform, which at this point has settled on the resting angle and offset.
+     * Where the block is in the world right now: at assembly, where it was lifted from; at
+     * disassembly, where it is about to be put down. Create only tracks {@code context.position}
+     * for actors that do work while moving, so it is worked out from the contraption entity's own
+     * transform, which at both moments is at a resting angle and offset.
      */
     private static BlockPos landing(MovementContext context) {
         AbstractContraptionEntity entity = context.contraption.entity;

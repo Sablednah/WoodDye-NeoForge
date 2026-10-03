@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.piston.PistonStructureResolver;
+import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -36,17 +36,16 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  *         it, remembering the removal for a few ticks.</li>
  *     <li><b>Drops</b> from a position that was fireproof are stamped (by
  *         {@link FireproofLootModifier}; Forge 1.20.1 has no block-drops event).</li>
- *     <li><b>Pistons</b> carry marks with the blocks they push or pull.</li>
+ *     <li><b>Pistons</b> carry marks with the blocks they push or pull, sticky chains included.</li>
  * </ul>
  */
 public final class FireproofEvents {
 
-    /** Marks that a piston about to move will carry, from the Pre event to the Post. */
-    private static final Map<BlockPos, List<Move>> PISTON_MOVES = new HashMap<>();
+    /** Marked wood near a piston that is about to move, with what stood there, from Pre to Post. */
+    private static final Map<BlockPos, Map<BlockPos, Block>> PISTON_NEARBY = new HashMap<>();
 
-    private record Move(BlockPos from, BlockPos to) {}
-
-    private FireproofEvents() {}
+    /** As far as a piston's influence reaches: the push limit, plus the head, plus a little. */
+    private static final int PISTON_REACH = 16;
 
     /** What each player is about to place, noted before the stack in hand is used up by placing it. */
     private static final Map<UUID, Placement> PLACING = new HashMap<>();
@@ -93,44 +92,51 @@ public final class FireproofEvents {
         Fireproofing.unmark(level, event.getPos());
     }
 
-    /** Work out, before anything moves, which marked blocks this piston will carry and to where. */
+    /**
+     * Note the marked wood a piston could move. The resolver the event offers cannot be trusted
+     * here: on a retraction it runs while the piston head is still in the way and reports nothing,
+     * so instead the move is read off the world afterwards, in {@link #onPistonPost}.
+     */
     @SubscribeEvent
     public static void onPistonPre(PistonEvent.Pre event) {
         if (!(event.getLevel() instanceof ServerLevel level)) {
             return;
         }
-        PistonStructureResolver structure = event.getStructureHelper();
-        if (structure == null || !structure.resolve()) {
-            return;
-        }
-        Direction push = structure.getPushDirection();
-        List<Move> moves = new ArrayList<>();
-        for (BlockPos moved : structure.getToPush()) {
-            if (Fireproofing.isFireproof(level, moved)) {
-                moves.add(new Move(moved.immutable(), moved.relative(push)));
-            }
-        }
-        if (!moves.isEmpty()) {
-            PISTON_MOVES.put(event.getPos().immutable(), moves);
+        Map<BlockPos, Block> nearby = new HashMap<>();
+        Fireproofing.forEachNear(level, event.getPos(), PISTON_REACH,
+                pos -> nearby.put(pos, level.getBlockState(pos).getBlock()));
+        if (!nearby.isEmpty()) {
+            PISTON_NEARBY.put(event.getPos().immutable(), nearby);
         }
     }
 
     /**
-     * The blocks are in transit now, as moving-piston blocks that will become the wood again in a
-     * couple of ticks. The marks move with them: off the sources, onto the destinations.
+     * The blocks are in transit now: each moved block is a moving-piston block one step along the
+     * push direction from where it stood, remembering what it was. A marked block that has gone
+     * from its place and reappears that way one step on takes its mark with it.
      */
     @SubscribeEvent
     public static void onPistonPost(PistonEvent.Post event) {
-        List<Move> moves = PISTON_MOVES.remove(event.getPos());
-        if (moves == null || !(event.getLevel() instanceof ServerLevel level)) {
+        Map<BlockPos, Block> nearby = PISTON_NEARBY.remove(event.getPos());
+        if (nearby == null || !(event.getLevel() instanceof ServerLevel level)) {
             return;
         }
+        Direction push = event.getPistonMoveType().isExtend ? event.getDirection() : event.getDirection().getOpposite();
         FireproofMarks marks = FireproofMarks.of(level);
-        for (Move move : moves) {
-            marks.remove(move.from(), level.getGameTime());
+        List<BlockPos> arrived = new ArrayList<>();
+        for (Map.Entry<BlockPos, Block> was : nearby.entrySet()) {
+            BlockPos from = was.getKey();
+            BlockPos to = from.relative(push);
+            if (!level.getBlockState(from).is(was.getValue())
+                    && level.getBlockEntity(to) instanceof PistonMovingBlockEntity moving
+                    && !moving.isSourcePiston()
+                    && moving.getMovedState().is(was.getValue())) {
+                marks.remove(from, level.getGameTime());
+                arrived.add(to);
+            }
         }
-        for (Move move : moves) {
-            marks.add(move.to());
+        for (BlockPos to : arrived) {
+            marks.add(to);
         }
     }
 
@@ -158,7 +164,7 @@ public final class FireproofEvents {
     public static void onLevelTick(TickEvent.LevelTickEvent event) {
         if (event.phase == TickEvent.Phase.END && event.level instanceof ServerLevel level) {
             Fireproofing.tick(level);
-            PISTON_MOVES.clear(); // a Pre without a Post means the move was cancelled
+            PISTON_NEARBY.clear(); // a Pre without a Post means the move was cancelled
             PLACING.clear();      // a right-click that placed nothing
         }
     }
