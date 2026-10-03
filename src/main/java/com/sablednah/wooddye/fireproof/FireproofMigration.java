@@ -1,6 +1,9 @@
 package com.sablednah.wooddye.fireproof;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import com.sablednah.wooddye.WoodDye;
+import com.sablednah.wooddye.WoodDyeConfig;
 import com.sablednah.wooddye.neoforge.WoodDyeInteractions;
 import com.sablednah.wooddye.neoforge.WoodTransforms;
 
@@ -16,6 +19,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
@@ -61,7 +65,27 @@ public final class FireproofMigration {
         }
         if (converted > 0) {
             chunk.markUnsaved();
-            WoodDye.LOGGER.info("WoodDye: converted {} legacy fireproof blocks in chunk {} to marked wood", converted, chunk.getPos());
+            if (WoodDyeConfig.DEBUG.get()) {
+                WoodDye.LOGGER.info("WoodDye: converted {} legacy fireproof blocks in chunk {} to marked wood", converted, chunk.getPos());
+            } else if (CONVERTED.get() == 0 && CHUNKS.get() == 0) {
+                WoodDye.LOGGER.info("WoodDye: converting 2.0 fireproof blocks to marked wood as their chunks load; "
+                        + "a total is logged when the server stops (debugMode logs each chunk)");
+            }
+            CONVERTED.addAndGet(converted);
+            CHUNKS.incrementAndGet();
+        }
+    }
+
+    /** Conversions this session, for one summary line instead of one per chunk. */
+    private static final AtomicLong CONVERTED = new AtomicLong();
+    private static final AtomicLong CHUNKS = new AtomicLong();
+
+    @SubscribeEvent
+    public static void onServerStopping(ServerStoppingEvent event) {
+        long blocks = CONVERTED.getAndSet(0);
+        long chunks = CHUNKS.getAndSet(0);
+        if (blocks > 0) {
+            WoodDye.LOGGER.info("WoodDye: converted {} legacy fireproof blocks in {} chunks to marked wood this session", blocks, chunks);
         }
     }
 
