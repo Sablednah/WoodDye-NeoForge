@@ -210,6 +210,10 @@ CONFIG_LANG = {
     "wooddye.already_fireproof": "Already fireproof",
     "item.wooddye.fireproof_name": "%s (Fireproof)",
     "wooddye.jade.fireproof": "Fireproof",
+    "wooddye.jei.in_world": "WoodDye: in world",
+    "wooddye.jei.right_click": "Right-click the placed block",
+    "wooddye.jei.sneak_right_click": "Sneak + right-click the block",
+    "wooddye.jei.right_click_side": "Right-click a side (bark order)",
 }
 
 lang = {"itemGroup.wooddye": "WoodDye ReForged", **CONFIG_LANG}
