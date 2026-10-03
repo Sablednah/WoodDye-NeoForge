@@ -215,6 +215,14 @@ public final class WoodTransforms {
         return tables().wood.contains(block);
     }
 
+    /** Every wood block that can be fireproofed by marking, in no particular order. */
+    public static Set<Block> markableWood() {
+        Tables t = tables();
+        Set<Block> wood = new HashSet<>(t.wood);
+        wood.removeAll(t.fromFireproof.keySet());
+        return wood;
+    }
+
     /** Whether this is one of the registered legacy {@code fireproof_*} blocks. */
     public static boolean isLegacyFireproof(Block block) {
         return tables().fromFireproof.containsKey(block);
