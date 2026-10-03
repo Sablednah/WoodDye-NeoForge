@@ -122,6 +122,16 @@ public final class Fireproofing {
         PENDING.addAll(retry);
     }
 
+    /** Every fireproof position near {@code centre}. */
+    public static void forEachNear(ServerLevel level, BlockPos centre, int radius, java.util.function.Consumer<BlockPos> action) {
+        FireproofMarks.of(level).forEachNear(centre, radius, action);
+    }
+
+    /** Mark without the door logic or the wood check: for migration, which knows what it has. */
+    static void markRaw(ServerLevel level, BlockPos pos) {
+        FireproofMarks.of(level).add(pos);
+    }
+
     /** How many positions are fireproof in this dimension, for {@code /wooddye fireproof}. */
     public static int count(ServerLevel level) {
         return FireproofMarks.of(level).size();
