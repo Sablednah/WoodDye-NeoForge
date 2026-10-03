@@ -297,6 +297,10 @@ with zipfile.ZipFile(MJAR) as z:
     for tag, names in tagged.items():
         write(f"data/{MODID}/{ITEM_TAGS}/fireproof_{tag}.json", taglist(names))
 
+    # The legacy fireproof_* items exist only so 2.x worlds load; recipe viewers (JEI, EMI, REI)
+    # all honour this common tag and hide the items and every recipe that makes them.
+    write(f"data/c/{ITEM_TAGS}/hidden_from_recipe_viewers.json", taglist(everything))
+
     # The dyeable tags: references to vanilla's, and only to those this version has — a tag that
     # names a missing tag fails to load whole. A form with nothing to refer to (shelves, before
     # they existed) still gets its tag, empty, so a pack has somewhere to add to.

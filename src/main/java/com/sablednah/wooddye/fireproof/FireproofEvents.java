@@ -8,11 +8,14 @@ import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
@@ -23,6 +26,7 @@ import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.PistonEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
  * Keeps the fireproof marks in step with the blocks they belong to.
@@ -144,6 +148,26 @@ public final class FireproofEvents {
         for (Move move : moves) {
             marks.add(move.to());
         }
+    }
+
+    /**
+     * Holding Magma Cream or a Wet Sponge shows which blocks nearby are fireproof: a small flame
+     * on each, sent to that player alone. Fireproof wood looks like any other, and this is the
+     * moment a player wants to know which is which.
+     */
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % 10 != 0) {
+            return;
+        }
+        if (!player.getMainHandItem().is(Items.MAGMA_CREAM) && !player.getMainHandItem().is(Items.WET_SPONGE)
+                && !player.getOffhandItem().is(Items.MAGMA_CREAM) && !player.getOffhandItem().is(Items.WET_SPONGE)) {
+            return;
+        }
+        ServerLevel level = player.serverLevel();
+        Fireproofing.forEachNear(level, player.blockPosition(), 12, pos -> level.sendParticles(player,
+                ParticleTypes.SMALL_FLAME, true, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5,
+                1, 0.2, 0.0, 0.2, 0.0));
     }
 
     @SubscribeEvent
