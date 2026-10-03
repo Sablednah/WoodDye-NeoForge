@@ -31,6 +31,11 @@ repositories {
     maven { url = 'https://maven.createmod.net' }
     // The Mixin annotation processor, which writes the refmap (see legacyForge.mixin below).
     maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+    // JEI, for the optional plugin (compile-time only).
+    maven {
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
 }
 
 base {
@@ -126,6 +131,8 @@ dependencies {
     // On the legacy plugin a mod jar must come in through modCompileOnly, which remaps it from
     // production names to the names this build uses.
     modCompileOnly("${create_compile}") { transitive = false }
+    // JEI the same way: compat/JeiFireproof is found by JEI's annotation scan.
+    modCompileOnly("${jei_compile}") { transitive = false }
     // Runs at compile time to write the refmap the legacy mixin DSL expects. Without it the
     // refmap is silently empty and every vanilla-targeted mixin fails in production.
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
