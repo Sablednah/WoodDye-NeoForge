@@ -98,7 +98,10 @@ server), then ported to `main` and every line. Per-line differences worth knowin
 - Create is compiled against (`create_compile` in gradle.properties) on every line, using the
   1.21.1 build where no build for that line exists; the hook only runs when Create is loaded.
 - **Jade** (`compat/JadeFireproof`, `jade_compile` from Modrinth's Maven) adds a "Fireproof" line
-  on the NeoForge lines. Not on 1.20.1: Jade 11 only syncs server data for blocks with a block
+  on the NeoForge lines (confirmed in game on 1.21.11). ⚠ The data provider and the tooltip
+  provider must be **separate objects**: since 1.21.6 Jade rejects a data provider that is also a
+  component provider, but only on a physical client, so a headless server reports the plugin as
+  loaded while the game throws it out. Check the client log for `JadeFireproof loaded`. Not on 1.20.1: Jade 11 only syncs server data for blocks with a block
   entity, so a plain planks block can never carry the mark to the client there.
 - After an in-world treatment the whole inventory is resent (`sendAllDataToRemote`): the client
   predicts placing a wet sponge (a block item) and the single slot update lost to that on 1.20.1.
