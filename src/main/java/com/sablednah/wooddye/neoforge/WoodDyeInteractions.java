@@ -138,6 +138,13 @@ public final class WoodDyeInteractions {
         // As before 26.3: everyone else sees the arm swing; the player's own client is not told.
         player.swing(event.getHand(), SwingAnimation.DEFAULT, false);
         event.setCanceled(true);
+        // The client has already predicted vanilla's use of the item. For a wet sponge, a block
+        // item, that is a placement which empties its copy of the stack, and the single slot
+        // update the server sends does not reliably win against it (seen on 1.20.1: a slot that
+        // looked empty while the server still held the sponge). Resend the whole inventory.
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.containerMenu.sendAllDataToRemote();
+        }
 
         feedback(level, player, pos, kind);
 
