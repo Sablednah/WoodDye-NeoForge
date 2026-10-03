@@ -1,16 +1,20 @@
 package com.sablednah.wooddye.fireproof;
 
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.LongStream;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 
 /**
  * The positions in one dimension whose wood has been fireproofed, saved with the world.
@@ -26,7 +30,11 @@ import net.minecraft.world.level.saveddata.SavedData;
 public final class FireproofMarks extends SavedData {
 
     private static final String NAME = "wooddye_fireproof";
-    private static final Factory<FireproofMarks> FACTORY = new Factory<>(FireproofMarks::new, FireproofMarks::load);
+    private static final Codec<FireproofMarks> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.LONG.listOf().fieldOf("positions")
+                    .forGetter(marks -> LongStream.of(marks.positions.toLongArray()).boxed().toList()))
+            .apply(instance, FireproofMarks::new));
+    private static final SavedDataType<FireproofMarks> TYPE = new SavedDataType<>(NAME, FireproofMarks::new, CODEC);
 
     /** How many ticks a just-removed mark is still answered for, so a broken block's drops see it. */
     private static final long GRACE_TICKS = 5;
@@ -40,22 +48,14 @@ public final class FireproofMarks extends SavedData {
      */
     private final Long2LongOpenHashMap removed = new Long2LongOpenHashMap();
 
+    private FireproofMarks() {}
+
+    private FireproofMarks(List<Long> saved) {
+        positions.addAll(saved);
+    }
+
     static FireproofMarks of(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(FACTORY, NAME);
-    }
-
-    private static FireproofMarks load(CompoundTag tag, HolderLookup.Provider registries) {
-        FireproofMarks marks = new FireproofMarks();
-        for (long position : tag.getLongArray("positions")) {
-            marks.positions.add(position);
-        }
-        return marks;
-    }
-
-    @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putLongArray("positions", positions.toLongArray());
-        return tag;
+        return level.getDataStorage().computeIfAbsent(TYPE);
     }
 
     boolean contains(BlockPos pos) {
