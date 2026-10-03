@@ -107,8 +107,19 @@ server), then ported to `main` and every line. Per-line differences worth knowin
 conversion; with Create on 1.21.1 (bearing + radial chassis quarter turn) and on a production
 Forge 1.20.1 server with Create 6.0.8 and Biomes O' Plenty. Crafting carry-through and stamped
 placement were checked with a temporary self-check on 1.21.1 only. Sable confirmed in game on
-1.20.1 (2026-10-03): vanilla pistons and Create's mechanical piston both carry the mark, and the
-wet-sponge restore works once the inventory resync was in. **Not tested anywhere:** block movers
+1.20.1 (2026-10-03): vanilla pistons push **and** sticky-pull (spammed, no loss), Create's
+mechanical piston extends **and** retracts, including reversed mid-run, and the wet-sponge restore
+works once the inventory resync was in.
+
+Two traps found that way, both fixed:
+- `PistonEvent.Pre`'s structure resolver reports nothing on a retraction (the head is still in
+  the way), so piston moves are read off the world after the move instead: a marked block that
+  left its place and is now a moving-piston block one step along carries its mark.
+- Create tells actors they are moving **before** the contraption entity exists, so the lift
+  position is `anchor + localPos` — wrong for a retracting mechanical piston, which assembles at
+  the extended end. `PistonContraption`'s protected `orientation` and `initialExtensionProgress`
+  give the offset (read reflectively). `debugMode` makes the hook log lift/landing positions;
+  that log is what found it. **Not tested anywhere:** block movers
 other than pistons and Create; the creative tab and item names as seen on a client.
 
 **1.20.1 mixin build recipe:** in `build.gradle` add
