@@ -7,6 +7,7 @@ import com.mojang.logging.LogUtils;
 import com.sablednah.wooddye.compat.CreateFireproof;
 import com.sablednah.wooddye.fireproof.FireproofComponents;
 import com.sablednah.wooddye.fireproof.FireproofEvents;
+import com.sablednah.wooddye.fireproof.FireproofMigration;
 import com.sablednah.wooddye.neoforge.WoodDyeServerEvents;
 import com.sablednah.wooddye.neoforge.WoodTransforms;
 import com.sablednah.wooddye.registry.WoodDyeBlocks;
@@ -66,6 +67,7 @@ public class WoodDye {
         // Game-bus glue: permission nodes, the /wooddye command, and the right-click handler.
         MinecraftForge.EVENT_BUS.register(WoodDyeServerEvents.class);
         MinecraftForge.EVENT_BUS.register(FireproofEvents.class);
+        MinecraftForge.EVENT_BUS.register(FireproofMigration.class);
 
         // Create moves blocks about in contraptions; fireproofing has to go with them.
         if (ModList.get().isLoaded("create")) {

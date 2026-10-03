@@ -53,7 +53,6 @@ public final class WoodDyeServerEvents {
      */
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event) {
-        WoodTransforms.invalidate();
-        WoodTransforms.woodOrder();
+        WoodTransforms.woodOrder(); // tags were bound before the level loaded; a build now is current
     }
 }
