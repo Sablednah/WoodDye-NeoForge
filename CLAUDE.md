@@ -9,6 +9,17 @@ Minecraft version, loader (Forge for 1.20.x, else NeoForge) and Java read from t
 skips until the repo secret `CURSEFORGE_TOKEN` exists; re-run by hand with workflow_dispatch.
 CurseForge dedupes by content, so a re-upload of the same jar is rejected in moderation.
 
+## Lessons from 3.0.0 → 3.0.1 (2026-10-04)
+
+- ⚠ **26.x syncs recipes to clients on join, through each serializer's stream codec.** A
+  `StreamCodec.unit(x)` refuses to encode any value not `equals(x)`, so a custom recipe served by
+  a unit codec needs value equality, or *no client can join* ("Can't encode … expected …").
+  3.0.0 shipped that way on 26.1–26.3 because no headless test has a client join. **Before a
+  release, join each line's dev server with a real client** (Vivo: `vivo-showcase.sh client`).
+- ⚠ **26.3's default `server.properties` has `white-list=true`.** A fresh dev server turns the
+  buddy client away with "You are not white-listed", which looks like a mod failure.
+  `vivo-showcase.sh ship` now writes `white-list=false`.
+
 ## To do — next batch
 
 - **Sync the wood list and order from server to client** (asked for by Sable, 2026-10-03).
