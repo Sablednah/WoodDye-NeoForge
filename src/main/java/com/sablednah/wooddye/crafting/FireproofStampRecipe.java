@@ -34,6 +34,22 @@ public class FireproofStampRecipe extends CustomRecipe {
         this.stamping = stamping;
     }
 
+    /**
+     * Two recipes of the same kind are the same recipe. The serializer's network codec is a unit
+     * codec, which refuses to encode anything not equal to its own instance; without this, the
+     * server's copy was not "equal" to the codec's and a client could not join (26.x sends recipes
+     * on join).
+     */
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof FireproofStampRecipe recipe && recipe.stamping == stamping;
+    }
+
+    @Override
+    public int hashCode() {
+        return Boolean.hashCode(stamping);
+    }
+
     /** A serializer for one of the two: the JSON carries nothing but the type. */
     public static RecipeSerializer<FireproofStampRecipe> serializer(boolean stamping) {
         return new RecipeSerializer<>(MapCodec.unit(() -> new FireproofStampRecipe(stamping)),
