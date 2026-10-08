@@ -45,7 +45,10 @@ public class WoodDye {
 
     public WoodDye(IEventBus modEventBus, ModContainer modContainer) {
         // Server-side (common) configuration: useItems, fireProof, debugMode.
-        modContainer.registerConfig(ModConfig.Type.COMMON, WoodDyeConfig.SPEC);
+        // LOCAL is what FML 12.0.8 (NeoForge 26.3.0.37+) calls COMMON. The file name is given
+        // explicitly: LOCAL would otherwise name it wooddye-local.toml, and every existing server
+        // would silently start from defaults.
+        modContainer.registerConfig(ModConfig.Type.LOCAL, WoodDyeConfig.SPEC, "wooddye-common.toml");
 
         // Content registration on the mod event bus (blocks before items before the creative tab).
         WoodDyeBlocks.register(modEventBus);
