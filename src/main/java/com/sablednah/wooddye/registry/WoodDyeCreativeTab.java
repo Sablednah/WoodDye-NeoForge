@@ -9,6 +9,10 @@ import com.sablednah.wooddye.core.WoodType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import java.util.HashSet;
+import java.util.Set;
+
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -32,10 +36,14 @@ public final class WoodDyeCreativeTab {
                     .title(Component.translatable("itemGroup.wooddye"))
                     .icon(() -> FireproofComponents.stamp(new ItemStack(Items.OAK_PLANKS)))
                     .displayItems((parameters, output) -> {
+                        // A standing sign and its wall sign are two blocks with one item (hanging
+                        // signs too), so add each item once: NeoForge 26.3 rejects a duplicate and
+                        // the whole creative screen fails to open.
+                        Set<Item> added = new HashSet<>();
                         for (WoodType.Form form : WoodType.Form.values()) {
                             for (Family family : WoodTransforms.woodOrder()) {
                                 Block block = family.block(form);
-                                if (block != null && block.asItem() != Items.AIR) {
+                                if (block != null && block.asItem() != Items.AIR && added.add(block.asItem())) {
                                     output.accept(FireproofComponents.stamp(new ItemStack(block)));
                                 }
                             }
