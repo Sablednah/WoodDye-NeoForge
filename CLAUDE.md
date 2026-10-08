@@ -50,7 +50,7 @@ One branch per Minecraft line, each checked out permanently under
 | `main` (trunk) | 1.21.11 | NeoForge 21.11.42 | 21 |
 | `mc26.1` | 26.1.2 | NeoForge 26.1.2.95 | 25 |
 | `mc26.2` | 26.2 | NeoForge 26.2.0.59 | 25 |
-| `mc26.3` | 26.3 | NeoForge 26.3.0.33-beta (range capped below .37-beta) | 25 |
+| `mc26.3` | 26.3 | NeoForge 26.3.0.58-beta (floor; registers ModConfig.Type.LOCAL) | 25 |
 | `mc1.21.1` | 1.21.1 | NeoForge 21.1.251 | 21 |
 | `mc1.20.1` | 1.20.1 | MinecraftForge 47.4.23 | 17 |
 

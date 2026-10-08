@@ -17,7 +17,7 @@ One build per Minecraft line, each on its own branch; the jar name says which it
 
 | Minecraft | Loader | Java | Branch | Woods |
 |-----------|--------|------|--------|-------|
-| 26.3 | NeoForge 26.3.0.33-beta – .36 | 25 | `mc26.3` | 11 — adds **poplar** |
+| 26.3 | NeoForge 26.3.0.58-beta or later | 25 | `mc26.3` | 11 — adds **poplar** |
 | 26.2 | NeoForge 26.2 | 25 | `mc26.2` | 10 |
 | 26.1 | NeoForge 26.1 | 25 | `mc26.1` | 10 |
 | 1.21.11 | NeoForge 21.11 | 21 | `main` | 10 |

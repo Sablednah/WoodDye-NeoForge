@@ -5,13 +5,17 @@
 creative tab listed each fireproof sign twice, because a standing sign and its wall sign share one
 item, and NeoForge 26.3 refuses a duplicate. Fixed on every version.
 
-All six jars are rebuilt as 3.0.2 to keep one version number; nothing else changed.
+**26.3 now needs NeoForge 26.3.0.58-beta or later.** NeoForge 26.3.0.37 renamed a configuration
+type the mod uses, so earlier 3.0.x jars refused anything from .37 up; 3.0.2 is built for .58 and
+keeps your existing `wooddye-common.toml`. If your 26.3 pack is still on .33–.36, update NeoForge.
+
+All six jars are rebuilt as 3.0.2 to keep one version number; nothing else changed on the others.
 
 ## Requirements
 
 | Jar | Minecraft | Loader | Java |
 |---|---|---|---|
-| `wooddye-3.0.2+mc26.3.jar` | 26.3 | NeoForge 26.3.0.33-beta – .36-beta | 25 |
+| `wooddye-3.0.2+mc26.3.jar` | 26.3 | NeoForge 26.3.0.58-beta or later | 25 |
 | `wooddye-3.0.2+mc26.2.jar` | 26.2 | NeoForge 26.2 | 25 |
 | `wooddye-3.0.2+mc26.1.2.jar` | 26.1 | NeoForge 26.1 | 25 |
 | `wooddye-3.0.2+mc1.21.11.jar` | 1.21.11 | NeoForge 21.11 | 21 |
